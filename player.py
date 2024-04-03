@@ -4,8 +4,37 @@ import settings
 
 pygame.init()
 
-class Player:
+"""
+class Entity():
+    def __init__(self, spawn_x, spawn_y):
+        self.x = spawn_x
+        self.y = spawn_y
+        self.vel = 5
+        self.Maxvel = 10
+        self.left = False
+        self.right = False
+        self.last = 0
+        self.walkCount = 0
+        self.CanJump = False
+        self.JumpCount = 10
+
+    
+    def movement(self):
+        pass
+
+    def flip(self):
+        pass
+
+    def RectCollision(self, other_rect: pygame.rect):
+        collide = pygame.Rect.colliderect(player.rect,other_rect)
+        if collide:
+            self.rect.bottom = other_rect.top
+
+"""
+
+class Player():
     def __init__(self) :
+        #super().__init__(100, 100)
         self.x = 100
         self.y = 100
         self.vel = 5
@@ -14,15 +43,15 @@ class Player:
         self.right = False
         self.last = 0
         self.walkCount = 0
-        self.walkRight = [pygame.image.load("./Assets/image_0-0.png"),pygame.image.load("./Assets/image_0-1.png"),pygame.image.load("./Assets/image_0-2.png"),pygame.image.load("./Assets/image_0-3.png")]
+        self.walkRight = [pygame.image.load("./Assets/SpriteSheets/Player/MoveRight/image_0-0.png"),pygame.image.load("./Assets/SpriteSheets/Player/MoveRight/image_0-1.png"),pygame.image.load("./Assets/SpriteSheets/Player/MoveRight/image_0-2.png"),pygame.image.load("./Assets/SpriteSheets/Player/MoveRight/image_0-3.png")]
         for i in range(len(self.walkRight)):
             self.walkRight[i] = pygame.transform.scale(self.walkRight[i], (40, 80))
-        self.walkLeft = [pygame.image.load("./Assets/image_1-0.png"),pygame.image.load("./Assets/image_1-1.png"),pygame.image.load("./Assets/image_1-2.png"),pygame.image.load("./Assets/image_1-3.png")]
+        self.walkLeft = [pygame.image.load("./Assets/SpriteSheets/Player/MoveLeft/image_1-0.png"),pygame.image.load("./Assets/SpriteSheets/Player/MoveLeft/image_1-1.png"),pygame.image.load("./Assets/SpriteSheets/Player/MoveLeft/image_1-2.png"),pygame.image.load("./Assets/SpriteSheets/Player/MoveLeft/image_1-3.png")]
         for i in range(len(self.walkLeft)):
             self.walkLeft[i] = pygame.transform.scale(self.walkLeft[i], (40, 80))
-        self.StandLeft = pygame.image.load("./Assets/image_1-0.png")
+        self.StandLeft = pygame.image.load("./Assets/SpriteSheets/Player/MoveLeft/image_1-0.png")
         self.StandLeft = pygame.transform.scale(self.StandLeft, (40, 80))
-        self.StandRight = pygame.image.load("./Assets/image_0-0.png")
+        self.StandRight = pygame.image.load("./Assets/SpriteSheets/Player/MoveRight/image_0-0.png")
         self.StandRight = pygame.transform.scale(self.StandRight, (40, 80))
         self.CanJump = False
         self.JumpCount = 10
