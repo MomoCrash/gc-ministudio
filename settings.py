@@ -1,4 +1,7 @@
 SCREEN_HEIGHT = 500
 SCREEN_WIDHT = 800
 
+# In frame number per second 
+ANIMATION_DURATION = 120
+
 WHITE = (255,255,255)
