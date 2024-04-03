@@ -1,6 +1,17 @@
 import pygame
 import settings
 import os
+from enum import Enum
+from enum import auto
+
+
+class TextureRef(Enum):
+    BACKGROUND = auto()
+
+
+class SheetsRef(Enum):
+    PLAYER_WALK_LEFT = auto()
+    PLAYER_WALK_RIGHT = auto()
 
 
 class Sprite:
@@ -31,19 +42,40 @@ class SpriteSheet:
     
     def is_next_frame(self, current_ticks) -> bool:
         if current_ticks - self.time > self.frame_per_image:
+            self.time = current_ticks
             return True
         return False
-        
-    
+
+
 class Assets:
 
-    Texture = []
-    SpriteSheets = []
+    Texture: list[Sprite] = []
+    SpriteSheets: list[SpriteSheet] = []
+
+    AssetFolder = "Assets/"
 
     @staticmethod
     def Init():
-        pass
-    
+
+        spriteSheetsFolder = [f.path for f in os.scandir(Assets.AssetFolder + "SpriteSheets/") if f.is_dir()]
+        textureFolders = [f.path for f in os.scandir(Assets.AssetFolder + "Textures/") if f.is_dir()]
+
+        for mainFolderSheet in spriteSheetsFolder:
+            for animationPartFolder in os.listdir(mainFolderSheet):
+                sprites = []
+                for animationFiles in os.listdir(mainFolderSheet + "/" + animationPartFolder):
+                    sprite = Sprite(mainFolderSheet + "/" + animationPartFolder + "/" + animationFiles, 40, 80)
+                    sprites.append(sprite)
+                if len(sprites) < 1:
+                    continue
+                Assets.SpriteSheets.append(SpriteSheet(sprites))
+
+        for textureFolderName in textureFolders:
+            for textureFiles in os.listdir(textureFolderName):
+                print(textureFiles)
+
+
+
     @staticmethod
     def Get():
         pass

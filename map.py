@@ -1,14 +1,6 @@
 import pygame
+from gameobject import GameObject
 
-
-class GameObject:
-    def __init__(self, pos: pygame.Vector2, width, height):
-        self.position = pos
-        self.width = width
-        self.height = height
-        
-    def draw(self, surface: pygame.Surface):
-        pygame.draw.rect(surface, pygame.Color(255, 255, 255, 255), pygame.Rect(self.position.x, self.position.y, self.width, self.height))
 
 class Map:
     def __init__(self, game, map_w, map_h):

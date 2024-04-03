@@ -1,5 +1,7 @@
 import pygame
 from map import Map
+from texture import *
+from player import *
 
 class Game:
     def __init__(self, win_width, win_height, win_name, fps=60):
@@ -7,30 +9,42 @@ class Game:
         self.height = win_height
         self.window_name = win_name
         self.fps = fps
+
         self.map = Map(self, win_width, win_height)
+        self.map.create_object(0, 600, 1000, 80)
         
         pygame.init()
         self.screen = pygame.display.set_mode((win_width, win_height))
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
 
+        self.player = Player(100, 100, 40, 80)
+
         self.loop()
 
     def inputs(self) -> bool:
+
+        self.player.movement()
+        self.player.is_flip()
+
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_h:
-                    
-                    #Test key
-                    pass
-                    
+
             if event.type == pygame.QUIT:
                 return False
         return True
 
     def update_graphics(self):
+
         self.map.draw(self.surface)
-        
+
+        if self.player.IsFacingRight:
+            Assets.SpriteSheets[SheetsRef.PLAYER_WALK_RIGHT.value - 1].draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
+        else:
+            Assets.SpriteSheets[SheetsRef.PLAYER_WALK_LEFT.value - 1].draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
+
+        for mapObject in self.map.elements:
+            mapObject.draw(self.surface)
+
         pygame.display.flip()
 
     def loop(self):
@@ -40,6 +54,10 @@ class Game:
             self.screen.fill("gray")
 
             running = self.inputs()
+
+            for mapObject in self.map.elements:
+                self.player.check_collision(mapObject.rect_transform)
+
             self.update_graphics()
 
             self.clock.tick(60)
