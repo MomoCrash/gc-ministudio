@@ -4,7 +4,7 @@ import settings
 class Assets:
 
 
-    Texture = []
+    Texture = {}
 
 
 
