@@ -37,11 +37,13 @@ class SpriteSheet:
     
 class Assets:
 
-    Texture = {}
+    Texture = []
+    SpriteSheets = []
 
     @staticmethod
     def Init():
-
+        pass
+    
     @staticmethod
     def Get():
         pass
