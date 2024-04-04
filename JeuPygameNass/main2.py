@@ -58,7 +58,7 @@ while True:
     for i, segment in enumerate(background_segments):
         SCREEN.blit(segment, (i * segment_width - camera_x, 0))
     pygame.draw.rect(SCREEN, BLACK, (player_x - camera_x, player_y - camera_y, player_width, player_height))
-
+    
     pygame.display.flip()
 
     clock.tick(60)
