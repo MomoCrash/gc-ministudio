@@ -3,6 +3,7 @@ from map import Map
 from texture import *
 from player import *
 
+
 class Game:
     def __init__(self, win_width, win_height, win_name, fps=60):
         self.width = win_width

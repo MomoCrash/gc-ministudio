@@ -4,7 +4,6 @@ import os
 from enum import Enum
 from enum import auto
 
-
 class TextureRef(Enum):
     BACKGROUND = auto()
 
@@ -28,11 +27,12 @@ class Sprite:
 class SpriteSheet:
     def __init__(self, textures: list[Sprite]):
         self.frame_count = len(textures)
-        self.frame_per_image = settings.ANIMATION_DURATION / self.frame_count
+        self.frame_per_image = settings.ANIMATION_DURATION // self.frame_count
         self.textures = textures
         self.current_index = 0
         self.time = pygame.time.get_ticks()
-        
+
+    # TODO: RANDOM FIRST FRAME / DELAY
     def draw(self, ticks, surface: pygame.Surface, pos: pygame.Rect):
         if self.is_next_frame(ticks):
             self.current_index += 1
