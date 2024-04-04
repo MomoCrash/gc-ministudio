@@ -6,7 +6,7 @@ class GameObject:
         self.position = pos
         self.width = width
         self.height = height
-        self.rect_transform = pygame.rect.Rect(self.position.x, self.position.y, width, height)
+        self.rect_transform = pygame.Rect(self.position.x, self.position.y, width, height)
 
     def draw(self, surface: pygame.Surface, color: pygame.Color):
         pass
@@ -17,6 +17,7 @@ class GameObject:
         if collide:
             self.rect_transform.bottom = other_rect.top
 
+
 class SolidObject(GameObject):
     def __init__(self, pos: pygame.Vector2, width, height):
         super().__init__(pos, width, height)
@@ -24,7 +25,8 @@ class SolidObject(GameObject):
     def draw(self, surface: pygame.Surface, color: pygame.Color):
         pygame.draw.rect(surface, color,
                          pygame.Rect(self.rect_transform.x, self.rect_transform.y, self.width, self.height))
+
         
-class ColiderObject(GameObject):
+class ColliderObject(GameObject):
     def __init__(self, pos: pygame.Vector2, width, height):
         super().__init__(pos, width, height)
