@@ -12,7 +12,10 @@ class Game:
         self.fps = fps
 
         self.map = Map(self, win_width, win_height)
-        self.map.create_object(0, 600, 1000, 80)
+        self.map.create_object(0, 850, 3000, 20)
+        self.map.create_object(1000, 900, 200, 80)
+        self.map.create_object(1500, 650, 250, 80)
+        self.map.create_object(2500, 650, 250, 80)
         
         pygame.init()
         self.screen = pygame.display.set_mode((win_width, win_height))
@@ -20,6 +23,9 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.player = Player(100, 100, 40, 80)
+        self.camera = pygame.Vector2(0, 0)
+        
+        self.background_sprites = [Assets.GetSprite(SpritesRef.BACKGROUND_0),Assets.GetSprite(SpritesRef.BACKGROUND_0)]
 
         self.loop()
 
@@ -27,6 +33,15 @@ class Game:
 
         self.player.movement()
         self.player.is_flip()
+
+        self.camera.x = self.player.rect_transform.x - self.width // 4
+        self.camera.y = self.player.rect_transform.y - self.height // 4
+
+        self.camera.x = max(0, min(self.camera.x, self.width))
+        self.camera.y = max(0, min(self.camera.y, self.height))
+        
+        for mapObject in self.map.elements:
+            mapObject.rect_transform.x = mapObject.position.x - self.camera.x
 
         for event in pygame.event.get():
 
@@ -38,21 +53,23 @@ class Game:
 
         self.map.draw(self.surface)
 
+        for i, segment in enumerate(self.background_sprites):
+            self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
+       
+        # Draw the player flipped on the good side
         if self.player.IsFacingRight:
-            Assets.SpriteSheets[SheetsRef.PLAYER_WALK_RIGHT.value - 1].draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
         else:
-            Assets.SpriteSheets[SheetsRef.PLAYER_WALK_LEFT.value - 1].draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
 
-        for mapObject in self.map.elements:
-            mapObject.draw(self.surface)
+        #for mapObject in self.map.elements:
+        #    mapObject.draw(self.surface)
 
         pygame.display.flip()
 
     def loop(self):
         running = True
         while running:
-
-            self.screen.fill("gray")
 
             running = self.inputs()
 
