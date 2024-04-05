@@ -3,6 +3,7 @@ from linkedlist import LinkedList
 from vector import Vector2
 from gameobject import GameObject
 from texture import Sprite, SpriteSheet, Assets, SpriteSheetsRef
+from thetimer import Timer
 
 
 
@@ -50,7 +51,8 @@ class Player( Entity ):
         super().__init__( position, rotation, scale, sprite, spriteSheet, spriteDimensions, isVisible, velocity )
         self.maxSpeed: float = maxSpeed
         self.isJumping: bool = False
-        self.isFacingRight = True #! To Remove
+        self.jumpCount: int = 10 #! To Remove
+        self.isFacingRight = False #! To Remove
     
     def update( self, surface: pygame.Surface, deltaTime: int ) -> None:
         self.movement()
