@@ -6,13 +6,17 @@ import json
 
 
 class SerializableObject:
-    def __init__(self,x,y,ref: Enum,is_trigger):
+    def __init__(self,x,y,w=0,h=0,ref: Enum=1,is_trigger=True):
         self.x: int = x
         self.y: int = y
+        self.w: int = w
+        self.h: int = h
         self.sprite_ref = ref
         self.is_trigger = is_trigger
         
     def to_json(self):
+        if self.sprite_ref is None:
+            return json.dumps({'x': self.x, 'y':self.y, 'ref':None, 'is_trigger': self.is_trigger})
         return json.dumps({'x': self.x, 'y':self.y, 'ref':self.sprite_ref.value, 'is_trigger': self.is_trigger})
         
 
@@ -30,13 +34,16 @@ class Editor:
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
 
-        self.player = Player(100, 100, 40, 80)
+        self.player = Player(self.width//2, self.height//2, 40, 80)
         self.camera = pygame.Vector2(0, 0)
         
-        self.decal_x = self.player.rect_transform.x
+        self.decal_x = self.player.position.x
         self.game_objects: list[SerializableObject] = []
         
-        self.selected_sprite = SpritesRef.BACKGROUND_1
+        self.drawing_collision = False
+        self.collision_start = (0, 0)
+        
+        self.selected_sprite = SpritesRef.EDITOR_BACKGROUND_0
         
         self.background_sprites = [Assets.GetSprite(SpritesRef.BACKGROUND_0),Assets.GetSprite(SpritesRef.BACKGROUND_0)]
 
@@ -61,11 +68,11 @@ class Editor:
         
         if pressed_key[pygame.K_RIGHT]:
             self.player.rect_transform.x += 5
-            if self.decal_x >= (self.width // 4):
+            if self.player.rect_transform.x >= (self.width // 4):
                 self.decal_x += 5
         elif  pressed_key[pygame.K_LEFT]:
             self.player.rect_transform.x -= 5
-            if self.decal_x >= (self.width // 4):
+            if self.player.rect_transform.x >= (self.width // 4):
                 self.decal_x -= 5
         elif  pressed_key[pygame.K_DOWN]:
             self.player.rect_transform.y += 5
@@ -89,17 +96,27 @@ class Editor:
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: 
-                    object = SerializableObject(self.decal_x + self.mouse_x, self.mouse_y, self.selected_sprite, 1)
+                    object = SerializableObject(self.decal_x + self.mouse_x, self.mouse_y, ref=self.selected_sprite, is_trigger=True)
                     self.game_objects.append(object)
-                if event.button == 0:
-                    pass
-            
+                if event.button == 3:
+                    self.drawing_collision = True
+                    self.collision_start = (self.mouse_x, self.mouse_y)
+                    
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 3:
+                    self.drawing_collision = False
+                    
+                    collider_w = self.mouse_x - self.collision_start[0]
+                    collider_h = self.mouse_y - self.collision_start[1]
+                    
+                    object = SerializableObject(self.decal_x + self.collision_start[0], self.collision_start[1], w=collider_w, h=collider_h, ref=None, is_trigger=True)
+                    self.game_objects.append(object)
+                    
             if event.type == pygame.MOUSEWHEEL:
-                print(event.y)
                 if event.y > 0:
-                    self.selected_sprite = SpritesRef((self.selected_sprite.value + 1) % len(SpritesRef) + 1)
+                    self.selected_sprite = SpritesRef((self.selected_sprite.value//2 + 1) % len(SpritesRef)//2 + len(SpritesRef)//2 + 1)
                 if event.y < 0:
-                    self.selected_sprite = SpritesRef((self.selected_sprite.value - 1) % len(SpritesRef) + 1)
+                    self.selected_sprite = SpritesRef((self.selected_sprite.value//2 - 1) % len(SpritesRef)//2 + len(SpritesRef)//2 + 1)
                 
         return True
 
@@ -111,18 +128,25 @@ class Editor:
 
         for i, segment in enumerate(self.background_sprites):
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
+            
+        Assets.GetSprite(self.selected_sprite).draw(self.surface, (self.mouse_x, self.mouse_y, 100, 100))
+        
+        for object in self.game_objects:
+            if object.sprite_ref is not None:
+                Assets.GetSprite(object.sprite_ref).draw(self.surface, (object.x - self.decal_x, object.y, 100, 100))
+            else:
+                pygame.draw.rect(self.screen, (0, 255, 0), (object.x - self.decal_x, object.y, object.x + object.w, object.y + object.h))
        
         # Draw the player flipped on the good side
         if self.player.IsFacingRight:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
         else:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
-
-        Assets.GetResizedSprite(self.selected_sprite, 100, 100).draw(self.surface, (self.mouse_x, self.mouse_y, 100, 100))
-
-        for object in self.game_objects:
-            Assets.GetResizedSprite(object.sprite_ref, 100, 100).draw(self.surface, (object.x - self.decal_x, object.y, 100, 100))
-
+            
+        
+        if self.drawing_collision:
+            print("Draw")
+            pygame.draw.rect(self.screen, (0, 255, 0), (self.collision_start[0], self.collision_start[1], self.mouse_x - self.collision_start[0], self.mouse_y - self.collision_start[1]))
 
         pygame.display.flip()
 
