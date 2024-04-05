@@ -1,1 +1,1 @@
-{[{"x": 1922.0, "y": 460, "ref": 5, "is_trigger": true},{"x": 2212.0, "y": 571, "ref": 5, "is_trigger": true},{"x": 3351.0, "y": 382, "ref": 5, "is_trigger": true},{"x": 890.0, "y": 937, "ref": null, "is_trigger": true}]}
+{[{"x": 1464, "y": 356, "ref": 3, "is_trigger": true},{"x": 1194, "y": 168, "ref": 2, "is_trigger": true}]}

@@ -1,5 +1,5 @@
 import pygame
-from gameobject import GameObject
+from gameobject import *
 
 
 class Map:
@@ -9,7 +9,7 @@ class Map:
         self.elements: list[GameObject] = []
         
     def create_object(self, x, y, w, h):
-        self.elements.append(GameObject(pygame.Vector2(x, y), w, h))
+        self.elements.append(GameObject(position=Vector2(x,y), scale=Vector2(w, h)))
         
     def draw(self, surface: pygame.Surface):
         for element in self.elements:

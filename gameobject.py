@@ -1,31 +1,7 @@
 from __future__ import annotations
 import pygame
 from texture import *
-from math import sqrt
-
-
-
-class Vector2:
-    def __init__( self, x: int, y: int ):
-        self.x: int = x
-        self.y: int = y
-    
-    def add( self, other: Vector2 ) -> None:
-        self.x += other.x
-        self.y += other.y
-    
-    def remove( self, other: Vector2 ) -> None:
-        self.x -= other.x
-        self.y -= other.y
-    
-    def norme( self ) -> int:
-        return sqrt( self.x * self.x + self.y * self.y )
-    
-    def normalize( self ):
-        norme: int = self.norme()
-        self.x /= norme
-        self.y /= norme
-
+from vector import *
 
 
 class Transform:

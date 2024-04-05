@@ -1,7 +1,7 @@
 import pygame
 from map import Map
 from texture import *
-from player import *
+from entity import *
 
 
 class Game:
@@ -15,7 +15,7 @@ class Game:
 
 
         self.map = Map(self, win_width, win_height)
-        self.map.create_object(0, 850, 3000, 20)
+        self.map.create_object(0, 850, 5000, 20)
         self.map.create_object(1000, 900, 200, 80)
         self.map.create_object(1500, 650, 250, 80)
         self.map.create_object(2500, 650, 250, 80)
@@ -35,18 +35,23 @@ class Game:
 
     def inputs(self) -> bool:
 
-        self.player.movement()
+        movement = self.player.movement()
+        for mapObject in self.map.elements:
+            print(mapObject.transform)
+            if self.player.GetCollision(mapObject.transform):
+                print("dfsdgfs")
+                self.player.transform.position.remove(movement)
         self.player.is_flip()
 
 
-        self.camera.x = self.player.rect_transform.x - self.width // 4
-        self.camera.y = self.player.rect_transform.y - self.height // 4
+        self.camera.x = self.player.transform.position.x - self.width // 4
+        self.camera.y = self.player.transform.position.y - self.height // 4
 
         self.camera.x = max(0, min(self.camera.x, self.width))
         self.camera.y = max(0, min(self.camera.y, self.height))
         
         for mapObject in self.map.elements:
-            mapObject.rect_transform.x = mapObject.position.x - self.camera.x
+            mapObject.transform.position.x = mapObject.transform.position.x - self.camera.x
 
         for event in pygame.event.get():
 
@@ -56,6 +61,10 @@ class Game:
                 if event.button == 1: 
                     self.player.Attack()
         return True
+    
+    
+    def update():
+        pass
 
     def update_graphics(self):
 
@@ -66,14 +75,14 @@ class Game:
        
         # Draw the player flipped on the good side
         if self.player.IsFacingRight:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
         else:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
 
         if self.mob.IsFacingRight:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.mob.rect_transform)
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.mob.transform.position, self.mob.transform.scale)
         else:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.mob.rect_transform)
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.mob.transform.position, self.mob.transform.scale)
 
         self.mob.movement(self.player)
 
@@ -100,9 +109,6 @@ class Game:
             dt_start = pygame.time.get_ticks()
 
             running = self.inputs()
-
-            for mapObject in self.map.elements:
-                self.player.check_collision(mapObject.rect_transform)
 
             self.update_graphics()
 

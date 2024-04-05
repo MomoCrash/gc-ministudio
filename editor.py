@@ -1,7 +1,7 @@
 import pygame
 from map import Map
 from texture import *
-from player import *
+from entity import *
 import json
 
 
@@ -37,13 +37,13 @@ class Editor:
         self.player = Player(self.width//2, self.height//2, 40, 80)
         self.camera = pygame.Vector2(0, 0)
         
-        self.decal_x = self.player.position.x
+        self.decal_x = self.player.transform.position.x
         self.game_objects: list[SerializableObject] = []
         
         self.drawing_collision = False
         self.collision_start = (0, 0)
         
-        self.selected_sprite = SpritesRef.EDITOR_BACKGROUND_0
+        self.selected_sprite = SpritesRef.BACKGROUND_0
         
         self.background_sprites = [Assets.GetSprite(SpritesRef.BACKGROUND_0),Assets.GetSprite(SpritesRef.BACKGROUND_0)]
 
@@ -67,27 +67,27 @@ class Editor:
             self.write_to_file()
         
         if pressed_key[pygame.K_RIGHT]:
-            self.player.rect_transform.x += 5
-            if self.player.rect_transform.x >= (self.width // 4):
+            self.player.transform.position.x += 5
+            if self.player.transform.position.x >= (self.width // 4):
                 self.decal_x += 5
         elif  pressed_key[pygame.K_LEFT]:
-            self.player.rect_transform.x -= 5
-            if self.player.rect_transform.x >= (self.width // 4):
+            self.player.transform.position.x -= 5
+            if self.player.transform.position.x >= (self.width // 4):
                 self.decal_x -= 5
         elif  pressed_key[pygame.K_DOWN]:
-            self.player.rect_transform.y += 5
+            self.player.transform.position.y += 5
         elif  pressed_key[pygame.K_UP]:
-            self.player.rect_transform.y -= 5
+            self.player.transform.position.y -= 5
 
 
-        self.camera.x = self.player.rect_transform.x - self.width // 4
-        self.camera.y = self.player.rect_transform.y - self.height // 4
+        self.camera.x = self.player.transform.position.x - self.width // 4
+        self.camera.y = self.player.transform.position.y - self.height // 4
 
         self.camera.x = max(0, min(self.camera.x, self.width))
         self.camera.y = max(0, min(self.camera.y, self.height))
         
         for mapObject in self.map.elements:
-            mapObject.rect_transform.x = mapObject.position.x - self.camera.x
+            mapObject.transform.position.x = mapObject.transform.position.x - self.camera.x
 
         for event in pygame.event.get():
 
@@ -114,9 +114,9 @@ class Editor:
                     
             if event.type == pygame.MOUSEWHEEL:
                 if event.y > 0:
-                    self.selected_sprite = SpritesRef((self.selected_sprite.value//2 + 1) % len(SpritesRef)//2 + len(SpritesRef)//2 + 1)
+                    self.selected_sprite = SpritesRef((self.selected_sprite.value + 1) % len(SpritesRef) + 1)
                 if event.y < 0:
-                    self.selected_sprite = SpritesRef((self.selected_sprite.value//2 - 1) % len(SpritesRef)//2 + len(SpritesRef)//2 + 1)
+                    self.selected_sprite = SpritesRef((self.selected_sprite.value - 1) % len(SpritesRef) + 1)
                 
         return True
 
@@ -129,19 +129,19 @@ class Editor:
         for i, segment in enumerate(self.background_sprites):
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
             
-        Assets.GetSprite(self.selected_sprite).draw(self.surface, (self.mouse_x, self.mouse_y, 100, 100))
+        Assets.GetSprite(self.selected_sprite).draw(self.surface, Vector2(self.mouse_x, self.mouse_y), Vector2(100, 100))
         
         for object in self.game_objects:
             if object.sprite_ref is not None:
-                Assets.GetSprite(object.sprite_ref).draw(self.surface, (object.x - self.decal_x, object.y, 100, 100))
+                Assets.GetSprite(object.sprite_ref).draw(self.surface, Vector2(object.x - self.decal_x, object.y,), Vector2(100, 100))
             else:
                 pygame.draw.rect(self.screen, (0, 255, 0), (object.x - self.decal_x, object.y, object.x + object.w, object.y + object.h))
        
         # Draw the player flipped on the good side
         if self.player.IsFacingRight:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
         else:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
             
         
         if self.drawing_collision:
@@ -155,9 +155,6 @@ class Editor:
         while running:
 
             running = self.inputs()
-
-            for mapObject in self.map.elements:
-                self.player.check_collision(mapObject.rect_transform)
 
             self.update_graphics()
 
