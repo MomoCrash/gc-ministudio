@@ -8,28 +8,28 @@ class Vector2:
         self.x: int = x
         self.y: int = y
     
-    def Copy( self ) -> Vector2:
+    def copy( self ) -> Vector2:
         return Vector2( self.x, self.y )
     
-    def ScalarProduct( self, other: Vector2 ) -> int:
+    def scalarProduct( self, other: Vector2 ) -> int:
         return self.x * other.x + self.y * other.y
     
-    def Norm( self ) -> int:
-        return sqrt( self.ScalarProduct( self ) )
+    def norm( self ) -> int:
+        return sqrt( self.scalarProduct( self ) )
     
-    def DistanceTo( self, other: Vector2 ) -> int:
-        return Vector2( self.x - other.x, self.y - other.y ).Norm()
+    def distanceTo( self, other: Vector2 ) -> int:
+        return Vector2( self.x - other.x, self.y - other.y ).norm()
     
-    def Add( self, other: Vector2 ) -> None:
+    def add( self, other: Vector2 ) -> None:
         self.x += other.x
         self.y += other.y
     
-    def Remove( self, other: Vector2 ) -> None:
+    def remove( self, other: Vector2 ) -> None:
         self.x -= other.x
         self.y -= other.y
     
-    def Normalize( self ) -> None:
-        norm: int = self.Norm()
+    def normalize( self ) -> None:
+        norm: int = self.norm()
         self.x /= norm
         self.y /= norm
 
@@ -41,30 +41,30 @@ class Vector3:
         self.y: int = y
         self.z: int = z
     
-    def Copy( self ) -> Vector3:
+    def copy( self ) -> Vector3:
         return Vector3( self.x, self.y, self.z )
     
-    def ScalarProduct( self, other: Vector3 ) -> int:
+    def scalarProduct( self, other: Vector3 ) -> int:
         return self.x * other.x + self.y * other.y + self.z * other.z
     
-    def Norm( self ) -> int:
-        return sqrt( self.ScalarProduct( self ) )
+    def norm( self ) -> int:
+        return sqrt( self.scalarProduct( self ) )
     
-    def DistanceTo( self, other: Vector3 ) -> int:
-        return Vector3( self.x - other.x, self.y - other.y, self.z - other.z ).Norm()
+    def distanceTo( self, other: Vector3 ) -> int:
+        return Vector3( self.x - other.x, self.y - other.y, self.z - other.z ).norm()
     
-    def Add( self, other: Vector3 ) -> None:
+    def add( self, other: Vector3 ) -> None:
         self.x += other.x
         self.y += other.y
         self.z += other.z
     
-    def Remove( self, other: Vector3 ) -> None:
+    def remove( self, other: Vector3 ) -> None:
         self.x -= other.x
         self.y -= other.y
         self.z -= other.z
     
-    def Normalize( self ) -> None:
-        norm: int = self.Norm()
+    def normalize( self ) -> None:
+        norm: int = self.norm()
         self.x /= norm
         self.y /= norm
         self.z /= norm
