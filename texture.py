@@ -9,6 +9,10 @@ class SpritesRef(Enum):
     BACKGROUND_0 = auto()
     BACKGROUND_1 = auto()
     LIGHT = auto()
+    
+    EDITOR_BACKGROUND_0 = auto()
+    EDITOR_BACKGROUND_1 = auto()
+    EDITOR_LIGHT = auto()
 
 
 class SpriteSheetsRef(Enum):
@@ -76,6 +80,10 @@ class Assets:
         for textureFolderName in textureFolders:
             for textureFile in os.listdir(textureFolderName):
                 Assets.Sprites.append(Sprite(textureFolderName + '/' + textureFile, 1920, 1080))
+                
+        for textureFolderName in textureFolders:
+            for textureFile in os.listdir(textureFolderName):
+                Assets.Sprites.append(Sprite(textureFolderName + '/' + textureFile, 100, 100))
 
     @staticmethod
     def GetSprite(ref: Enum) -> Sprite:

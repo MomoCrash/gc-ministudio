@@ -10,6 +10,9 @@ class Game:
         self.height = win_height
         self.window_name = win_name
         self.fps = fps
+        self.dt = 0
+        self.current_dt = 0
+
 
         self.map = Map(self, win_width, win_height)
         self.map.create_object(0, 850, 3000, 20)
@@ -22,7 +25,8 @@ class Game:
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
 
-        self.player = Player(100, 100, 40, 80)
+        self.player = Player(1000, 500, 40, 80)
+        self.mob = Mob(500,500,40,80)
         self.camera = pygame.Vector2(0, 0)
         
         self.background_sprites = [Assets.GetSprite(SpritesRef.BACKGROUND_0),Assets.GetSprite(SpritesRef.BACKGROUND_0)]
@@ -66,18 +70,34 @@ class Game:
         else:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
 
+        if self.mob.IsFacingRight:
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.mob.rect_transform)
+        else:
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.mob.rect_transform)
+
+        self.mob.movement(self.player)
+
+        self.mob.tryThrow(self.player)
+        self.mob.update(self.dt)
+        self.mob.draw(self.surface, self.player)
+        
+
+        
+
 
         #for mapObject in self.map.elements:
         #    mapObject.draw(self.surface)
 
-        Assets.GetSprite(SpritesRef.LIGHT).draw(self.surface, (self.camera.x - self.width // 2 ,self.camera.y- self.height // 2))
+        #Assets.GetSprite(SpritesRef.LIGHT).draw(self.surface, (self.camera.x ,self.camera.y))
 
+        
 
         pygame.display.flip()
 
     def loop(self):
         running = True
         while running:
+            dt_start = pygame.time.get_ticks()
 
             running = self.inputs()
 
@@ -88,5 +108,8 @@ class Game:
 
             self.clock.tick(60)
             
+            dt_end = pygame.time.get_ticks()
+            self.dt =self.clock.get_time() / 1000
+            self.current_dt += self.dt
         pygame.quit()
         
