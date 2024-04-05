@@ -70,7 +70,7 @@ class Game:
         #for mapObject in self.map.elements:
         #    mapObject.draw(self.surface)
 
-        Assets.GetSprite(SpritesRef.LIGHT).draw(self.surface, (self.player.rect_transform.x - Assets.GetSprite(SpritesRef.LIGHT).size[0] // 2 + 50 ,self.player.rect_transform.y- Assets.GetSprite(SpritesRef.LIGHT).size[1] // 2))
+        Assets.GetSprite(SpritesRef.LIGHT).draw(self.surface, (self.camera.x - self.width // 2 ,self.camera.y- self.height // 2))
 
 
         pygame.display.flip()

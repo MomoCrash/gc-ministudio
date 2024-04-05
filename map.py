@@ -13,4 +13,4 @@ class Map:
         
     def draw(self, surface: pygame.Surface):
         for element in self.elements:
-            element.draw(surface)
+            element.draw(surface, (0, 0, 0))
