@@ -1,3 +1,4 @@
+from __future__ import annotations
 import pygame
 from texture import *
 from math import sqrt
@@ -9,8 +10,21 @@ class Vector2:
         self.x: int = x
         self.y: int = y
     
-    def norme( self ):
+    def add( self, other: Vector2 ) -> None:
+        self.x += other.x
+        self.y += other.y
+    
+    def remove( self, other: Vector2 ) -> None:
+        self.x -= other.x
+        self.y -= other.y
+    
+    def norme( self ) -> int:
         return sqrt( self.x * self.x + self.y * self.y )
+    
+    def normalize( self ):
+        norme: int = self.norme()
+        self.x /= norme
+        self.y /= norme
 
 
 
@@ -45,7 +59,7 @@ class GameObject:
             self.rect: pygame.Rect = pygame.Rect( self.transform.position.x, self.transform.position.y, self.transform.scale.x, self.transform.scale.y )
         self.isVisible: bool = isVisible
     
-    def Draw( self, surface: pygame.Surface, color: pygame.Color = pygame.Color( 255, 255, 255 ) ) -> None:
+    def draw( self, surface: pygame.Surface, color: pygame.Color = pygame.Color( 255, 255, 255 ) ) -> None:
         if ( not self.isVisible ): return
         if ( self.spriteSheet != None ): self.spriteSheet.draw( pygame.time.get_ticks(), surface, self.transform.position )
         elif ( self.sprite != None ): self.sprite.draw( surface, self.transform.position )

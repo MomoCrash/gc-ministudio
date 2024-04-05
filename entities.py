@@ -1,6 +1,7 @@
 import pygame
 from texture import *
 from gameobject import *
+from chainon import *
 
 
 
@@ -8,29 +9,38 @@ class Entity( GameObject ):
     
     def __init__(
                     self,
+                    
                     position: Vector2 = Vector2( 0, 0 ),
                     rotation: Vector2 = Vector2( 0, 0 ),
                     scale: Vector2 = Vector2( 1, 1 ),
-                    direction: int = -1, # -1 = Left, 1 = Right
+                    
                     velocity: Vector2 = Vector2( 0, 0 ),
-                    maxVelocity: int = 10,
+                    speed: int = 10,
+                    
                     isOnLoop: bool = False,
-                    # pathParts: 
+                    pathPositions: ChainedList = None,
+                    
                     sprite: Sprite = None,
                     spriteSheet: SpriteSheet = None,
                     isVisible: bool = True
                 ):
         super().__init__( position, rotation, scale, sprite, spriteSheet, isVisible )
-        self.velocity = velocity
-        self.maxVelocity = maxVelocity
-        self.direction = direction
-        self.isOnLoop = isOnLoop
+        self.velocity: Vector2 = velocity
+        self.speed: int = speed
+        self.isOnLoop: bool = isOnLoop
+        if ( self.isOnLoop ): self.pathPosition: Node = pathPositions.first
     
-    def movement(self):
-        pass
-    
-    def flip(self):
-        pass
+    def update( self, deltaTime ):
+        
+        if ( self.isOnLoop ):
+            if ( self.transform.position == self.pathPosition.value ):
+                self.pathPosition = self.pathPosition.next
+            self.velocity = Vector2( self.pathPosition.value.x, self.pathPosition.value.y )
+            self.velocity.remove( self.transform.position )
+            self.velocity.normalize()
+        
+        self.transform.position.add( self.velocity * deltaTime )
+
 
 
 class Player(Entity):
