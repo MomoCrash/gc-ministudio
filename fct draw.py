@@ -1,3 +1,5 @@
+import pygame
+
 text_size = 20
 text_font = pygame.font.SysFont("Arial",text_size)
 
