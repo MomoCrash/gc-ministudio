@@ -11,7 +11,7 @@ class Game:
         self.fps = fps
 
         self.map = Map(self, win_width, win_height)
-        self.map.create_object(0, 600, 1000, 80)
+        self.map.create_object(0, 600, 1000, 800)
         
         pygame.init()
         self.screen = pygame.display.set_mode((win_width, win_height))
@@ -27,10 +27,14 @@ class Game:
         self.player.movement()
         self.player.is_flip()
 
+
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
                 return False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1: 
+                    self.player.Attack()
         return True
 
     def update_graphics(self):
@@ -42,8 +46,12 @@ class Game:
         else:
             Assets.SpriteSheets[SheetsRef.PLAYER_WALK_LEFT.value - 1].draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
 
+
         for mapObject in self.map.elements:
             mapObject.draw(self.surface)
+
+        Assets.Texture[TextureRef.LIGHT.value].draw(self.surface, (self.player.rect_transform.x - Assets.Texture[TextureRef.LIGHT.value].size[0] // 2 + 50 ,self.player.rect_transform.y- Assets.Texture[TextureRef.LIGHT.value].size[1] // 2))
+
 
         pygame.display.flip()
 

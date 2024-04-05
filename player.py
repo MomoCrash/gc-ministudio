@@ -54,3 +54,7 @@ class Player(Entity):
             self.IsFacingRight = False
         elif pressed_key[pygame.K_RIGHT] - pressed_key[pygame.K_LEFT] > 0 and not self.IsFacingRight:
             self.IsFacingRight = True
+
+    def Attack(self):
+        print("left click")
+

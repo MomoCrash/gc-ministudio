@@ -7,6 +7,7 @@ from enum import auto
 
 class TextureRef(Enum):
     BACKGROUND = auto()
+    LIGHT = auto()
 
 
 class SheetsRef(Enum):
@@ -72,6 +73,7 @@ class Assets:
 
         for textureFolderName in textureFolders:
             for textureFiles in os.listdir(textureFolderName):
+                Assets.Texture.append(Sprite(textureFolderName + '/' + textureFiles, 2000, 1100))
                 print(textureFiles)
 
 
