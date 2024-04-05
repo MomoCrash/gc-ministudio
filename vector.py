@@ -8,6 +8,8 @@ class Vector2:
         self.x: int = x
         self.y: int = y
     
+    
+    
     def copy( self ) -> Vector2:
         return Vector2( self.x, self.y )
     
@@ -18,53 +20,73 @@ class Vector2:
         return sqrt( self.scalarProduct( self ) )
     
     def distanceTo( self, other: Vector2 ) -> int:
-        return Vector2( self.x - other.x, self.y - other.y ).norm()
+        return self.removeToNew( other ).norm()
+        # return Vector2( self.x - other.x, self.y - other.y ).norm() #! Is this more efficient ?
     
-    def add( self, other: Vector2 ) -> None:
+    
+    
+    def addToSelf( self, other: Vector2 ) -> None:
         self.x += other.x
         self.y += other.y
     
-    def remove( self, other: Vector2 ) -> None:
+    def removeToSelf( self, other: Vector2 ) -> None:
         self.x -= other.x
         self.y -= other.y
     
-    def normalize( self ) -> None:
-        norm: int = self.norm()
-        self.x /= norm
-        self.y /= norm
-
-
-
-class Vector3:
-    def __init__( self, x: int, y: int, z: int ):
-        self.x: int = x
-        self.y: int = y
-        self.z: int = z
+    def multiplyToSelf( self, other: Vector2 ) -> None:
+        self.x *= other.x
+        self.y *= other.y
     
-    def copy( self ) -> Vector3:
-        return Vector3( self.x, self.y, self.z )
+    def divideToSelf( self, other: Vector2 ) -> None:
+        self.x /= other.x
+        self.y /= other.y
     
-    def scalarProduct( self, other: Vector3 ) -> int:
-        return self.x * other.x + self.y * other.y + self.z * other.z
+    def addToSelf( self, value: float ) -> None:
+        self.x += value
+        self.y += value
     
-    def norm( self ) -> int:
-        return sqrt( self.scalarProduct( self ) )
+    def removeToSelf( self, value: float ) -> None:
+        self.x -= value
+        self.y -= value
     
-    def distanceTo( self, other: Vector3 ) -> int:
-        return Vector3( self.x - other.x, self.y - other.y, self.z - other.z ).norm()
+    def multiplyToSelf( self, value: float ) -> None:
+        self.x *= value
+        self.y *= value
     
-    def add( self, other: Vector3 ) -> None:
-        self.x += other.x
-        self.y += other.y
-        self.z += other.z
+    def divideToSelf( self, value: float ) -> None:
+        self.x /= value
+        self.y /= value
     
-    def remove( self, other: Vector3 ) -> None:
-        self.x -= other.x
-        self.y -= other.y
-        self.z -= other.z
     
-    def normalize( self ) -> None:
-        norm: int = self.norm()
-        self.x /= norm
-        self.y /= norm
-        self.z /= norm
+    
+    def addToNew( self, other: Vector2 ) -> Vector2:
+        return Vector2( self.x + other.x, self.y + other.y )
+    
+    def removeToNew( self, other: Vector2 ) -> Vector2:
+        return Vector2( self.x - other.x, self.y - other.y )
+    
+    def multiplyToNew( self, other: Vector2 ) -> Vector2:
+        return Vector2( self.x * other.x, self.y * other.y )
+    
+    def divideToNew( self, other: Vector2 ) -> Vector2:
+        return Vector2( self.x / other.x, self.y / other.y )
+    
+    def addToNew( self, value: float ) -> Vector2:
+        return Vector2( self.x + value, self.y + value )
+    
+    def removeToNew( self, value: float ) -> Vector2:
+        return Vector2( self.x - value, self.y - value )
+    
+    def multiplyToNew( self, value: float ) -> Vector2:
+        return Vector2( self.x * value, self.y * value )
+    
+    def divideToNew( self, value: float ) -> Vector2:
+        return Vector2( self.x / value, self.y / value )
+    
+    
+    
+    def normalizeToSelf( self ) -> None:
+        self.divideToSelf( self.norm() )
+    
+    def normalizeToNew( self ) -> Vector2:
+        return self.divideToNew( self.norm() )

@@ -21,28 +21,33 @@ class GameObject:
     
     def __init__(
                     self,
+                    
                     position: Vector2 = Vector2( 0, 0 ),
                     rotation: Vector2 = Vector2( 0, 0 ),
                     scale: Vector2 = Vector2( 1, 1 ),
+                    
                     sprite: Sprite = None,
                     spriteSheet: SpriteSheet = None,
+                    spriteDimensions: Vector2 = Vector2( 1, 1 ),
                     isVisible: bool = True
                 ):
         self.transform: Transform = Transform( position, rotation, scale )
         self.sprite: Sprite = sprite
         self.spriteSheet: SpriteSheet = spriteSheet
-        if ( self.sprite == None and self.spriteSheet == None ):
-            self.rect: pygame.Rect = pygame.Rect( self.transform.position.x, self.transform.position.y, self.transform.scale.x, self.transform.scale.y )
+        self.spriteDimensions: Vector2 = spriteDimensions
         self.isVisible: bool = isVisible
+        
+        if ( self.sprite == None and self.spriteSheet == None ):
+            self.rect: pygame.Rect = pygame.Rect( self.transform.position.x, self.transform.position.y, self.transform.scale.x * self.spriteDimensions.x, self.transform.scale.y * self.spriteDimensions.y ) #! Don't forget to replace this line with "isVisible = False"
     
-    def update( self, surface: pygame.Surface, color: pygame.Color = pygame.Color( 255, 255, 255 ) ) -> None:
-        self.draw( surface, color )
+    def update( self, surface: pygame.Surface ) -> None:
+        self.draw( surface )
     
-    def draw( self, surface: pygame.Surface, color: pygame.Color = pygame.Color( 255, 255, 255 ) ) -> None:
+    def draw( self, surface: pygame.Surface, color: pygame.Color = pygame.Color( 255, 255, 255 ) ) -> None: #! Don't forget to remove the "color" because it's only for testing
         if ( not self.isVisible ): return
-        if ( self.spriteSheet != None ): self.spriteSheet.draw( pygame.time.get_ticks(), surface, self.transform.position )
-        elif ( self.sprite != None ): self.sprite.draw( surface, self.transform.position )
-        else: pygame.draw.rect( surface, color, self.rect )
+        if ( self.spriteSheet != None ): self.spriteSheet.draw( pygame.time.get_ticks(), surface, self.transform.position, self.spriteDimensions.multiplyToNew( self.transform.scale ) )
+        elif ( self.sprite != None ): self.sprite.draw( surface, self.transform.position, self.spriteDimensions.multiplyToNew( self.transform.scale ) )
+        else: pygame.draw.rect( surface, color, self.rect ) #! Don't forget to remove this line because it's only for testing
     
     def getCollision( self, otherTransform: Transform ) -> bool:
         return \

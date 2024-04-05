@@ -3,9 +3,10 @@ from __future__ import annotations
 
 
 class Node:
-    def __init__( self, value: any, next: Node = None ):
+    def __init__( self, value: any ):
         self.value = value
-        self.next = next
+        self.previous = None
+        self.next = None
 
 
 
@@ -13,17 +14,48 @@ class LinkedList:
     
     def __init__( self ):
         self.first = None
+        self.count = 0
     
-    def insertFirst( self, value: any ) -> None:
-        newNode = Node( value )
+    def insertFirstTime( self, value: any ) -> bool:
+        firstTime = self.first is None
         
-        if ( self.first is None ):
-            self.first = newNode
-            return
+        if ( firstTime ):
+            self.first = Node( value )
+            self.first.previous = self.first
+            self.first.next = self.first
+        
+        return firstTime
     
+    def insertAtBeginning( self, value: any ) -> None:
+        self.count += 1
+        if ( self.insertFirstTime( value ) ): return
+        
+        newNode = Node( value )
+        newNode.previous = self.first.previous
         newNode.next = self.first
+        self.first.previous.next = newNode
+        self.first.previous = newNode
         self.first = newNode
     
-    def removeFirst( self ) -> None:
+    def insertAtEnd( self, value: any ) -> None:
+        self.count += 1
+        if ( self.insertFirstTime( value ) ): return
+        
+        newNode = Node( value )
+        newNode.previous = self.first.previous
+        newNode.next = self.first
+        self.first.previous.next = newNode
+        self.first.previous = newNode
+    
+    def removeAtBeginning( self ) -> None:
         if ( self.first is None ): return
+        self.count -= 1
+        self.first.previous.next = self.first.next
+        self.first.next.previous = self.first.previous
         self.first = self.first.next
+    
+    def removeAtEnd( self ) -> None:
+        if ( self.first is None ): return
+        self.count -= 1
+        self.first.previous.previous.next = self.first
+        self.first.previous = self.first.previous.previous
