@@ -80,10 +80,6 @@ class Assets:
         for textureFolderName in textureFolders:
             for textureFile in os.listdir(textureFolderName):
                 Assets.Sprites.append(Sprite(textureFolderName + '/' + textureFile, 1920, 1080))
-                
-        for textureFolderName in textureFolders:
-            for textureFile in os.listdir(textureFolderName):
-                Assets.Sprites.append(Sprite(textureFolderName + '/' + textureFile, 100, 100))
 
     @staticmethod
     def GetSprite(ref: Enum) -> Sprite:
