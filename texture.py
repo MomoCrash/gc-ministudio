@@ -84,3 +84,9 @@ class Assets:
     @staticmethod
     def GetSpriteSheet(ref: Enum) -> SpriteSheet:
         return Assets.SpriteSheets[ref.value - 1]
+    
+    @staticmethod
+    def GetResizedSprite(ref: Enum, w, h) -> Sprite:
+        sprite_copy = Assets.GetSprite(ref)
+        sprite_copy.texture = pygame.transform.scale(sprite_copy.texture, (w, h))
+        return sprite_copy
