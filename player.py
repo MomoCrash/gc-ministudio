@@ -58,3 +58,5 @@ class Player(Entity):
     def Attack(self):
         print("left click")
 
+class Mob(Entity):
+    pass

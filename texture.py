@@ -5,12 +5,12 @@ from enum import Enum
 from enum import auto
 
 
-class TextureRef(Enum):
-    BACKGROUND = auto()
+class SpritesRef(Enum):
+    BACKGROUND_0 = auto()
     LIGHT = auto()
 
 
-class SheetsRef(Enum):
+class SpriteSheetsRef(Enum):
     PLAYER_WALK_LEFT = auto()
     PLAYER_WALK_RIGHT = auto()
 
@@ -29,11 +29,12 @@ class Sprite:
 class SpriteSheet:
     def __init__(self, textures: list[Sprite]):
         self.frame_count = len(textures)
-        self.frame_per_image = settings.ANIMATION_DURATION / self.frame_count
+        self.frame_per_image = settings.ANIMATION_DURATION // self.frame_count
         self.textures = textures
         self.current_index = 0
         self.time = pygame.time.get_ticks()
-        
+
+    # TODO: RANDOM FIRST FRAME / DELAY
     def draw(self, ticks, surface: pygame.Surface, pos: pygame.Rect):
         if self.is_next_frame(ticks):
             self.current_index += 1
@@ -50,10 +51,10 @@ class SpriteSheet:
 
 class Assets:
 
-    Texture: list[Sprite] = []
+    Sprites: list[Sprite] = []
     SpriteSheets: list[SpriteSheet] = []
 
-    AssetFolder = "Assets/"
+    AssetFolder = os.path.dirname(os.path.realpath(__file__)) + "/Assets/"
 
     @staticmethod
     def Init():
@@ -65,19 +66,20 @@ class Assets:
             for animationPartFolder in os.listdir(mainFolderSheet):
                 sprites = []
                 for animationFiles in os.listdir(mainFolderSheet + "/" + animationPartFolder):
-                    sprite = Sprite(mainFolderSheet + "/" + animationPartFolder + "/" + animationFiles, 40, 80)
+                    sprite = Sprite(mainFolderSheet + "/" + animationPartFolder + "/" + animationFiles, 60, 100)
                     sprites.append(sprite)
                 if len(sprites) < 1:
                     continue
                 Assets.SpriteSheets.append(SpriteSheet(sprites))
 
         for textureFolderName in textureFolders:
-            for textureFiles in os.listdir(textureFolderName):
-                Assets.Texture.append(Sprite(textureFolderName + '/' + textureFiles, 2000, 1100))
-                print(textureFiles)
-
-
+            for textureFile in os.listdir(textureFolderName):
+                Assets.Sprites.append(Sprite(textureFolderName + '/' + textureFile, 1920, 1080))
 
     @staticmethod
-    def Get():
-        pass
+    def GetSprite(ref: Enum) -> Sprite:
+        return Assets.Sprites[ref.value - 1]
+    
+    @staticmethod
+    def GetSpriteSheet(ref: Enum) -> SpriteSheet:
+        return Assets.SpriteSheets[ref.value - 1]
