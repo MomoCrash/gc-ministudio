@@ -60,20 +60,24 @@ class Vector2:
     
     
     def addToNew( self, other: Vector2 | float ) -> Vector2:
-        if isinstance( other, Vector2 ): return Vector2( self.x + other.x, self.y + other.y )
-        else: return Vector2( self.x + other, self.y + other )
+        newVector = self.copy()
+        newVector.addToSelf( other )
+        return newVector
     
     def removeToNew( self, other: Vector2 | float ) -> Vector2:
-        if isinstance( other, Vector2 ): return Vector2( self.x - other.x, self.y - other.y )
-        else: return Vector2( self.x - other, self.y - other )
+        newVector = self.copy()
+        newVector.removeToSelf( other )
+        return newVector
     
     def multiplyToNew( self, other: Vector2 | float ) -> Vector2:
-        if isinstance( other, Vector2 ): return Vector2( self.x * other.x, self.y * other.y )
-        else: return Vector2( self.x * other, self.y * other )
+        newVector = self.copy()
+        newVector.multiplyToSelf( other )
+        return newVector
     
     def divideToNew( self, other: Vector2 | float ) -> Vector2:
-        if isinstance( other, Vector2 ): return Vector2( self.x / other.x, self.y / other.y )
-        else: return Vector2( self.x / other, self.y / other )
+        newVector = self.copy()
+        newVector.divideToSelf( other )
+        return newVector
     
     
     
