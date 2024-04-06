@@ -1,4 +1,4 @@
-SCREEN_WIDHT = 1920
+SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 
 # In frame number per second 

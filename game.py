@@ -1,6 +1,7 @@
 import pygame
 from vector import Vector2
 from map import Map
+from text import Text
 from entity import Entity, Player, Mob
 from texture import SpritesRef, SpriteSheetsRef, Sprite, SpriteSheet, Assets
 
@@ -22,6 +23,7 @@ class Game:
         self.map.create_object(2500, 650, 250, 80)
         
         pygame.init()
+
         self.screen = pygame.display.set_mode((win_width, win_height))
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
@@ -29,6 +31,8 @@ class Game:
         self.player = Player( position=Vector2( 1000, 500 ), scale=Vector2( 40, 80 ) )
         self.mob = Mob( position=Vector2( 500, 500 ), scale=Vector2( 40, 80 ) )
         self.camera = pygame.Vector2(0, 0)
+
+        self.text = Text(self.screen, "Arial")
         
         self.background_sprites = [Assets.GetSprite(SpritesRef.BACKGROUND_0),Assets.GetSprite(SpritesRef.BACKGROUND_0)]
 
@@ -59,7 +63,7 @@ class Game:
         return True
     
     
-    def update():
+    def update(self):
         pass
 
     def update_graphics(self):
@@ -85,9 +89,8 @@ class Game:
         self.mob.tryThrow(self.player)
         self.mob.update(self.dt)
         self.mob.draw(self.surface, self.player)
-        
 
-        
+        self.text.draw_text("Salut la team", (0, 0, 0), 100, 100, 10, 10)
 
 
         #for mapObject in self.map.elements:
