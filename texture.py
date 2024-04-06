@@ -1,15 +1,12 @@
 import pygame
-import settings
 import os
-from vector import *
-from enum import Enum
-from enum import auto
-
+import settings
+from vector import Vector2
+from enum import Enum, auto
 
 class SpritesRef(Enum):
     BACKGROUND_0 = auto()
     BACKGROUND_1 = auto()
-    LIGHT = auto()
 
 
 class SpriteSheetsRef(Enum):
@@ -24,8 +21,8 @@ class Sprite:
         self.size = (width, height)
         self.texture = pygame.transform.scale(self.texture, self.size)
         
-    def draw(self, surface: pygame.Surface, position: Vector2=Vector2(0,0), scale: Vector2=Vector2(1,1)):
-        surface.blit(self.texture, (position.x, position.y, scale.x, scale.y))
+    def draw( self, surface: pygame.Surface, position: Vector2, scale: Vector2 ):
+        surface.blit( self.texture, ( position.x, position.y, scale.x, scale.y ) )
         
 
 class SpriteSheet:
@@ -37,12 +34,12 @@ class SpriteSheet:
         self.time = pygame.time.get_ticks()
 
     # TODO: RANDOM FIRST FRAME / DELAY
-    def draw(self, ticks, surface: pygame.Surface, position: Vector2, scale: Vector2):
+    def draw( self, ticks, surface: pygame.Surface, position: Vector2, scale: Vector2 ):
         if self.is_next_frame(ticks):
             self.current_index += 1
             if self.current_index >= self.frame_count:
                 self.current_index = 0
-        self.textures[self.current_index].draw(surface, position, scale)
+        self.textures[self.current_index].draw( surface, position, scale )
     
     def is_next_frame(self, current_ticks) -> bool:
         if current_ticks - self.time > self.frame_per_image:
