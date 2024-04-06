@@ -1,8 +1,6 @@
 from __future__ import annotations
 from math import sqrt
 
-
-
 class Vector2:
     def __init__( self, x: float, y: float ):
         self.x: float = x

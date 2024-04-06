@@ -136,7 +136,6 @@ class Player( Entity ):
         print("left click")
 
 
-
 class Mob( Entity ):
     
     def __init__(
@@ -160,7 +159,6 @@ class Mob( Entity ):
         self.isOnLoop: bool = isOnLoop
         if ( self.isOnLoop ): self.pathDestination: LinkedList = pathPositions.first
         
-        
         self.maximum_distance = 400
         self.maximum_throw_distance = 700
         self.CanThrow = True
@@ -179,7 +177,6 @@ class Mob( Entity ):
             if self.transform.position.x < self.transform.position.x:
                 self.transform.position.x -= 1
                 self.isFacingRight = False
-       
 
            
     def update(self, dt):
@@ -211,14 +208,6 @@ class Mob( Entity ):
         new_image = pygame.transform.rotate(image, angle)
         # Get a new rect with the center of the old rect.
         rect = new_image.get_rect(center=rect.center)
-    
-
-        
-        
-                
-            
-        
-
 
     def draw(self, window: pygame.Surface, player: Player):
         #pygame.draw.line(window, (255,255,255), (self.rect_transform.x + self.width // 2 ,self.rect_transform.y + self.height // 2), (self.Vecteur_directeur.x * self.maximum_throw_distance + player.rect_transform.width // 2  , self.Vecteur_directeur.y * self.maximum_throw_distance  + player.rect_transform.height // 2), 1)

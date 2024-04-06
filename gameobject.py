@@ -4,7 +4,6 @@ from vector import Vector2
 from texture import Sprite, SpriteSheet
 
 
-
 class Transform:
     def __init__(
                     self,
@@ -21,8 +20,7 @@ class Transform:
 class GameObject:
     
     def __init__(
-                    self,
-                    
+                    self,         
                     position: Vector2 = Vector2( 0, 0 ),
                     rotation: Vector2 = Vector2( 0, 0 ),
                     scale: Vector2 = Vector2( 1, 1 ),
