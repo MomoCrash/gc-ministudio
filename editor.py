@@ -1,8 +1,10 @@
 import pygame
-from map import Map
-from texture import *
-from entity import *
 import json
+from enum import Enum
+from vector import Vector2
+from map import Map
+from entity import Entity, Player, Mob
+from texture import SpritesRef, SpriteSheetsRef, Sprite, SpriteSheet, Assets
 
 
 class SerializableObject:
@@ -34,7 +36,7 @@ class Editor:
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
 
-        self.player = Player(self.width//2, self.height//2, 40, 80)
+        self.player = Player( position=Vector2( self.width//2, self.height//2 ), scale=Vector2( 40, 80 ) )
         self.camera = pygame.Vector2(0, 0)
         
         self.decal_x = self.player.transform.position.x
@@ -138,7 +140,7 @@ class Editor:
                 pygame.draw.rect(self.screen, (0, 255, 0), (object.x - self.decal_x, object.y, object.x + object.w, object.y + object.h))
        
         # Draw the player flipped on the good side
-        if self.player.IsFacingRight:
+        if self.player.isFacingRight:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
         else:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)

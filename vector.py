@@ -4,84 +4,76 @@ from math import sqrt
 
 
 class Vector2:
-    def __init__( self, x: int, y: int ):
-        self.x: int = x
-        self.y: int = y
+    def __init__( self, x: float, y: float ):
+        self.x: float = x
+        self.y: float = y
     
     
     
     def copy( self ) -> Vector2:
         return Vector2( self.x, self.y )
     
-    def scalarProduct( self, other: Vector2 ) -> int:
+    def scalarProduct( self, other: Vector2 ) -> float:
         return self.x * other.x + self.y * other.y
     
-    def norm( self ) -> int:
+    def norm( self ) -> float:
         return sqrt( self.scalarProduct( self ) )
     
-    def distanceTo( self, other: Vector2 ) -> int:
+    def distanceTo( self, other: Vector2 ) -> float:
         return self.removeToNew( other ).norm()
         # return Vector2( self.x - other.x, self.y - other.y ).norm() #! Is this more efficient ?
     
     
     
-    def addToSelf( self, other: Vector2 ) -> None:
-        self.x += other.x
-        self.y += other.y
+    def addToSelf( self, other: Vector2 | float ) -> None:
+        if isinstance( other, Vector2 ):
+            self.x += other.x
+            self.y += other.y
+        else:
+            self.x += other
+            self.y += other
     
-    def removeToSelf( self, other: Vector2 ) -> None:
-        self.x -= other.x
-        self.y -= other.y
+    def removeToSelf( self, other: Vector2 | float ) -> None:
+        if isinstance( other, Vector2 ):
+            self.x -= other.x
+            self.y -= other.y
+        else:
+            self.x -= other
+            self.y -= other
     
-    def multiplyToSelf( self, other: Vector2 ) -> None:
-        self.x *= other.x
-        self.y *= other.y
+    def multiplyToSelf( self, other: Vector2 | float ) -> None:
+        if isinstance( other, Vector2 ):
+            self.x *= other.x
+            self.y *= other.y
+        else:
+            self.x *= other
+            self.y *= other
     
-    def divideToSelf( self, other: Vector2 ) -> None:
-        self.x /= other.x
-        self.y /= other.y
-    
-    def addToSelf( self, value: float ) -> None:
-        self.x += value
-        self.y += value
-    
-    def removeToSelf( self, value: float ) -> None:
-        self.x -= value
-        self.y -= value
-    
-    def multiplyToSelf( self, value: float ) -> None:
-        self.x *= value
-        self.y *= value
-    
-    def divideToSelf( self, value: float ) -> None:
-        self.x /= value
-        self.y /= value
+    def divideToSelf( self, other: Vector2 | float ) -> None:
+        if isinstance( other, Vector2 ):
+            self.x /= other.x
+            self.y /= other.y
+        else:
+            self.x /= other
+            self.y /= other
     
     
     
-    def addToNew( self, other: Vector2 ) -> Vector2:
-        return Vector2( self.x + other.x, self.y + other.y )
+    def addToNew( self, other: Vector2 | float ) -> Vector2:
+        if isinstance( other, Vector2 ): return Vector2( self.x + other.x, self.y + other.y )
+        else: return Vector2( self.x + other, self.y + other )
     
-    def removeToNew( self, other: Vector2 ) -> Vector2:
-        return Vector2( self.x - other.x, self.y - other.y )
+    def removeToNew( self, other: Vector2 | float ) -> Vector2:
+        if isinstance( other, Vector2 ): return Vector2( self.x - other.x, self.y - other.y )
+        else: return Vector2( self.x - other, self.y - other )
     
-    def multiplyToNew( self, other: Vector2 ) -> Vector2:
-        return Vector2( self.x * other.x, self.y * other.y )
+    def multiplyToNew( self, other: Vector2 | float ) -> Vector2:
+        if isinstance( other, Vector2 ): return Vector2( self.x * other.x, self.y * other.y )
+        else: return Vector2( self.x * other, self.y * other )
     
-    def divideToNew( self, other: Vector2 ) -> Vector2:
-        return Vector2( self.x / other.x, self.y / other.y )
-    
-    def addToNew( self, value: float ) -> Vector2:
-        return Vector2( self.x + value, self.y + value )
-    
-    def removeToNew( self, value: float ) -> Vector2:
-        return Vector2( self.x - value, self.y - value )
-    
-    def multiplyToNew( self, value: float ) -> Vector2:
-        return Vector2( self.x * value, self.y * value )
-    
-    def divideToNew( self, value: float ) -> Vector2:
-        return Vector2( self.x / value, self.y / value )
+    def divideToNew( self, other: Vector2 | float ) -> Vector2:
+        if isinstance( other, Vector2 ): return Vector2( self.x / other.x, self.y / other.y )
+        else: return Vector2( self.x / other, self.y / other )
     
     
     

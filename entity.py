@@ -2,8 +2,8 @@ import pygame
 from linkedlist import LinkedList
 from vector import Vector2
 from gameobject import GameObject
-from texture import Sprite, SpriteSheet, Assets, SpriteSheetsRef
 from thetimer import Timer
+from texture import Sprite, SpriteSheet, Assets, SpriteSheetsRef
 
 
 
@@ -46,44 +46,91 @@ class Player( Entity ):
                     isVisible: bool = True,
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 4, 4 )
-                    maxSpeed: float = 1
+                    maxSpeed: float = 4,
+                    jumpHeight: float = 1,
+                    gravity: float = 5
                 ):
         super().__init__( position, rotation, scale, sprite, spriteSheet, spriteDimensions, isVisible, velocity )
         self.maxSpeed: float = maxSpeed
+        self.jumpHeight: float = jumpHeight
+        self.gravity: float = gravity
         self.isJumping: bool = False
-        self.jumpCount: int = 10 #! To Remove
-        self.isFacingRight = False #! To Remove
+        self.jumpCount: int = 10
+        self.isFacingRight = False
     
-    def update( self, surface: pygame.Surface, deltaTime: int ) -> None:
-        self.movement()
-        self.transform.position.addToSelf( self.velocity.multiplyToNew( deltaTime ) )
+    def update( self, surface: pygame.Surface, mapElements: list[ GameObject ] ) -> None:
+        pressedKey = pygame.key.get_pressed()
+        self.playerMovement( pressedKey, mapElements )
+        self.playerJump( pressedKey, mapElements )
+        
+        self.transform.position.addToSelf( self.velocity )
         self.draw( surface )
     
-    def movement( self ) -> Vector2:
-        pressed_key = pygame.key.get_pressed()
+    def playerMovement( self, pressedKey: pygame.key.ScancodeWrapper, mapElements: list[ GameObject ] ) -> None:
+        leftPressed: bool = pressedKey[ pygame.K_q ]
+        rightPressed: bool = pressedKey[ pygame.K_d ]
         
-        if ( pressed_key[ pygame.K_SPACE ] and not self.isJumping ):
+        if ( leftPressed and not rightPressed ):
+            
+            if ( self.velocity.x == 0 ):
+                self.velocity.x = -1
+            
+            if ( self.velocity.x > 0 ):
+                factor: float = 0.6
+            else:
+                factor: float = 1.5
+
+        elif ( rightPressed and not leftPressed ):
+            
+            if ( self.velocity.x == 0 ):
+                self.velocity.x = 1
+            
+            if ( self.velocity.x < 0 ):
+                factor: float = 0.6
+            else:
+                factor: float = 1.5
+        
+        else:
+            factor: float = 0.8
+        
+        if ( abs( self.velocity.x * factor ) <= self.maxSpeed and self.velocity.x != 0 ):
+            self.velocity.x *= factor if abs( self.velocity.x ) > 0.9 else 0
+        
+        self.transform.position.x += self.velocity.x
+        collision: bool = False
+        for mapObject in mapElements: collision = collision or self.getCollision( mapObject )
+        self.transform.position.x -= self.velocity.x
+        if ( collision ) : self.velocity.x = 0
+    
+    def playerJump( self, pressedKey: pygame.key.ScancodeWrapper, mapElements: list[ GameObject ] ):
+        spacePressed = pressedKey[ pygame.K_SPACE ]
+        
+        self.velocity.y = ( spacePressed * self.jumpHeight ) + self.gravity
+        
+        if ( spacePressed and not self.isJumping ):
             self.isJumping = True
         
         if ( self.isJumping ):
-            if ( self.JumpCount >= 0 ):
-                self.transform.position.y -= ( self.JumpCount * abs( self.JumpCount ) ) * 0.1
-                self.JumpCount -= 1
+            if ( self.jumpCount >= 0 ):
+                self.velocity.y -= ( self.jumpCount * abs( self.jumpCount ) ) * 0.1
+                self.jumpCount -= 1
             else:
                 # This will execute if our jump is finished
-                self.JumpCount = 20
+                self.jumpCount = 20
                 self.isJumping = False
         
-        movement = Vector2( ( pressed_key[ pygame.K_RIGHT ] - pressed_key[ pygame.K_LEFT ] ) * self.velocity.x, ( pressed_key[ pygame.K_SPACE ] * self.velocity.y ) + 5 )
-        self.transform.position.addToSelf( movement )
-        return movement
+        self.transform.position.y += self.velocity.y
+        collision: bool = False
+        for mapObject in mapElements: collision = collision or self.getCollision( mapObject )
+        self.transform.position.y -= self.velocity.y
+        if ( collision ) : self.velocity.y = 0
     
     def is_flip(self):
-        pressed_key = pygame.key.get_pressed()
-        if pressed_key[pygame.K_RIGHT] - pressed_key[pygame.K_LEFT] < 0 and self.IsFacingRight:
-            self.IsFacingRight = False
-        elif pressed_key[pygame.K_RIGHT] - pressed_key[pygame.K_LEFT] > 0 and not self.IsFacingRight:
-            self.IsFacingRight = True
+        pressedKey = pygame.key.get_pressed()
+        if pressedKey[pygame.K_RIGHT] - pressedKey[pygame.K_LEFT] < 0 and self.isFacingRight:
+            self.isFacingRight = False
+        elif pressedKey[pygame.K_RIGHT] - pressedKey[pygame.K_LEFT] > 0 and not self.isFacingRight:
+            self.isFacingRight = True
 
     def Attack(self):
         print("left click")
@@ -101,6 +148,7 @@ class Mob( Entity ):
                     
                     sprite: Sprite = None,
                     spriteSheet: SpriteSheet = None,
+                    spriteDimensions: Vector2 = Vector2( 0, 0 ),
                     isVisible: bool = True,
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 3, 3 )
@@ -108,7 +156,7 @@ class Mob( Entity ):
                     isOnLoop: bool = False,
                     pathPositions: LinkedList = None
                 ):
-        super().__init__( position, rotation, scale, sprite, spriteSheet, isVisible, velocity )
+        super().__init__( position, rotation, scale, sprite, spriteSheet, spriteDimensions, isVisible, velocity )
         self.isOnLoop: bool = isOnLoop
         if ( self.isOnLoop ): self.pathDestination: LinkedList = pathPositions.first
         
@@ -120,17 +168,17 @@ class Mob( Entity ):
         self.Vecteur_directeur = pygame.Vector2(0,0)
         self.hammer = None
         self.shoot_timer = Timer(3, self.enableThrow )
+        self.isFacingRight = False
 
-    def movement(self, player: Player):
+    def movement( self, player: Player ):
         
-        self.position = self.transform.position
-        if self.position.distance(player.transform.position) < self.maximum_distance:
+        if self.transform.position.distanceTo( player.transform.position ) < self.maximum_distance:
             if self.transform.position.x > self.transform.position.x:
                 self.transform.position.x += 1
-                self.IsFacingRight = True
+                self.isFacingRight = True
             if self.transform.position.x < self.transform.position.x:
                 self.transform.position.x -= 1
-                self.IsFacingRight = False
+                self.isFacingRight = False
        
 
            
@@ -146,14 +194,14 @@ class Mob( Entity ):
         print("OK")
         self.CanThrow = True
 
-    def tryThrow(self, player: Player):
+    def tryThrow( self, player: Player ):
         if self.CanThrow == False:
             return
 
-        if self.maximum_distance < self.position.distance(player.transform.position) < self.maximum_throw_distance:
-            self.hammer = GameObject(position=self.position, scale=Vector2(40, 80))
+        if self.maximum_distance < self.transform.position.distanceTo( player.transform.position ) < self.maximum_throw_distance:
+            self.hammer = GameObject(position=self.transform.position, scale=Vector2(40, 80))
             self.Vecteur_directeur = Vector2(player.transform.position.x - self.transform.position.x, player.transform.position.y - self.transform.position.y)
-            self.Vecteur_directeur.normalize()
+            self.Vecteur_directeur.normalizeToSelf()
             self.CanThrow = False
             self.shoot_timer.start()
 

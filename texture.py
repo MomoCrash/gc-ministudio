@@ -2,8 +2,7 @@ import pygame
 import os
 import settings
 from vector import Vector2
-from enum import Enum
-from enum import auto
+from enum import Enum, auto
 
 class SpritesRef(Enum):
     BACKGROUND_0 = auto()

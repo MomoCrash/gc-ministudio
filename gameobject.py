@@ -1,3 +1,4 @@
+from __future__ import annotations
 import pygame
 from vector import Vector2
 from texture import Sprite, SpriteSheet
@@ -49,9 +50,9 @@ class GameObject:
         elif ( self.sprite != None ): self.sprite.draw( surface, self.transform.position, self.spriteDimensions.multiplyToNew( self.transform.scale ) )
         else: pygame.draw.rect( surface, color, self.rect ) #! Don't forget to remove this line because it's only for testing
     
-    def getCollision( self, otherTransform: Transform ) -> bool:
+    def getCollision( self, other: GameObject ) -> bool:
         return \
-        otherTransform.position.x < self.transform.position.x + self.transform.scale.x and \
-        otherTransform.position.y < self.transform.position.y + self.transform.scale.y and \
-        otherTransform.position.x + otherTransform.scale.x > self.transform.position.x and \
-        otherTransform.position.y + otherTransform.scale.y > self.transform.position.y
+        other.transform.position.x < self.transform.position.x + ( self.transform.scale.x * self.spriteDimensions.x ) and \
+        other.transform.position.y < self.transform.position.y + ( self.transform.scale.y  * self.spriteDimensions.y ) and \
+        other.transform.position.x + ( other.transform.scale.x * other.spriteDimensions.x ) > self.transform.position.x and \
+        other.transform.position.y + ( other.transform.scale.y * other.spriteDimensions.y ) > self.transform.position.y

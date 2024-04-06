@@ -1,7 +1,8 @@
 import pygame
+from vector import Vector2
 from map import Map
-from texture import *
-from entity import *
+from entity import Entity, Player, Mob
+from texture import SpritesRef, SpriteSheetsRef, Sprite, SpriteSheet, Assets
 
 
 class Game:
@@ -25,8 +26,8 @@ class Game:
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
 
-        self.player = Player(1000, 500, 40, 80)
-        self.mob = Mob(500,500,40,80)
+        self.player = Player( position=Vector2( 1000, 500 ), scale=Vector2( 40, 80 ) )
+        self.mob = Mob( position=Vector2( 500, 500 ), scale=Vector2( 40, 80 ) )
         self.camera = pygame.Vector2(0, 0)
         
         self.background_sprites = [Assets.GetSprite(SpritesRef.BACKGROUND_0),Assets.GetSprite(SpritesRef.BACKGROUND_0)]
@@ -34,13 +35,8 @@ class Game:
         self.loop()
 
     def inputs(self) -> bool:
-
-        movement = self.player.movement()
-        for mapObject in self.map.elements:
-            print(mapObject.transform)
-            if self.player.GetCollision(mapObject.transform):
-                print("dfsdgfs")
-                self.player.transform.position.remove(movement)
+        
+        self.player.update( self.surface, self.map.elements )
         self.player.is_flip()
 
 
@@ -50,8 +46,8 @@ class Game:
         self.camera.x = max(0, min(self.camera.x, self.width))
         self.camera.y = max(0, min(self.camera.y, self.height))
         
-        for mapObject in self.map.elements:
-            mapObject.transform.position.x = mapObject.transform.position.x - self.camera.x
+        # for mapObject in self.map.elements:
+        #     mapObject.transform.position.x = mapObject.transform.position.x - self.camera.x
 
         for event in pygame.event.get():
 
@@ -74,12 +70,12 @@ class Game:
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
        
         # Draw the player flipped on the good side
-        if self.player.IsFacingRight:
+        if self.player.isFacingRight:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
         else:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
 
-        if self.mob.IsFacingRight:
+        if self.mob.isFacingRight:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.mob.transform.position, self.mob.transform.scale)
         else:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.mob.transform.position, self.mob.transform.scale)
