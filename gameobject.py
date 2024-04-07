@@ -1,5 +1,6 @@
 from __future__ import annotations
 import pygame
+import json
 from vector import Vector2
 from texture import Sprite, SpriteSheet
 
@@ -47,7 +48,7 @@ class GameObject:
         if ( self.spriteSheet != None ): self.spriteSheet.draw( pygame.time.get_ticks(), surface, self.transform.position, self.spriteDimensions.multiplyToNew( self.transform.scale ) )
         elif ( self.sprite != None ): self.sprite.draw( surface, self.transform.position, self.spriteDimensions.multiplyToNew( self.transform.scale ) )
         else: pygame.draw.rect( surface, color, self.rect ) #! Don't forget to remove this line because it's only for testing
-    
+
     def getCollision( self, other: GameObject ) -> bool:
         return \
         other.transform.position.x < self.transform.position.x + ( self.transform.scale.x * self.spriteDimensions.x ) and \

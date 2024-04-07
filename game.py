@@ -15,12 +15,8 @@ class Game:
         self.dt = 0
         self.current_dt = 0
 
-
-        self.map = Map(self, win_width, win_height)
-        self.map.create_object(0, 850, 5000, 20)
-        self.map.create_object(1000, 900, 200, 80)
-        self.map.create_object(1500, 650, 250, 80)
-        self.map.create_object(2500, 650, 250, 80)
+        self.map = Map( "map1.txt", win_width, win_height )
+        self.map.load_map()
         
         pygame.init()
 
@@ -40,7 +36,7 @@ class Game:
 
     def inputs(self) -> bool:
         
-        self.player.update( self.surface, self.map.elements )
+        self.player.update( self.surface, self.map.decors )
         self.player.is_flip()
 
 
@@ -68,10 +64,10 @@ class Game:
 
     def update_graphics(self):
 
-        self.map.draw(self.surface)
-
         for i, segment in enumerate(self.background_sprites):
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
+
+        self.map.draw(self.surface)
        
         # Draw the player flipped on the good side
         if self.player.isFacingRight:
@@ -84,13 +80,14 @@ class Game:
         else:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.mob.transform.position, self.mob.transform.scale)
 
+        # Develop in progress
         self.mob.movement(self.player)
 
         self.mob.tryThrow(self.player)
         self.mob.update(self.dt)
         self.mob.draw(self.surface, self.player)
 
-        self.text.draw_text("Salut la team", (0, 0, 0), 100, 100, 10, 10)
+        self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
 
 
         #for mapObject in self.map.elements:
