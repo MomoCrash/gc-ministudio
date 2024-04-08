@@ -19,12 +19,8 @@ class Game:
         self.elementsOnScreen: LinkedList = LinkedList()
         self.elementsOffScreen: LinkedList = LinkedList()
 
-
-        self.map = Map(self, win_width, win_height)
-        self.map.createObject( Vector2( 0, 850 ), Vector2( 5000, 20 ) )
-        self.map.createObject( Vector2( 1000, 900 ), Vector2( 200, 80 ) )
-        self.map.createObject( Vector2( 1500, 650 ), Vector2( 250, 80 ) )
-        self.map.createObject( Vector2( 2500, 650 ), Vector2( 250, 80 ) )
+        self.map = Map( "map1.txt", win_width, win_height )
+        self.map.load_map()
         
         pygame.init()
 
@@ -54,9 +50,12 @@ class Game:
 
         self.camera.x = max(0, min(self.camera.x, self.width))
         self.camera.y = max(0, min(self.camera.y, self.height))
-        
-        # for mapObject in self.map.elements:
-        #     mapObject.transform.position.x = mapObject.transform.position.x - self.camera.x
+
+        for mapObject in self.map.decors:
+            mapObject.transform.position.x = mapObject.initial_position.x - self.camera.x
+
+        for mapObject in self.map.colliders:
+            mapObject.transform.position.x = mapObject.initial_position.x - self.camera.x
 
         for event in pygame.event.get():
 
@@ -73,24 +72,36 @@ class Game:
 
     def update_graphics(self):
 
-        self.map.draw(self.surface)
-
         for i, segment in enumerate(self.background_sprites):
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
         
         self.player.update( self.surface, self.map.elements )
 
+        self.map.draw(self.screen)
+
+        #REMOVE LATER
+        for collider in self.map.colliders:
+            collider.draw(self.screen, (0, 255, 0))
+       
+        # Draw the player flipped on the good side
+        if self.player.isFacingRight:
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
+        else:
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
+
+        if self.mob.isFacingRight:
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.mob.transform.position, self.mob.transform.scale)
+        else:
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.mob.transform.position, self.mob.transform.scale)
+
+        # Develop in progress
         self.mob.movement(self.player)
 
         self.mob.tryThrow(self.player)
         self.mob.update(self.dt)
         self.mob.draw(self.surface, self.player)
 
-        self.text.draw_text("Salut la team", (0, 0, 0), 100, 100, 10, 10)
-
-
-        #for mapObject in self.map.elements:
-        #    mapObject.draw(self.surface)
+        self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
 
         #Assets.GetSprite(SpritesRef.LIGHT).draw(self.surface, (self.camera.x ,self.camera.y))
 

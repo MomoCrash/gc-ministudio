@@ -1,5 +1,6 @@
 from __future__ import annotations
 import pygame
+import json
 from vector import Vector2
 from texture import Assets, SpritesRef, SpriteSheetsRef
 
@@ -81,7 +82,7 @@ class GameObject:
         if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, self.transform.position, self.spriteDimensions.multiplyToNew( self.transform.scale ) )
         elif ( self.spriteRef != None ): Assets.GetSprite( self.spriteRef ).draw( surface, self.transform.position, self.spriteDimensions.multiplyToNew( self.transform.scale ) )
         else: pygame.draw.rect( surface, self.color, self.rect )
-    
+          
     def getCollision( self, other: GameObject ) -> bool:
         """Returns true if there is a collision between this GameObject and the one specified"""
         return \

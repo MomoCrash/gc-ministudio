@@ -8,6 +8,16 @@ class SpritesRef(Enum):
     BACKGROUND_0 = auto()
     BACKGROUND_1 = auto()
 
+    LVL1_LOG = auto()
+    LVL1_ROCK_1 = auto()
+    LVL1_ROCK_2 = auto()
+    LVL1_ROCK_3 = auto()
+    LVL1_ROCK_4 = auto()
+    LVL1_ROCK_SIDE = auto()
+    LVL1_ROCK_FACE = auto()
+    LVL1_TOMBSTONE = auto()
+    LVL1_STUMP = auto()
+
 
 class SpriteSheetsRef(Enum):
     PLAYER_WALK_LEFT = auto()
@@ -72,8 +82,21 @@ class Assets:
                 Assets.SpriteSheets.append(SpriteSheet(sprites))
 
         for textureFolderName in textureFolders:
+
+            texture_param = textureFolderName + '/' + "param.txt"
+            params = {}
+            with open(texture_param, "r") as file:
+                lines = file.readlines()
+                if len(lines) == 0:
+                    print(("CRITICAL ERROR : PLEASE ADD PARAM FILE IN " + textureFolderName))
+                    break
+                for line in lines:
+                    splited = line.split(":")
+                    params[splited[0]] = splited[1]
+
             for textureFile in os.listdir(textureFolderName):
-                Assets.Sprites.append(Sprite(textureFolderName + '/' + textureFile, 1920, 1080))
+                if not textureFile.endswith(".txt"):
+                    Assets.Sprites.append(Sprite(textureFolderName + '/' + textureFile, int(params["w"]), int(params["h"])))
 
     @staticmethod
     def GetSprite(ref: Enum) -> Sprite:
