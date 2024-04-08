@@ -95,7 +95,7 @@ class Map:
                 self.append_backgrounds(1)
                 return
 
-            for backgroundRef in jsonObjects["backgrounds"]:
+            for backgroundRef in jsonObjects["background"]:
                 self.append_backgrounds(int(backgroundRef))
 
             try:

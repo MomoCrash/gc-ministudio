@@ -33,7 +33,12 @@ class Game:
                                 walkingRightSpriteSheetRef = SpriteSheetsRef.PLAYER_WALK_RIGHT,
                                 spriteDimensions = Vector2( 40, 80 )
                             )
-        self.mob = Mob( position=Vector2( 500, 500 ), scale=Vector2( 40, 80 ) )
+        self.mob = Mob( 
+            position=Vector2( 500, 500 ),
+            walkingLeftSpriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_LEFT,
+            walkingRightSpriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_RIGHT,
+            spriteDimensions = Vector2( 40, 80 )
+            )
         self.camera = Vector2( 0, 0 )
 
         self.text = Text(self.screen, "Arial")
@@ -83,11 +88,18 @@ class Game:
             collider.draw(self.screen, self.camera, (0, 255, 0))
 
         # Develop in progress
-        self.mob.movement(self.player)
+        self.mob.movement(self.player, self.dt)
+
 
         self.mob.tryThrow(self.player)
-        self.mob.update(self.dt)
+        self.mob.update(self.dt, self.surface, self.camera, self.map.colliders)
         self.mob.draw(self.surface, self.player)
+
+        self.player.DrawArrow(self.surface)
+
+        
+
+        self.player.UpdateArrow(self.dt)
 
         self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
 
