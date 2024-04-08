@@ -16,19 +16,19 @@ class Entity( GameObject ):
                     rotation: Vector2 = Vector2( 0, 0 ),
                     scale: Vector2 = Vector2( 1, 1 ),
                     
+                    spriteDimensions: Vector2 = Vector2( 1, 1 ),
                     spriteRef: SpritesRef = None,
                     spriteSheetRef: SpriteSheetsRef = None,
-                    spriteDimensions: Vector2 = Vector2( 1, 1 ),
-                    isVisible: bool = True,
+                    color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
                     
                     velocity: Vector2 = Vector2( 0, 0 ) #? Vector2( 4, 4 )
                 ):
-        super().__init__( position, rotation, scale, spriteRef, spriteSheetRef, spriteDimensions, isVisible )
+        super().__init__( position, rotation, scale, spriteDimensions, spriteRef, spriteSheetRef, color )
         self.velocity: Vector2 = velocity
     
-    def update( self, surface: pygame.Surface, deltaTime: int ) -> None:
+    def update( self, surface: pygame.Surface, camera: Vector2, deltaTime: int ) -> None:
         self.transform.position.addToSelf( self.velocity.multiplyToNew( deltaTime ) )
-        self.draw( surface )
+        self.spriteRenderer.draw( surface, camera, self.transform )
 
 
 
@@ -40,36 +40,35 @@ class Player( Entity ):
                     rotation: Vector2 = Vector2( 0, 0 ),
                     scale: Vector2 = Vector2( 1, 1 ),
                     
+                    spriteDimensions: Vector2 = Vector2( 1, 1 ),
                     walkingLeftSpriteSheetRef: SpriteSheetsRef = None,
                     walkingRightSpriteSheetRef: SpriteSheetsRef = None,
-                    spriteDimensions: Vector2 = Vector2( 1, 1 ),
-                    isVisible: bool = True,
+                    color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 4, 4 )
                     maxSpeed: float = 4,
                     jumpHeight: float = 1,
                     gravity: float = 5
                 ):
-        super().__init__( position, rotation, scale, None, walkingRightSpriteSheetRef, spriteDimensions, isVisible, velocity )
-        self.walkingLeftSpriteSheet: SpriteSheetsRef = walkingLeftSpriteSheetRef
-        self.walkingRightSpriteSheet: SpriteSheetsRef = walkingRightSpriteSheetRef
+        super().__init__( position, rotation, scale, spriteDimensions, None, walkingRightSpriteSheetRef, color, velocity )
+        self.spriteRenderer.walkingLeftSpriteSheet = walkingLeftSpriteSheetRef
+        self.spriteRenderer.walkingRightSpriteSheet = walkingRightSpriteSheetRef
         self.maxSpeed: float = maxSpeed
         self.jumpHeight: float = jumpHeight
         self.gravity: float = gravity
         self.isJumping: bool = False
         self.jumpCount: int = 10
-        self.isFacingRight = False
     
-    def update( self, surface: pygame.Surface, mapElements: list[ GameObject ] ) -> None:
+    def update( self, surface: pygame.Surface, camera: Vector2, mapElements: list[ GameObject ] ) -> None:
         pressedKey = pygame.key.get_pressed()
         self.playerMovement( pressedKey, mapElements )
         self.playerJump( pressedKey, mapElements )
         
         self.transform.position.addToSelf( self.velocity )
         
-        if ( self.velocity.x < 0 and self.spriteSheetRef != self.walkingLeftSpriteSheet ): self.spriteSheetRef = self.walkingLeftSpriteSheet
-        elif ( self.velocity.x > 0 and self.spriteSheetRef != self.walkingRightSpriteSheet ): self.spriteSheetRef = self.walkingRightSpriteSheet
-        self.draw( surface )
+        if ( self.velocity.x < 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingLeftSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingLeftSpriteSheet
+        elif ( self.velocity.x > 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingRightSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingRightSpriteSheet
+        self.spriteRenderer.draw( surface, camera, self.transform )
     
     def playerMovement( self, pressedKey: pygame.key.ScancodeWrapper, mapElements: list[ GameObject ] ) -> None:
         leftPressed: bool = pressedKey[ pygame.K_q ]
@@ -143,17 +142,17 @@ class Mob( Entity ):
                     rotation: Vector2 = Vector2( 0, 0 ),
                     scale: Vector2 = Vector2( 1, 1 ),
                     
-                    sprite: Sprite = None,
-                    spriteSheet: SpriteSheet = None,
                     spriteDimensions: Vector2 = Vector2( 1, 1 ),
-                    isVisible: bool = True,
+                    sprite: SpritesRef = None,
+                    spriteSheet: SpriteSheetsRef = None,
+                    color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 3, 3 )
                     
                     isOnLoop: bool = False,
                     pathPositions: LinkedList = None
                 ):
-        super().__init__( position, rotation, scale, sprite, spriteSheet, spriteDimensions, isVisible, velocity )
+        super().__init__( position, rotation, scale, spriteDimensions, sprite, spriteSheet, color, velocity )
         self.isOnLoop: bool = isOnLoop
         if ( self.isOnLoop ): self.pathDestination: LinkedList = pathPositions.first
         

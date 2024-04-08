@@ -18,37 +18,27 @@ class Editor:
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
 
-        self.player = Player( position=Vector2( 0, 0 ), scale=Vector2( 40, 80 ) )
-        self.camera = pygame.Vector2(0, 0)
-        
-        self.decal_x = self.player.transform.position.x
+        self.player = Player(
+                                position = Vector2( 1000, 500 ),
+                                walkingLeftSpriteSheetRef = SpriteSheetsRef.PLAYER_WALK_LEFT,
+                                walkingRightSpriteSheetRef = SpriteSheetsRef.PLAYER_WALK_RIGHT,
+                                spriteDimensions = Vector2( 40, 80 ),
+                                gravity=0
+                            )
+        self.camera = Vector2(0, 0)
 
         self.drawing_collision = False
         self.collision_start = (0, 0)
         
         self.selected_sprite = SpritesRef(1)
 
-        self.map = Map("map1.txt", win_width, win_height)
+        self.map = Map("map1.json", win_width, win_height)
 
         self.loop()
 
     def inputs(self) -> bool:
         
-        pressed_key = pygame.key.get_pressed()
         self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
-        
-        if pressed_key[pygame.K_RIGHT]:
-            self.player.transform.position.x += 5
-            if self.player.transform.position.x >= (self.width // 4):
-                self.decal_x += 5
-        elif  pressed_key[pygame.K_LEFT]:
-            self.player.transform.position.x -= 5
-            if self.player.transform.position.x >= (self.width // 4):
-                self.decal_x -= 5
-        elif  pressed_key[pygame.K_DOWN]:
-            self.player.transform.position.y += 5
-        elif  pressed_key[pygame.K_UP]:
-            self.player.transform.position.y -= 5
 
         self.camera.x = self.player.transform.position.x - self.map.width // 4
         self.camera.y = self.player.transform.position.y - self.map.height // 4
@@ -79,7 +69,7 @@ class Editor:
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    self.map.create_decoration(self.decal_x + self.mouse_x, self.mouse_y, self.selected_sprite)
+                    self.map.create_decoration(self.camera.x + self.mouse_x, self.mouse_y, self.selected_sprite)
                 if event.button == 3:
                     self.drawing_collision = True
                     self.collision_start = (self.mouse_x, self.mouse_y)
@@ -99,12 +89,6 @@ class Editor:
                 if event.y < 0:
                     self.selected_sprite = SpritesRef((self.selected_sprite.value - 2) % len(SpritesRef) + 1)
 
-        for mapObject in self.map.decors:
-            mapObject.transform.position.x = mapObject.initial_position.x - self.camera.x
-
-        for mapObject in self.map.colliders:
-            mapObject.transform.position.x = mapObject.initial_position.x - self.camera.x
-
         return True
 
     def update_graphics(self):
@@ -114,21 +98,14 @@ class Editor:
 
         for i, segment in enumerate(self.map.background_sprites):
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
-        
-        for mapDecor in self.map.decors:
-            mapDecor.draw(self.screen, (0, 255, 0))
 
         for collider in self.map.colliders:
-            collider.draw(self.screen, (0, 255, 0))
+            collider.spriteRenderer.draw(self.screen, self.camera, collider.transform)
 
-        # Draw the player flipped on the good side
-        if self.player.isFacingRight:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
-        else:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
-
-        self.map.draw(self.surface)
-
+        self.map.draw(self.surface, self.camera)
+        
+        self.player.update( self.surface, self.camera, self.map.colliders )
+        
         Assets.GetSprite(self.selected_sprite).draw(self.surface, Vector2(self.mouse_x, self.mouse_y), Vector2(100, 100))
         
         if self.drawing_collision:

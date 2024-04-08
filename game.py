@@ -7,7 +7,6 @@ from entity import Entity, Player, Mob
 from texture import SpritesRef, SpriteSheetsRef, Sprite, SpriteSheet, Assets
 
 
-
 class Game:
     def __init__(self, win_width, win_height, win_name, fps=60):
         self.width = win_width
@@ -19,7 +18,7 @@ class Game:
         self.elementsOnScreen: LinkedList = LinkedList()
         self.elementsOffScreen: LinkedList = LinkedList()
 
-        self.map = Map( "map1.txt", win_width, win_height )
+        self.map = Map( "map1.json", win_width, win_height )
         self.map.load_map()
         
         pygame.init()
@@ -35,7 +34,7 @@ class Game:
                                 spriteDimensions = Vector2( 40, 80 )
                             )
         self.mob = Mob( position=Vector2( 500, 500 ), scale=Vector2( 40, 80 ) )
-        self.camera = pygame.Vector2(0, 0)
+        self.camera = Vector2( 0, 0 )
 
         self.text = Text(self.screen, "Arial")
         
@@ -75,13 +74,13 @@ class Game:
         for i, segment in enumerate(self.background_sprites):
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
         
-        self.player.update( self.surface, self.map.colliders )
+        self.player.update( self.surface, self.camera, self.map.colliders )
 
-        self.map.draw(self.screen)
+        self.map.draw(self.screen, self.camera)
 
         #REMOVE LATER
         for collider in self.map.colliders:
-            collider.draw(self.screen, (0, 255, 0))
+            collider.draw(self.screen, self.camera, (0, 255, 0))
 
         # Develop in progress
         self.mob.movement(self.player)
