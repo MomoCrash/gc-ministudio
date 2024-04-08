@@ -8,7 +8,23 @@ from enum import auto
 class SpritesRef(Enum):
     BACKGROUND_0 = auto()
     BACKGROUND_1 = auto()
+<<<<<<< Updated upstream
     LIGHT = auto()
+=======
+
+    LVL1_LOG = auto()
+    LVL1_ROCK_1 = auto()
+    LVL1_ROCK_2 = auto()
+    LVL1_ROCK_3 = auto()
+    LVL1_ROCK_4 = auto()
+    LVL1_ROCK_SIDE = auto()
+    LVL1_ROCK_FACE = auto()
+    LVL1_TOMBSTONE = auto()
+    LVL1_STUMP = auto()
+    TEST = auto()
+
+    TOMAHAWK = auto()
+>>>>>>> Stashed changes
 
 
 class SpriteSheetsRef(Enum):

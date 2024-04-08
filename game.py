@@ -70,19 +70,36 @@ class Game:
         else:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.rect_transform)
 
+<<<<<<< Updated upstream
         if self.mob.IsFacingRight:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.mob.rect_transform)
+=======
+            
+        if self.mob.isFacingRight:
+            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.mob.transform.position, self.mob.transform.scale)
+>>>>>>> Stashed changes
         else:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.mob.rect_transform)
 
+<<<<<<< Updated upstream
         self.mob.movement(self.player)
+=======
+        # Develop in progress
+        self.mob.movement(self.player, self.dt)
+>>>>>>> Stashed changes
 
         self.mob.tryThrow(self.player)
         self.mob.update(self.dt)
         self.mob.draw(self.surface, self.player)
+<<<<<<< Updated upstream
         
+=======
+        self.player.DrawArrow(self.surface)
+>>>>>>> Stashed changes
 
         
+
+        self.player.UpdateArrow(self.dt)
 
 
         #for mapObject in self.map.elements:
