@@ -9,9 +9,9 @@ class Map:
         self.height = map_h
         self.elements: list[ GameObject ] = []
         
-    def create_object(self, x, y, w, h):
-        self.elements.append( GameObject( position=Vector2( x, y ), scale=Vector2( w, h ) ) )
+    def createObject( self, position: Vector2, scale: Vector2 ) -> None:
+        self.elements.append( GameObject( position=position, scale=scale, color=pygame.Color( 0, 0, 0 ) ) )
         
-    def draw(self, surface: pygame.Surface):
+    def draw( self, surface: pygame.Surface ) -> None:
         for element in self.elements:
-            element.draw(surface, (0, 0, 0))
+            element.draw( surface )
