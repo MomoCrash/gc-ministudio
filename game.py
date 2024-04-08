@@ -1,9 +1,11 @@
 import pygame
+from linkedlist import LinkedList
 from vector import Vector2
 from map import Map
 from text import Text
 from entity import Entity, Player, Mob
 from texture import SpritesRef, SpriteSheetsRef, Sprite, SpriteSheet, Assets
+
 
 
 class Game:
@@ -14,13 +16,15 @@ class Game:
         self.fps = fps
         self.dt = 0
         self.current_dt = 0
+        self.elementsOnScreen: LinkedList = LinkedList()
+        self.elementsOffScreen: LinkedList = LinkedList()
 
 
         self.map = Map(self, win_width, win_height)
-        self.map.create_object(0, 850, 5000, 20)
-        self.map.create_object(1000, 900, 200, 80)
-        self.map.create_object(1500, 650, 250, 80)
-        self.map.create_object(2500, 650, 250, 80)
+        self.map.createObject( Vector2( 0, 850 ), Vector2( 5000, 20 ) )
+        self.map.createObject( Vector2( 1000, 900 ), Vector2( 200, 80 ) )
+        self.map.createObject( Vector2( 1500, 650 ), Vector2( 250, 80 ) )
+        self.map.createObject( Vector2( 2500, 650 ), Vector2( 250, 80 ) )
         
         pygame.init()
 
@@ -28,7 +32,12 @@ class Game:
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
 
-        self.player = Player( position=Vector2( 1000, 500 ), scale=Vector2( 40, 80 ) )
+        self.player = Player(
+                                position = Vector2( 1000, 500 ),
+                                walkingLeftSpriteSheetRef = SpriteSheetsRef.PLAYER_WALK_LEFT,
+                                walkingRightSpriteSheetRef = SpriteSheetsRef.PLAYER_WALK_RIGHT,
+                                spriteDimensions = Vector2( 40, 80 )
+                            )
         self.mob = Mob( position=Vector2( 500, 500 ), scale=Vector2( 40, 80 ) )
         self.camera = pygame.Vector2(0, 0)
 
@@ -39,10 +48,6 @@ class Game:
         self.loop()
 
     def inputs(self) -> bool:
-        
-        self.player.update( self.surface, self.map.elements )
-        self.player.is_flip()
-
 
         self.camera.x = self.player.transform.position.x - self.width // 4
         self.camera.y = self.player.transform.position.y - self.height // 4
@@ -72,17 +77,8 @@ class Game:
 
         for i, segment in enumerate(self.background_sprites):
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
-       
-        # Draw the player flipped on the good side
-        if self.player.isFacingRight:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
-        else:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
-
-        if self.mob.isFacingRight:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.mob.transform.position, self.mob.transform.scale)
-        else:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.mob.transform.position, self.mob.transform.scale)
+        
+        self.player.update( self.surface, self.map.elements )
 
         self.mob.movement(self.player)
 
@@ -103,11 +99,29 @@ class Game:
         pygame.display.flip()
 
     def loop(self):
+        
         running = True
+        
         while running:
             dt_start = pygame.time.get_ticks()
-
             running = self.inputs()
+            
+            # element = self.elementsOnScreen.first
+            # amountOfElementsOnScreen = self.elementsOnScreen.count
+            # for elementIndex in range( amountOfElementsOnScreen ):
+            #     if ( not element.value.isOnScreen ):
+                    
+            #         if ( amountOfElementsOnScreen == 1 ): self.elementsOnScreen.first = None
+            #         else:
+            #             element.previous.next = element.next
+            #             element.next.previous = element.previous
+            #             if ( elementIndex == 0 ):
+            #                 self.elementsOnScreen.first = element.next
+                    
+            #         self.elementsOnScreen.count -= 1
+            #         element.value.isVisible = False
+            #     element.value.update( self.surface )
+            #     element = element.next #! I think this won't work because it's not a "pointer" copy, but a real copy that creates a new Node
 
             self.update_graphics()
 
@@ -116,5 +130,5 @@ class Game:
             dt_end = pygame.time.get_ticks()
             self.dt =self.clock.get_time() / 1000
             self.current_dt += self.dt
-        pygame.quit()
         
+        pygame.quit()
