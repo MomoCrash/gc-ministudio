@@ -19,7 +19,6 @@ image =  pygame.transform.scale(pygame.image.load("nordics.jfif") , (SCREEN_WIDT
 background_image = [image]
 
 
-
 def draw_menu():
     SCREEN.fill(BLACK)
     for i, item in enumerate(menu_items):
