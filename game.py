@@ -70,6 +70,10 @@ class Game:
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
 
         self.map.draw(self.screen)
+
+        #REMOVE LATER
+        for collider in self.map.colliders:
+            collider.draw(self.screen, (0, 255, 0))
        
         # Draw the player flipped on the good side
         if self.player.isFacingRight:
