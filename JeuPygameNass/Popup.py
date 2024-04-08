@@ -20,7 +20,7 @@ class Player:
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
 
-class HitboxRectangle:
+class Hitbox:
     def __init__(self, x, y, width, height, color):
         self.rect = pygame.Rect(x, y, width, height)
         self.hitbox = self.rect.inflate(50, 50)
@@ -95,7 +95,7 @@ def check_collision(player, hitbox_rect):
     return player.rect.colliderect(hitbox_rect.hitbox)
 
 player = Player(50, 300, 50, 50, BLUE)
-hitbox_rect = HitboxRectangle(600, 300, 100, 100, RED)
+hitbox_rect = Hitbox(600, 300, 100, 100, RED)
 
 running = True
 clock = pygame.time.Clock()
