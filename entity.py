@@ -3,7 +3,7 @@ from linkedlist import LinkedList
 from vector import Vector2
 from gameobject import GameObject
 from thetimer import Timer
-from texture import Sprite, SpriteSheet, Assets, SpriteSheetsRef
+from texture import Sprite, SpriteSheet, Assets, SpritesRef, SpriteSheetsRef
 
 
 
@@ -16,14 +16,14 @@ class Entity( GameObject ):
                     rotation: Vector2 = Vector2( 0, 0 ),
                     scale: Vector2 = Vector2( 1, 1 ),
                     
-                    sprite: Sprite = None,
-                    spriteSheet: SpriteSheet = None,
-                    spriteDimensions: Vector2 = Vector2( 0, 0 ),
+                    spriteRef: SpritesRef = None,
+                    spriteSheetRef: SpriteSheetsRef = None,
+                    spriteDimensions: Vector2 = Vector2( 1, 1 ),
                     isVisible: bool = True,
                     
                     velocity: Vector2 = Vector2( 0, 0 ) #? Vector2( 4, 4 )
                 ):
-        super().__init__( position, rotation, scale, sprite, spriteSheet, spriteDimensions, isVisible )
+        super().__init__( position, rotation, scale, spriteRef, spriteSheetRef, spriteDimensions, isVisible )
         self.velocity: Vector2 = velocity
     
     def update( self, surface: pygame.Surface, deltaTime: int ) -> None:
@@ -40,9 +40,9 @@ class Player( Entity ):
                     rotation: Vector2 = Vector2( 0, 0 ),
                     scale: Vector2 = Vector2( 1, 1 ),
                     
-                    sprite: Sprite = None,
-                    spriteSheet: SpriteSheet = None,
-                    spriteDimensions: Vector2 = Vector2( 0, 0 ),
+                    walkingLeftSpriteSheetRef: SpriteSheetsRef = None,
+                    walkingRightSpriteSheetRef: SpriteSheetsRef = None,
+                    spriteDimensions: Vector2 = Vector2( 1, 1 ),
                     isVisible: bool = True,
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 4, 4 )
@@ -50,7 +50,9 @@ class Player( Entity ):
                     jumpHeight: float = 1,
                     gravity: float = 5
                 ):
-        super().__init__( position, rotation, scale, sprite, spriteSheet, spriteDimensions, isVisible, velocity )
+        super().__init__( position, rotation, scale, None, walkingRightSpriteSheetRef, spriteDimensions, isVisible, velocity )
+        self.walkingLeftSpriteSheet: SpriteSheetsRef = walkingLeftSpriteSheetRef
+        self.walkingRightSpriteSheet: SpriteSheetsRef = walkingRightSpriteSheetRef
         self.maxSpeed: float = maxSpeed
         self.jumpHeight: float = jumpHeight
         self.gravity: float = gravity
@@ -64,6 +66,9 @@ class Player( Entity ):
         self.playerJump( pressedKey, mapElements )
         
         self.transform.position.addToSelf( self.velocity )
+        
+        if ( self.velocity.x < 0 and self.spriteSheetRef != self.walkingLeftSpriteSheet ): self.spriteSheetRef = self.walkingLeftSpriteSheet
+        elif ( self.velocity.x > 0 and self.spriteSheetRef != self.walkingRightSpriteSheet ): self.spriteSheetRef = self.walkingRightSpriteSheet
         self.draw( surface )
     
     def playerMovement( self, pressedKey: pygame.key.ScancodeWrapper, mapElements: list[ GameObject ] ) -> None:
@@ -96,8 +101,8 @@ class Player( Entity ):
         if ( abs( self.velocity.x * factor ) <= self.maxSpeed and self.velocity.x != 0 ):
             self.velocity.x *= factor if abs( self.velocity.x ) > 0.9 else 0
         
-        self.transform.position.x += self.velocity.x
         collision: bool = False
+        self.transform.position.x += self.velocity.x
         for mapObject in mapElements: collision = collision or self.getCollision( mapObject )
         self.transform.position.x -= self.velocity.x
         if ( collision ) : self.velocity.x = 0
@@ -119,18 +124,11 @@ class Player( Entity ):
                 self.jumpCount = 20
                 self.isJumping = False
         
-        self.transform.position.y += self.velocity.y
         collision: bool = False
+        self.transform.position.y += self.velocity.y
         for mapObject in mapElements: collision = collision or self.getCollision( mapObject )
         self.transform.position.y -= self.velocity.y
         if ( collision ) : self.velocity.y = 0
-    
-    def is_flip(self):
-        pressedKey = pygame.key.get_pressed()
-        if pressedKey[pygame.K_RIGHT] - pressedKey[pygame.K_LEFT] < 0 and self.isFacingRight:
-            self.isFacingRight = False
-        elif pressedKey[pygame.K_RIGHT] - pressedKey[pygame.K_LEFT] > 0 and not self.isFacingRight:
-            self.isFacingRight = True
 
     def Attack(self):
         print("left click")
@@ -147,7 +145,7 @@ class Mob( Entity ):
                     
                     sprite: Sprite = None,
                     spriteSheet: SpriteSheet = None,
-                    spriteDimensions: Vector2 = Vector2( 0, 0 ),
+                    spriteDimensions: Vector2 = Vector2( 1, 1 ),
                     isVisible: bool = True,
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 3, 3 )
