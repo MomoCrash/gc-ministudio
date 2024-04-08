@@ -23,7 +23,7 @@ class Game:
         self.map.load_map()
         
         pygame.init()
-
+        
         self.screen = pygame.display.set_mode((win_width, win_height))
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
@@ -75,24 +75,13 @@ class Game:
         for i, segment in enumerate(self.background_sprites):
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
         
-        self.player.update( self.surface, self.map.elements )
+        self.player.update( self.surface, self.map.colliders )
 
         self.map.draw(self.screen)
 
         #REMOVE LATER
         for collider in self.map.colliders:
             collider.draw(self.screen, (0, 255, 0))
-       
-        # Draw the player flipped on the good side
-        if self.player.isFacingRight:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
-        else:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
-
-        if self.mob.isFacingRight:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.mob.transform.position, self.mob.transform.scale)
-        else:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.mob.transform.position, self.mob.transform.scale)
 
         # Develop in progress
         self.mob.movement(self.player)
@@ -102,10 +91,6 @@ class Game:
         self.mob.draw(self.surface, self.player)
 
         self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
-
-        #Assets.GetSprite(SpritesRef.LIGHT).draw(self.surface, (self.camera.x ,self.camera.y))
-
-        
 
         pygame.display.flip()
 
