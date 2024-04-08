@@ -1,10 +1,8 @@
 import pygame
-import json
-from enum import Enum
 from vector import Vector2
 from map import Map
-import os
-from entity import Entity, Player, Mob
+from entity import Player
+from gameobject import GameObject
 from texture import SpritesRef, SpriteSheetsRef, Sprite, SpriteSheet, Assets
         
 
@@ -14,8 +12,6 @@ class Editor:
         self.height = win_height
         self.window_name = win_name
         self.fps = fps
-
-        self.map = Map("map1.txt", win_width, win_height)
         
         pygame.init()
         self.screen = pygame.display.set_mode((win_width, win_height))
@@ -41,9 +37,6 @@ class Editor:
         pressed_key = pygame.key.get_pressed()
         self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
         
-        if pressed_key[pygame.K_s]:
-            self.map.save_map()
-        
         if pressed_key[pygame.K_RIGHT]:
             self.player.transform.position.x += 5
             if self.player.transform.position.x >= (self.width // 4):
@@ -62,14 +55,27 @@ class Editor:
 
         self.camera.x = max(0, min(self.camera.x, self.map.width))
         self.camera.y = max(0, min(self.camera.y, self.height))
-        
-        for mapObject in self.map.decors:
-            mapObject.transform.position.x = mapObject.transform.position.x - self.camera.x
 
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
                 return False
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                    self.map.save_map()
+                if event.key == pygame.K_DELETE:
+                    mouseObject = GameObject(position=Vector2(self.mouse_x, self.mouse_y), spriteDimensions=Vector2(10, 10))
+                    for mapObject in self.map.colliders:
+                        if mapObject.getCollision( mouseObject ):
+                            self.map.colliders.remove(mapObject)
+                            break
+                    for mapObject in self.map.decors:
+                        print(mapObject.transform.position.x)
+                        print(mouseObject.transform.position.x)
+                        if mapObject.getCollision(mouseObject):
+                            self.map.decors.remove(mapObject)
+                            break
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
@@ -83,23 +89,26 @@ class Editor:
                     self.drawing_collision = False
                     
                     collider_w = (self.mouse_x - self.decal_x) - (self.collision_start[0]-self.decal_x)
-                    print(collider_w)
                     collider_h = self.mouse_y - self.collision_start[1]
 
                     self.map.create_collider(self.decal_x + self.collision_start[0], self.collision_start[1], w=collider_w, h=collider_h)
 
             if event.type == pygame.MOUSEWHEEL:
-                print(event.y)
                 if event.y > 0:
                     self.selected_sprite = SpritesRef((self.selected_sprite.value + 1) % len(SpritesRef) + 1)
                 if event.y < 0:
                     self.selected_sprite = SpritesRef((self.selected_sprite.value - 2) % len(SpritesRef) + 1)
-                
+
+        for mapObject in self.map.decors:
+            mapObject.transform.position.x = mapObject.initial_position.x - self.camera.x
+
+        for mapObject in self.map.colliders:
+            mapObject.transform.position.x = mapObject.initial_position.x - self.camera.x
+
         return True
 
     def update_graphics(self):
 
-        self.map.draw(self.surface)
         pygame.draw.rect(self.screen, (0,0,0),
                          pygame.Rect(0, 0, self.width, self.height))
 
@@ -117,6 +126,8 @@ class Editor:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_RIGHT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
         else:
             Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(), self.surface, self.player.transform.position, self.player.transform.scale)
+
+        self.map.draw(self.surface)
 
         Assets.GetSprite(self.selected_sprite).draw(self.surface, Vector2(self.mouse_x, self.mouse_y), Vector2(100, 100))
         

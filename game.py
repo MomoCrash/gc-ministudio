@@ -39,15 +39,17 @@ class Game:
         self.player.update( self.surface, self.map.decors )
         self.player.is_flip()
 
-
         self.camera.x = self.player.transform.position.x - self.width // 4
         self.camera.y = self.player.transform.position.y - self.height // 4
 
         self.camera.x = max(0, min(self.camera.x, self.width))
         self.camera.y = max(0, min(self.camera.y, self.height))
-        
-        # for mapObject in self.map.elements:
-        #     mapObject.transform.position.x = mapObject.transform.position.x - self.camera.x
+
+        for mapObject in self.map.decors:
+            mapObject.transform.position.x = mapObject.initial_position.x - self.camera.x
+
+        for mapObject in self.map.colliders:
+            mapObject.transform.position.x = mapObject.initial_position.x - self.camera.x
 
         for event in pygame.event.get():
 
@@ -67,7 +69,7 @@ class Game:
         for i, segment in enumerate(self.background_sprites):
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
 
-        self.map.draw(self.surface)
+        self.map.draw(self.screen)
        
         # Draw the player flipped on the good side
         if self.player.isFacingRight:
@@ -88,10 +90,6 @@ class Game:
         self.mob.draw(self.surface, self.player)
 
         self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
-
-
-        #for mapObject in self.map.elements:
-        #    mapObject.draw(self.surface)
 
         #Assets.GetSprite(SpritesRef.LIGHT).draw(self.surface, (self.camera.x ,self.camera.y))
 

@@ -1,9 +1,8 @@
 import texture
 import settings
-import text
+from editor import Editor
 from game import Game
 from pygame import display
-from editor import Editor
 
 if __name__ == '__main__':
     texture.Assets.Init()
