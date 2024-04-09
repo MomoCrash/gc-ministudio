@@ -31,7 +31,7 @@ class Entity( GameObject ):
         self.gravity: float = gravity
     
     def update( self, surface: pygame.Surface, camera: Vector2, deltaTime: int ) -> None:
-        self.transform.position.addToSelf( self.velocity.multiplyToNew( deltaTime ) )
+        self.transform.position += self.velocity * deltaTime
         self.spriteRenderer.draw( surface, camera, self.transform )
 
 
@@ -71,7 +71,7 @@ class Player( Entity ):
         self.playerMovement( pressedKey, solidElements, movableElements )
         self.playerJump( pressedKey, solidElements, movableElements )
         
-        self.transform.position.addToSelf( self.velocity )
+        self.transform.position += self.velocity
         
         if ( self.velocity.x < 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingLeftSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingLeftSpriteSheet
         elif ( self.velocity.x > 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingRightSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingRightSpriteSheet

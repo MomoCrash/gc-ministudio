@@ -45,12 +45,13 @@ class SpriteRenderer:
     def draw( self, surface: pygame.Surface, camera: Vector2, transform: Transform ) -> None:
         """Draws the sprite / sprite sheet / rectangle into the given surface (except if alpha color is 0)"""
         if ( not self.isVisible ): return
-        if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position.addToNew( camera ), self.dimensions.multiplyToNew( transform.scale ) )
-        elif ( self.spriteRef != None ): Assets.GetSprite( self.spriteRef ).draw( surface, transform.position.addToNew( camera ), self.dimensions.multiplyToNew( transform.scale ) )
-        else: 
-          self.rect: pygame.Rect = pygame.Rect(transform.position.x - camera.x, transform.position.y - camera.y,
-                                                 transform.scale.x * self.dimensions.x,
-                                                 transform.scale.y * self.dimensions.y)
+        if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position + camera, self.dimensions * transform.scale )
+        elif ( self.spriteRef != None ): Assets.GetSprite( self.spriteRef ).draw( surface, transform.position + camera, self.dimensions * transform.scale )
+        else:
+          self.rect.x = transform.position.x + camera.x
+          self.rect.y = transform.position.y + camera.y
+          self.rect.width = self.dimensions.x * transform.scale.x
+          self.rect.height = self.dimensions.y * transform.scale.y
           pygame.draw.rect( surface, self.color, self.rect )
 
 
@@ -90,7 +91,7 @@ class GameObject:
     
     def isOnScreen( self, screenPosition: Vector2, screenSize: Vector2 ) -> bool:
         """Returns true if this GameObject is on the screen"""
-        spriteDimensionsScaled: Vector2 = self.spriteRenderer.dimensions.multiplyToNew( self.transform.scale )
+        spriteDimensionsScaled: Vector2 = self.spriteRenderer.dimensions * self.transform.scale
         return \
         self.transform.position.x + spriteDimensionsScaled.x >= screenPosition.x and \
         self.transform.position.x - spriteDimensionsScaled.x <= screenPosition.x + screenSize.x and \

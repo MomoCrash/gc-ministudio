@@ -28,7 +28,11 @@ class Vector2:
     def distanceTo( self, other: Vector2 ) -> float:
         return ( self - other ).norm()
     
-    def __abs__( self ) -> Vector2:
+    def abs( self ) -> None: # Vector2.abs()
+        self.x *= 1 if self.x >= 0 else -1
+        self.y *= 1 if self.y >= 0 else -1
+    
+    def __abs__( self ) -> Vector2: # abs( Vector2 )
         return Vector2( self.x if self.x >= 0 else -self.x , self.y if self.y >= 0 else -self.y )
     
     
@@ -193,17 +197,20 @@ class Vector2:
     
     
     
+    def __bool__( self ) -> bool: # Vector2
+        return bool( self.x ) or bool( self.y )
+    
     def __and__( self, other: Vector2 ) -> bool: # Vector2 & Vector2
-        return ( self.x or self.y ) and ( other.x or other.y )
+        return ( bool( self.x ) or bool( self.y ) ) and ( bool( other.x ) or bool( other.y ) )
     
     def __or__( self, other: Vector2 ) -> bool: # Vector2 | Vector2
-        return ( self.x or self.y ) or ( other.x or other.y )
+        return ( bool( self.x ) or bool( self.y ) ) or ( bool( other.x ) or bool( other.y ) )
     
     def __xor__( self, other: Vector2 ) -> bool: # Vector2 ^ Vector2
         return ( self | other ) and not ( self & other )
     
     def __lt__( self, other: Vector2 ) -> bool: # Vector2 < Vector2
-        return ( self.x < other.x ) and ( self < other.x )
+        return ( self.x < other.x ) and ( self.y < other.y )
     
     def __rt__( self, other: Vector2 ) -> bool: # Vector2 > Vector2
-        return ( self.x > other.x ) and ( self > other.x )
+        return ( self.x > other.x ) and ( self.y > other.y )
