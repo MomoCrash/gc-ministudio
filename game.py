@@ -64,6 +64,11 @@ class Game:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: 
                     self.player.Attack()
+                if event.button == 3:
+                    self.player.Defence()
+            if event.type == pygame.MOUSEBUTTONUP:
+                self.player.DesactivateDefence()
+
         return True
     
     
@@ -75,8 +80,9 @@ class Game:
         for i, segment in enumerate(self.background_sprites):
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
 
-    
+        self.mob.DamagePlayer(self.player)
         self.player.update( self.surface, self.camera, self.map.colliders )
+
 
         self.map.draw(self.screen, self.camera)
 
@@ -91,6 +97,7 @@ class Game:
         self.mob.tryThrow(self.player)
         self.mob.tryAttack(self.player)
         self.mob.tryDefence(self.player)
+        self.player.DamageEnnemy(self.mob)
         self.mob.update(self.dt, self.surface, self.camera, self.map.colliders)
         self.mob.draw(self.surface, self.player)
 
