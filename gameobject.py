@@ -30,36 +30,33 @@ class SpriteRenderer:
                     dimensions: Vector2 = Vector2( 1, 1 ),
                     spriteRef: SpritesRef = None,
                     spriteSheetRef: SpriteSheetsRef = None,
-                    color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
-                    isVisible: bool = True
+                    color: pygame.Color = pygame.Color( 255, 255, 255, 255 )
                 ):
         self.dimensions: Vector2 = dimensions
         self.spriteRef: SpritesRef = spriteRef
         self.spriteSheetRef: SpriteSheetsRef = spriteSheetRef
         self.color: pygame.Color = color
-        self.isVisible: bool = isVisible
         
         if ( self.spriteRef == None and self.spriteSheetRef == None ):
             self.rect: pygame.Rect = pygame.Rect( transform.position.x, transform.position.y, transform.scale.x * self.dimensions.x, transform.scale.y * self.dimensions.y )
     
     def draw( self, surface: pygame.Surface, camera: Vector2, transform: Transform ) -> None:
         """Draws the sprite / sprite sheet / rectangle into the given surface (except if alpha color is 0)"""
-        if ( not self.isVisible ): return
-        if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position.addToNew( camera ), self.dimensions.multiplyToNew( transform.scale ) )
-        elif ( self.spriteRef != None ): Assets.GetSprite( self.spriteRef ).draw( surface, transform.position.addToNew( camera ), self.dimensions.multiplyToNew( transform.scale ) )
-        else: 
-          self.rect: pygame.Rect = pygame.Rect(transform.position.x - camera.x, transform.position.y - camera.y,
+        if ( self.color.a == 0 ): return
+        if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position.removeToNew(camera), self.dimensions.multiplyToNew( transform.scale ) )
+        elif ( self.spriteRef != None ): Assets.GetSprite( self.spriteRef ).draw( surface, transform.position.removeToNew(camera), self.dimensions.multiplyToNew( transform.scale ) )
+        else:
+            self.rect: pygame.Rect = pygame.Rect(transform.position.x - camera.x, transform.position.y - camera.y,
                                                  transform.scale.x * self.dimensions.x,
                                                  transform.scale.y * self.dimensions.y)
-          pygame.draw.rect( surface, self.color, self.rect )
+            pygame.draw.rect( surface, self.color, self.rect )
 
 
 
 class GameObject:
     """Unity-like GameObject (2D) class that stores a Transform and a SpriteRenderer (TODO)"""
     def __init__(
-                    self,
-                    isActive: bool = True,
+                    self,         
                     
                     position: Vector2 = Vector2( 0, 0 ),
                     rotation: Vector2 = Vector2( 0, 0 ),
@@ -68,21 +65,17 @@ class GameObject:
                     spriteDimensions: Vector2 = Vector2( 1, 1 ),
                     spriteRef: SpritesRef = None,
                     spriteSheetRef: SpriteSheetsRef = None,
-                    color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
-                    isVisible: bool = True
+                    color: pygame.Color = pygame.Color( 255, 255, 255, 255 )
                 ):
-        self.isActive: bool = isActive
         self.transform: Transform = Transform( position, rotation, scale )
         print(spriteSheetRef)
         self.spriteRenderer: SpriteRenderer = SpriteRenderer( self.transform, spriteDimensions, spriteRef, spriteSheetRef, color, isVisible )
     
     def update( self, surface: pygame.Surface, camera: Vector2 ) -> None:
-        if ( not self.isActive ): return
         self.spriteRenderer.draw( surface, camera, self.transform )
-    
+          
     def getCollision( self, other: GameObject ) -> bool:
         """Returns true if there is a collision between this GameObject and the one specified"""
-        if ( not self.isActive ): return
         return \
         other.transform.position.x < self.transform.position.x + ( self.transform.scale.x * self.spriteRenderer.dimensions.x ) and \
         other.transform.position.y < self.transform.position.y + ( self.transform.scale.y  * self.spriteRenderer.dimensions.y ) and \
