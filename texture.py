@@ -23,6 +23,8 @@ class SpritesRef(Enum):
 
 
 class SpriteSheetsRef(Enum):
+    ENNEMY_ATTACK_LEFT = auto()
+    ENNEMY_ATTACK_RIGHT = auto()
     ENNEMY_WALK_LEFT = auto()
     ENNEMY_WALK_RIGHT = auto()
     ENNEMY_SHIELD_LEFT = auto()
@@ -52,13 +54,18 @@ class SpriteSheet:
         self.textures = textures
         self.current_index = 0
         self.time = pygame.time.get_ticks()
+        self.callback: function = None
 
     # TODO: RANDOM FIRST FRAME / DELAY
-    def draw( self, ticks, surface: pygame.Surface, position: Vector2, scale: Vector2 ):
+    def draw( self, ticks, surface: pygame.Surface, position: Vector2, scale: Vector2, func = lambda: 0 ):
+        self.callback = func
         if self.is_next_frame(ticks):
             self.current_index += 1
             if self.current_index >= self.frame_count:
+                self.callback()
                 self.current_index = 0
+
+
         self.textures[self.current_index].draw( surface, position, scale )
     
     def is_next_frame(self, current_ticks) -> bool:
@@ -84,9 +91,22 @@ class Assets:
         for mainFolderSheet in spriteSheetsFolder:
             for animationPartFolder in os.listdir(mainFolderSheet):
                 sprites = []
+
+                texture_param = mainFolderSheet + "/" + animationPartFolder + '/' + "param.txt"
+                params = {}
+                with open(texture_param, "r") as file:
+                    lines = file.readlines()
+                    if len(lines) == 0:
+                        print(("CRITICAL ERROR : PLEASE ADD PARAM FILE IN " + animationPartFolder))
+                        break
+                    for line in lines:
+                        splited = line.split(":")
+                        params[splited[0]] = splited[1]
+
                 for animationFiles in os.listdir(mainFolderSheet + "/" + animationPartFolder):
-                    sprite = Sprite(mainFolderSheet + "/" + animationPartFolder + "/" + animationFiles, 60, 100)
-                    sprites.append(sprite)
+                    if not animationFiles.endswith(".txt"):
+                        sprite = Sprite(mainFolderSheet + "/" + animationPartFolder + "/" + animationFiles, int(params["w"]), int(params["h"]))
+                        sprites.append(sprite)
                 if len(sprites) < 1:
                     continue
                 Assets.SpriteSheets.append(SpriteSheet(sprites))

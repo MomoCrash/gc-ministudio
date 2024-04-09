@@ -29,16 +29,10 @@ class Game:
 
         self.player = Player(
                                 position = Vector2( 1000, 500 ),
-                                walkingLeftSpriteSheetRef = SpriteSheetsRef.PLAYER_WALK_LEFT,
-                                walkingRightSpriteSheetRef = SpriteSheetsRef.PLAYER_WALK_RIGHT,
                                 spriteDimensions = Vector2( 40, 80 )
                             )
         self.mob = Mob( 
             position=Vector2( 500, 500 ),
-            walkingLeftSpriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_LEFT,
-            walkingRightSpriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_RIGHT,
-            ShieldingLeftSpriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_LEFT,
-            ShieldingRightSpriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_RIGHT,
             spriteDimensions = Vector2( 40, 80 )
             )
         self.camera = Vector2( 0, 0 )
@@ -95,6 +89,7 @@ class Game:
 
 
         self.mob.tryThrow(self.player)
+        self.mob.tryAttack(self.player)
         self.mob.tryDefence(self.player)
         self.mob.update(self.dt, self.surface, self.camera, self.map.colliders)
         self.mob.draw(self.surface, self.player)

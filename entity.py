@@ -18,13 +18,13 @@ class Entity( GameObject ):
                     scale: Vector2 = Vector2( 1, 1 ),
                     
                     spriteDimensions: Vector2 = Vector2( 1, 1 ),
-                    spriteRef: SpritesRef = None,
-                    spriteSheetRef: SpriteSheetsRef = None,
                     color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
+
+                    spritesheet_ref: SpriteSheetsRef = SpriteSheetsRef.ENNEMY_WALK_RIGHT,
                     
                     velocity: Vector2 = Vector2( 0, 0 )
                 ):
-        super().__init__( position, rotation, scale, spriteDimensions, spriteRef, spriteSheetRef, color )
+        super().__init__( position, rotation, scale, spriteDimensions, None, spritesheet_ref, color )
         self.velocity: Vector2 = velocity
     
     def update( self, surface: pygame.Surface, camera: Vector2, deltaTime: int ) -> None:
@@ -42,18 +42,14 @@ class Player( Entity ):
                     scale: Vector2 = Vector2( 1, 1 ),
                     
                     spriteDimensions: Vector2 = Vector2( 1, 1 ),
-                    walkingLeftSpriteSheetRef: SpriteSheetsRef = None,
-                    walkingRightSpriteSheetRef: SpriteSheetsRef = None,
-                    color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
+                    spritesheet_ref: SpriteSheetsRef = SpriteSheetsRef.PLAYER_WALK_LEFT,
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 4, 4 )
                     maxSpeed: float = 4,
                     jumpHeight: float = 1,
                     gravity: float = 5
                 ):
-        super().__init__( position, rotation, scale, spriteDimensions, None, walkingRightSpriteSheetRef, color, velocity )
-        self.spriteRenderer.walkingLeftSpriteSheet = walkingLeftSpriteSheetRef
-        self.spriteRenderer.walkingRightSpriteSheet = walkingRightSpriteSheetRef
+        super().__init__( position, rotation, scale, spriteDimensions, None, spritesheet_ref, velocity )
         self.maxSpeed: float = maxSpeed
         self.jumpHeight: float = jumpHeight
         self.gravity: float = gravity
@@ -66,6 +62,7 @@ class Player( Entity ):
         self.Vecteur_directeur = Vector2(0,0)
         self.ArrowDistance = 500
         self.circle = pi / self.ArrowDistance
+        self.health = 10
     
     def update( self, surface: pygame.Surface, camera: Vector2, mapElements: list[ GameObject ] ) -> None:
         pressedKey = pygame.key.get_pressed()
@@ -74,8 +71,11 @@ class Player( Entity ):
         
         self.transform.position.addToSelf( self.velocity )
         
-        if ( self.velocity.x < 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingLeftSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingLeftSpriteSheet
-        elif ( self.velocity.x > 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingRightSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingRightSpriteSheet
+        if self.velocity.x < 0: 
+            self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_WALK_LEFT
+        else:
+            self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_WALK_RIGHT
+
         self.spriteRenderer.draw( surface, camera, self.transform )
     
     def UpdateArrow(self, dt):
@@ -178,10 +178,8 @@ class Mob( Entity ):
                     scale: Vector2 = Vector2( 1, 1 ),
                     
                     spriteDimensions: Vector2 = Vector2( 1, 1 ),
-                    walkingLeftSpriteSheetRef: SpriteSheetsRef = None,
-                    walkingRightSpriteSheetRef: SpriteSheetsRef = None,
-                    ShieldingLeftSpriteSheetRef: SpriteSheetsRef = None,
-                    ShieldingRightSpriteSheetRef: SpriteSheetsRef = None,
+                    spritesheet_ref: SpriteSheetsRef = None,
+
                     color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 3, 3 )
@@ -189,11 +187,7 @@ class Mob( Entity ):
                     isOnLoop: bool = False,
                     pathPositions: LinkedList = None
                 ):
-        super().__init__( position, rotation, scale, spriteDimensions, None, walkingRightSpriteSheetRef, color, velocity )
-        self.spriteRenderer.walkingLeftSpriteSheet = walkingLeftSpriteSheetRef
-        self.spriteRenderer.walkingRightSpriteSheet = walkingRightSpriteSheetRef
-        self.spriteRenderer.ShieldingLeftSpriteSheetRef = ShieldingLeftSpriteSheetRef
-        self.spriteRenderer.ShieldingRightSpriteSheetRef = ShieldingRightSpriteSheetRef
+        super().__init__( position, rotation, scale, spriteDimensions, None, spritesheet_ref, velocity )
         self.isOnLoop: bool = isOnLoop
         if ( self.isOnLoop ): self.pathDestination: LinkedList = pathPositions.first
         
@@ -206,10 +200,15 @@ class Mob( Entity ):
         self.shoot_timer = Timer(3, self.enableThrow )
         self.defence_timer = Timer(5, self.enableDefence )
         self.disable_shield_timer = Timer(1, self.disableShield )
+        self.timer_between_attack = Timer(2,self.enableAttack )
         self.isFacingRight = False
         self.WalkSpeed = 60
+        
         self.CanDefend = True
         self.shield = False
+        self.CanAttack = True
+        self.AttackRange = 50
+        self.isAttacking = False
         #self.HammerImage = Assets.GetSprite(SpritesRef.TOMAHAWK).copy()
 
     def movement( self, player: Player, dt ):
@@ -229,23 +228,31 @@ class Mob( Entity ):
         self.shoot_timer.update(dt)
         self.defence_timer.update(dt)
         self.disable_shield_timer.update(dt)
+        self.timer_between_attack.update(dt)
 
         if self.hammer != None:
             self.hammer.transform.position.x += self.Vecteur_directeur.x * self.ThrowSpeed * dt
             self.hammer.transform.position.y += self.Vecteur_directeur.y * self.ThrowSpeed * dt
         
-        if self.shield == False:
-            if ( self.velocity.x < 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingLeftSpriteSheet ): 
-                self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingLeftSpriteSheet
-            elif ( self.velocity.x > 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingRightSpriteSheet ): 
-                self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingRightSpriteSheet
+        if self.velocity.x < 0:
+            if self.shield == False and self.isAttacking == False:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_LEFT
+            elif self.shield:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_LEFT
+            elif self.isAttacking:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_ATTACK_LEFT
         else:
-            if ( self.velocity.x < 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.ShieldingLeftSpriteSheetRef ): 
-                self.spriteRenderer.spriteSheetRef = self.spriteRenderer.ShieldingLeftSpriteSheetRef
-            elif ( self.velocity.x > 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.ShieldingRightSpriteSheetRef ): 
-                self.spriteRenderer.spriteSheetRef = self.spriteRenderer.ShieldingRightSpriteSheetRef
+            if self.shield == False and self.isAttacking == False:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_RIGHT
+            elif self.shield:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_RIGHT
+            elif self.isAttacking:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_ATTACK_RIGHT
 
-        self.spriteRenderer.draw( surface, camera, self.transform )
+
+
+        self.spriteRenderer.draw( surface, camera, self.transform, self.stopAttack )
+
 
     def enableDefence(self):
         self.CanDefend = True
@@ -260,10 +267,29 @@ class Mob( Entity ):
             return
         
         if player.arrow != None and self.maximum_distance < self.transform.position.distanceTo( player.transform.position ) < self.maximum_throw_distance:
-            print("Can Shield")
             self.shield = True
             self.CanDefend = False
             self.disable_shield_timer.start()
+
+
+    
+    def stopAttack(self):
+        self.isAttacking = False
+
+    def enableAttack(self):
+        self.CanAttack = True
+
+    def tryAttack(self, player: Player):
+        if self.CanAttack == False:
+            return
+        
+        if self.transform.position.distanceTo( player.transform.position ) < self.AttackRange:
+            self.isAttacking = True
+            self.CanAttack = False
+            self.timer_between_attack.start()
+
+            
+
 
 
     def enableThrow(self):
