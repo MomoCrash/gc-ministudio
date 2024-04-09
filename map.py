@@ -35,7 +35,12 @@ class SerializableMapObject( GameObject ):
         
         position = Vector2(json["x"], json["y"])
         dimensions = Vector2( json["w"], json["h"])
-        spriteRef = SpritesRef(json["ref"])
+        ref = json["ref"]
+        if ref is not None:
+            spriteRef = SpritesRef(ref)
+        else:
+            spriteRef = ref
+
         interactable = json["interatable"]
         
         return SerializableMapObject(position, spriteDimensions=dimensions, spriteRef=spriteRef, interactable=interactable)
@@ -70,9 +75,9 @@ class Map:
     def save_map(self):
         with open("Assets/Editor/" + self.map_file, "w") as file:
             json_map = {}
-            json_map["background"] = [str(self.background_refs[0])]
+            json_map["backgrounds"] = [str(self.background_refs[0])]
             for i in range(1, len(self.background_refs)):
-                json_map["background"].append(str(self.background_refs[i]))
+                json_map["backgrounds"].append(str(self.background_refs[i]))
             if len(self.colliders):
                 json_map["colliders"] = [self.colliders[0].serialize()]
                 for i in range(1, len(self.colliders)):
@@ -94,6 +99,8 @@ class Map:
             except json.decoder.JSONDecodeError:
                 self.append_backgrounds(1)
                 return
+
+            print(jsonObjects)
 
             for backgroundRef in jsonObjects["backgrounds"]:
                 self.append_backgrounds(int(backgroundRef))

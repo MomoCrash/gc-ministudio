@@ -78,10 +78,10 @@ class Editor:
                 if event.button == 3:
                     self.drawing_collision = False
                     
-                    collider_w = (self.mouse_x - self.decal_x) - (self.collision_start[0]-self.decal_x)
+                    collider_w = (self.mouse_x - self.camera.x) - (self.collision_start[0]-self.camera.x)
                     collider_h = self.mouse_y - self.collision_start[1]
 
-                    self.map.create_collider(self.decal_x + self.collision_start[0], self.collision_start[1], w=collider_w, h=collider_h)
+                    self.map.create_collider(self.camera.x + self.collision_start[0], self.collision_start[1], w=collider_w, h=collider_h)
 
             if event.type == pygame.MOUSEWHEEL:
                 if event.y > 0:
