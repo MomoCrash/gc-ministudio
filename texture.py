@@ -104,5 +104,5 @@ class Assets:
     
     @staticmethod
     def GetSpriteSheet(ref: Enum) -> SpriteSheet:
-        print(ref)
+        # print(ref)
         return Assets.SpriteSheets[ref.value - 1]

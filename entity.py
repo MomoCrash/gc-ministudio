@@ -64,7 +64,7 @@ class Player( Entity ):
         self.playerMovement( pressedKey, mapElements )
         self.playerJump( pressedKey, mapElements )
         
-        self.transform.position.addToSelf( self.velocity )
+        self.transform.position += self.velocity
         
         if ( self.velocity.x < 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingLeftSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingLeftSpriteSheet
         elif ( self.velocity.x > 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingRightSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingRightSpriteSheet

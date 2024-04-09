@@ -69,7 +69,7 @@ class Editor:
                     self.map.create_decoration(self.camera.x + self.mouse_x, self.mouse_y + self.camera.y, self.selected_sprite)
                 if event.button == 3:
                     self.drawing_collision = True
-                    print(self.mouse_x + self.camera.x)
+                    # print(self.mouse_x + self.camera.x)
                     self.collision_start = Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y)
                     
             if event.type == pygame.MOUSEBUTTONUP:

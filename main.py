@@ -9,8 +9,10 @@ import pygame
 def init_game():
     pygame.display.init()
     display_info = pygame.display.Info()
-    settings.SCREEN_WIDTH = display_info.current_w
-    settings.SCREEN_HEIGHT = display_info.current_h
+    # settings.SCREEN_WIDTH = display_info.current_w
+    # settings.SCREEN_HEIGHT = display_info.current_h
+    settings.SCREEN_WIDTH = 1920
+    settings.SCREEN_HEIGHT = 1080
 
     pygame.init()
     settings.GAME_FONT = pygame.font.Font("Assets/Font/Thunder.ttf", 21)
@@ -23,8 +25,8 @@ if __name__ == '__main__':
 
     screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT))
 
-    #menu = StartMenu(screen)
+    menu = StartMenu(screen)
 
-    #game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Utltimate game of the Year")
+    game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Utltimate game of the Year")
     
-    editor = Editor(screen, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
+    # editor = Editor(screen, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")

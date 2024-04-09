@@ -43,8 +43,8 @@ class SpriteRenderer:
     def draw( self, surface: pygame.Surface, camera: Vector2, transform: Transform ) -> None:
         """Draws the sprite / sprite sheet / rectangle into the given surface (except if alpha color is 0)"""
         if ( self.color.a == 0 ): return
-        if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position.removeToNew(camera), self.dimensions.multiplyToNew( transform.scale ) )
-        elif ( self.spriteRef != None ): Assets.GetSprite( self.spriteRef ).draw( surface, transform.position.removeToNew(camera), self.dimensions.multiplyToNew( transform.scale ) )
+        if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position - camera, self.dimensions * transform.scale )
+        elif ( self.spriteRef != None ): Assets.GetSprite( self.spriteRef ).draw( surface, transform.position - camera, self.dimensions * transform.scale )
         else:
             self.rect: pygame.Rect = pygame.Rect(transform.position.x - camera.x, transform.position.y - camera.y,
                                                  transform.scale.x * self.dimensions.x,
@@ -68,7 +68,7 @@ class GameObject:
                     color: pygame.Color = pygame.Color( 255, 255, 255, 255 )
                 ):
         self.transform: Transform = Transform( position, rotation, scale )
-        print(spriteSheetRef)
+        # print(spriteSheetRef)
         self.spriteRenderer: SpriteRenderer = SpriteRenderer( self.transform, spriteDimensions, spriteRef, spriteSheetRef, color )
     
     def update( self, surface: pygame.Surface, camera: Vector2 ) -> None:
