@@ -1,5 +1,56 @@
 {
   "backgrounds": [
+    "1",
+    "1",
     "1"
+  ],
+  "colliders": [
+    {
+      "x": 775.0942239999999,
+      "y": 1679,
+      "w": 124.0,
+      "h": 31,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1238.6413359999997,
+      "y": 1739,
+      "w": 125.0,
+      "h": 26,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 4,
+      "y": 1852,
+      "w": 1921.2216328412158,
+      "h": 68,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    }
+  ],
+  "gameobjects": [
+    {
+      "x": 743.0942239999999,
+      "y": 1612,
+      "w": 200,
+      "h": 200,
+      "ref": 9,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1199.6413359999997,
+      "y": 1665,
+      "w": 200,
+      "h": 200,
+      "ref": 9,
+      "interactable": false,
+      "text": "Default"
+    }
   ]
 }

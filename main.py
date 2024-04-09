@@ -1,17 +1,30 @@
-import texture
+from texture import Assets
 import settings
 from editor import Editor
+from startmenu import StartMenu
 from game import Game
-from pygame import display
+import pygame
 
-if __name__ == '__main__':
-    texture.Assets.Init()
 
-    display.init()
-    display_info = display.Info()
+def init_game():
+    pygame.display.init()
+    display_info = pygame.display.Info()
     settings.SCREEN_WIDTH = display_info.current_w
     settings.SCREEN_HEIGHT = display_info.current_h
 
-    #game = Game(settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Utltimate game of the Year")
+    pygame.init()
+    settings.GAME_FONT = pygame.font.Font("Assets/Font/Thunder.ttf", 21)
+
+
+if __name__ == '__main__':
+    Assets.Init()
+
+    init_game()
+
+    screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT))
+
+    menu = StartMenu(screen)
+
+    game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Utltimate game of the Year")
     
-    editor = Editor(settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
+    #editor = Editor(screen, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
