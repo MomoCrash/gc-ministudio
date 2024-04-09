@@ -21,7 +21,7 @@ class SerializableMapObject( GameObject ):
                     
                     interactable: bool = False
                 ):
-        super().__init__( True, position, rotation, scale, spriteDimensions, spriteRef=spriteRef, color=color )
+        super().__init__( position, rotation, scale, spriteDimensions, spriteRef=spriteRef, color=color )
         self.interatable = interactable
 
 

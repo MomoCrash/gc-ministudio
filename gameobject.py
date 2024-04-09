@@ -69,7 +69,7 @@ class GameObject:
                 ):
         self.transform: Transform = Transform( position, rotation, scale )
         print(spriteSheetRef)
-        self.spriteRenderer: SpriteRenderer = SpriteRenderer( self.transform, spriteDimensions, spriteRef, spriteSheetRef, color, isVisible )
+        self.spriteRenderer: SpriteRenderer = SpriteRenderer( self.transform, spriteDimensions, spriteRef, spriteSheetRef, color )
     
     def update( self, surface: pygame.Surface, camera: Vector2 ) -> None:
         self.spriteRenderer.draw( surface, camera, self.transform )
