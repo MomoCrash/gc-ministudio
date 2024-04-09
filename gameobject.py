@@ -74,6 +74,7 @@ class GameObject:
                 ):
         self.isActive: bool = isActive
         self.transform: Transform = Transform( position, rotation, scale )
+        print(spriteSheetRef)
         self.spriteRenderer: SpriteRenderer = SpriteRenderer( self.transform, spriteDimensions, spriteRef, spriteSheetRef, color, isVisible )
     
     def update( self, surface: pygame.Surface, camera: Vector2 ) -> None:

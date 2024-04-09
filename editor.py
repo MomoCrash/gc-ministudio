@@ -76,7 +76,7 @@ class Editor:
                 if event.button == 3:
                     self.drawing_collision = False
 
-                    distance: Vector2 = Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y).removeToNew(self.collision_start)
+                    distance: Vector2 = Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y) - self.collision_start
 
                     self.map.create_collider(self.collision_start.x, self.collision_start.y,
                                              w=distance.x, h=distance.y)
@@ -113,7 +113,7 @@ class Editor:
         Assets.GetSprite(self.selected_sprite).draw(self.surface, Vector2(self.mouse_x, self.mouse_y), Vector2(100, 100))
         
         if self.drawing_collision:
-            distance: Vector2 = Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y).removeToNew(self.collision_start)
+            distance: Vector2 = Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y) - self.collision_start
             pygame.draw.rect(self.screen, (0, 200, 0, 120), (self.collision_start.x - self.camera.x, self.collision_start.y - self.camera.y, distance.x, distance.y))
 
         pygame.display.flip()

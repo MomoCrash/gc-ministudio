@@ -34,65 +34,7 @@ class Vector2:
     
     def __abs__( self ) -> Vector2: # abs( Vector2 )
         return Vector2( self.x if self.x >= 0 else -self.x , self.y if self.y >= 0 else -self.y )
-    
-    
-    
-    def addToSelf( self, other: Vector2 | float ) -> None:
-        if isinstance( other, Vector2 ):
-            self.x += other.x
-            self.y += other.y
-        else:
-            self.x += other
-            self.y += other
-    
-    def removeToSelf( self, other: Vector2 | float ) -> None:
-        if isinstance( other, Vector2 ):
-            self.x -= other.x
-            self.y -= other.y
-        else:
-            self.x -= other
-            self.y -= other
-    
-    def multiplyToSelf( self, other: Vector2 | float ) -> None:
-        if isinstance( other, Vector2 ):
-            self.x *= other.x
-            self.y *= other.y
-        else:
-            self.x *= other
-            self.y *= other
-    
-    def divideToSelf( self, other: Vector2 | float ) -> None:
-        if isinstance( other, Vector2 ):
-            self.x /= other.x
-            self.y /= other.y
-        else:
-            self.x /= other
-            self.y /= other
-    
-    
-    
-    def addToNew( self, other: Vector2 | float ) -> Vector2:
-        newVector = self.copy()
-        newVector.addToSelf( other )
-        return newVector
-    
-    def removeToNew( self, other: Vector2 | float ) -> Vector2:
-        newVector = self.copy()
-        newVector.removeToSelf( other )
-        return newVector
-    
-    def multiplyToNew( self, other: Vector2 | float ) -> Vector2:
-        newVector = self.copy()
-        newVector.multiplyToSelf( other )
-        return newVector
-    
-    def divideToNew( self, other: Vector2 | float ) -> Vector2:
-        newVector = self.copy()
-        newVector.divideToSelf( other )
-        return newVector
-    
-    
-    
+
     def __add__( self, other: Vector2 | float ) -> Vector2: # Vector2 + ( Vector2 | float )
         newVector = self.copy()
         if isinstance( other, Vector2 ):

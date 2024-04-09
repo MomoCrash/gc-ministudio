@@ -21,7 +21,7 @@ class SerializableMapObject( GameObject ):
                     
                     interactable: bool = False
                 ):
-        super().__init__( position, rotation, scale, spriteDimensions, spriteRef, None, color )
+        super().__init__( True, position, rotation, scale, spriteDimensions, spriteRef=spriteRef, color=color )
         self.interatable = interactable
 
 
@@ -70,6 +70,7 @@ class Map:
 
     def create_decoration(self, x, y, sprite_ref: SpritesRef):
         size = Assets.GetSprite(sprite_ref).size
+        print(sprite_ref)
         self.decors.append( SerializableMapObject( position=Vector2( x, y ), spriteDimensions=Vector2(size[0], size[1]), spriteRef=sprite_ref))
 
     def save_map(self):
@@ -120,6 +121,7 @@ class Map:
         
     def draw( self, surface: pygame.Surface, camera: Vector2, editor: bool = False ):
         for mapObject in self.decors:
+            print(mapObject.spriteRenderer.spriteSheetRef)
             mapObject.update( surface, camera )
         if editor:
             for collider in self.colliders:
