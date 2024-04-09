@@ -17,11 +17,19 @@ class SpritesRef(Enum):
     LVL1_ROCK_FACE = auto()
     LVL1_TOMBSTONE = auto()
     LVL1_STUMP = auto()
+    TEST = auto()
+
+    TOMAHAWK = auto()
 
 
 class SpriteSheetsRef(Enum):
+    ENNEMY_WALK_LEFT = auto()
+    ENNEMY_WALK_RIGHT = auto()
+
     PLAYER_WALK_LEFT = auto()
     PLAYER_WALK_RIGHT = auto()
+
+
 
 
 class Sprite:

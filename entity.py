@@ -4,6 +4,7 @@ from vector import Vector2
 from gameobject import GameObject
 from thetimer import Timer
 from texture import Sprite, SpriteSheet, Assets, SpritesRef, SpriteSheetsRef
+from math import cos, pi
 
 
 
@@ -21,7 +22,7 @@ class Entity( GameObject ):
                     spriteSheetRef: SpriteSheetsRef = None,
                     color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
                     
-                    velocity: Vector2 = Vector2( 0, 0 ) #? Vector2( 4, 4 )
+                    velocity: Vector2 = Vector2( 0, 0 )
                 ):
         super().__init__( position, rotation, scale, spriteDimensions, spriteRef, spriteSheetRef, color )
         self.velocity: Vector2 = velocity
@@ -58,6 +59,13 @@ class Player( Entity ):
         self.gravity: float = gravity
         self.isJumping: bool = False
         self.jumpCount: int = 10
+        self.CanShoot = True
+        self.shoot_timer = Timer(1, self.enableThrow )
+        self.ArrowSpeed = 500
+        self.arrow: GameObject = None
+        self.Vecteur_directeur = Vector2(0,0)
+        self.ArrowDistance = 400
+        self.circle = pi / self.ArrowDistance
     
     def update( self, surface: pygame.Surface, camera: Vector2, mapElements: list[ GameObject ] ) -> None:
         pressedKey = pygame.key.get_pressed()
@@ -70,6 +78,18 @@ class Player( Entity ):
         elif ( self.velocity.x > 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingRightSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingRightSpriteSheet
         self.spriteRenderer.draw( surface, camera, self.transform )
     
+    def UpdateArrow(self, dt):
+        if self.arrow != None:
+            total_distance_x = abs(self.arrow.transform.position.x - self.startpos)
+            
+            if total_distance_x >= self.ArrowDistance:
+                self.arrow = None
+                self.enableThrow()
+                return
+
+            self.arrow.transform.position.x += self.Vecteur_directeur.x * self.ArrowSpeed * dt
+            self.arrow.transform.position.y -= (cos((total_distance_x / self.ArrowDistance) * pi)*7)
+
     def playerMovement( self, pressedKey: pygame.key.ScancodeWrapper, mapElements: list[ GameObject ] ) -> None:
         leftPressed: bool = pressedKey[ pygame.K_q ]
         rightPressed: bool = pressedKey[ pygame.K_d ]
@@ -130,7 +150,30 @@ class Player( Entity ):
         if ( collision ) : self.velocity.y = 0
 
     def Attack(self):
-        print("left click")
+        if self.CanShoot:
+            self.MousePos = pygame.mouse.get_pos()
+            self.arrow = GameObject(position=Vector2(self.transform.position.x, self.transform.position.y))
+            self.Vecteur_directeur = Vector2(self.MousePos[0] - self.transform.position.x, self.MousePos[1] - self.transform.position.y)
+            """
+            if self.isFacingRight:
+                self.Vecteur_directeur = Vector2(1,0.5)
+            else:
+                self.Vecteur_directeur = Vector2(-1,0.5)
+                """
+
+
+            self.Vecteur_directeur.normalizeToSelf()
+            self.CanShoot = False
+            self.shoot_timer.start()
+            self.startpos = self.arrow.transform.position.x
+        
+    def enableThrow(self):
+        self.CanShoot = True
+
+    def DrawArrow(self,window):
+        if self.arrow != None:
+            Assets.GetSprite(SpritesRef.TOMAHAWK).draw(window,self.arrow.transform.position,self.arrow.transform.scale)
+
 
 
 class Mob( Entity ):
@@ -143,8 +186,8 @@ class Mob( Entity ):
                     scale: Vector2 = Vector2( 1, 1 ),
                     
                     spriteDimensions: Vector2 = Vector2( 1, 1 ),
-                    sprite: SpritesRef = None,
-                    spriteSheet: SpriteSheetsRef = None,
+                    walkingLeftSpriteSheetRef: SpriteSheetsRef = None,
+                    walkingRightSpriteSheetRef: SpriteSheetsRef = None,
                     color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 3, 3 )
@@ -152,7 +195,9 @@ class Mob( Entity ):
                     isOnLoop: bool = False,
                     pathPositions: LinkedList = None
                 ):
-        super().__init__( position, rotation, scale, spriteDimensions, sprite, spriteSheet, color, velocity )
+        super().__init__( position, rotation, scale, spriteDimensions, None, walkingRightSpriteSheetRef, color, velocity )
+        self.spriteRenderer.walkingLeftSpriteSheet = walkingLeftSpriteSheetRef
+        self.spriteRenderer.walkingRightSpriteSheet = walkingRightSpriteSheetRef
         self.isOnLoop: bool = isOnLoop
         if ( self.isOnLoop ): self.pathDestination: LinkedList = pathPositions.first
         
@@ -164,28 +209,33 @@ class Mob( Entity ):
         self.hammer = None
         self.shoot_timer = Timer(3, self.enableThrow )
         self.isFacingRight = False
+        self.WalkSpeed = 100
 
-    def movement( self, player: Player ):
-        
+    def movement( self, player: Player, dt ):
         if self.transform.position.distanceTo( player.transform.position ) < self.maximum_distance:
-            if self.transform.position.x > self.transform.position.x:
-                self.transform.position.x += 1
+            if player.transform.position.x > self.transform.position.x:
+                self.transform.position.x += self.WalkSpeed * dt
                 self.isFacingRight = True
-            if self.transform.position.x < self.transform.position.x:
-                self.transform.position.x -= 1
+            if player.transform.position.x < self.transform.position.x:
+                self.transform.position.x -= self.WalkSpeed * dt
                 self.isFacingRight = False
 
+
            
-    def update(self, dt):
+    def update(self, dt,  surface: pygame.Surface, camera: Vector2, mapElements: list[ GameObject ] ):
 
         self.shoot_timer.update(dt)
 
         if self.hammer != None:
             self.hammer.transform.position.x += self.Vecteur_directeur.x * self.ThrowSpeed * dt
             self.hammer.transform.position.y += self.Vecteur_directeur.y * self.ThrowSpeed * dt
+        
+        
+        if ( self.velocity.x < 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingLeftSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingLeftSpriteSheet
+        elif ( self.velocity.x > 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingRightSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingRightSpriteSheet
+        self.spriteRenderer.draw( surface, camera, self.transform )
 
     def enableThrow(self):
-        print("OK")
         self.CanThrow = True
 
     def tryThrow( self, player: Player ):
@@ -193,7 +243,7 @@ class Mob( Entity ):
             return
 
         if self.maximum_distance < self.transform.position.distanceTo( player.transform.position ) < self.maximum_throw_distance:
-            self.hammer = GameObject(position=self.transform.position, scale=Vector2(40, 80))
+            self.hammer = GameObject(position=Vector2(self.transform.position.x,self.transform.position.y))
             self.Vecteur_directeur = Vector2(player.transform.position.x - self.transform.position.x, player.transform.position.y - self.transform.position.y)
             self.Vecteur_directeur.normalizeToSelf()
             self.CanThrow = False
@@ -209,8 +259,7 @@ class Mob( Entity ):
     def draw(self, window: pygame.Surface, player: Player):
         #pygame.draw.line(window, (255,255,255), (self.rect_transform.x + self.width // 2 ,self.rect_transform.y + self.height // 2), (self.Vecteur_directeur.x * self.maximum_throw_distance + player.rect_transform.width // 2  , self.Vecteur_directeur.y * self.maximum_throw_distance  + player.rect_transform.height // 2), 1)
         if self.hammer != None:
-            Assets.GetSpriteSheet(SpriteSheetsRef.PLAYER_WALK_LEFT).draw(pygame.time.get_ticks(),window, self.hammer.transform.position, self.hammer.transform.scale)
-
+            Assets.GetSprite(SpritesRef.TOMAHAWK).draw(window,self.hammer.transform.position,self.hammer.transform.scale)
         
 
         
