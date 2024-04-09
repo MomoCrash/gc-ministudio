@@ -37,6 +37,8 @@ class Game:
             position=Vector2( 500, 500 ),
             walkingLeftSpriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_LEFT,
             walkingRightSpriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_RIGHT,
+            ShieldingLeftSpriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_LEFT,
+            ShieldingRightSpriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_RIGHT,
             spriteDimensions = Vector2( 40, 80 )
             )
         self.camera = Vector2( 0, 0 )
@@ -78,7 +80,8 @@ class Game:
 
         for i, segment in enumerate(self.background_sprites):
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
-        
+
+    
         self.player.update( self.surface, self.camera, self.map.colliders )
 
         self.map.draw(self.screen, self.camera)
@@ -92,10 +95,11 @@ class Game:
 
 
         self.mob.tryThrow(self.player)
+        self.mob.tryDefence(self.player)
         self.mob.update(self.dt, self.surface, self.camera, self.map.colliders)
         self.mob.draw(self.surface, self.player)
 
-        self.player.DrawArrow(self.surface)
+        self.player.DrawArrow(self.surface, self.camera)
 
         
 

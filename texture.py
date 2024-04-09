@@ -25,6 +25,8 @@ class SpritesRef(Enum):
 class SpriteSheetsRef(Enum):
     ENNEMY_WALK_LEFT = auto()
     ENNEMY_WALK_RIGHT = auto()
+    ENNEMY_SHIELD_LEFT = auto()
+    ENNEMY_SHIELD_RIGHT = auto()
 
     PLAYER_WALK_LEFT = auto()
     PLAYER_WALK_RIGHT = auto()
