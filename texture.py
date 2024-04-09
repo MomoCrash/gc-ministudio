@@ -39,7 +39,7 @@ class SpriteSheetsRef(Enum):
 class Sprite:
     def __init__(self, path_to_texture, width, height):
         self.texture_path = path_to_texture
-        self.texture = pygame.image.load(path_to_texture)
+        self.texture = pygame.image.load(path_to_texture)#.convert_alpha()
         self.size = (width, height)
         self.texture = pygame.transform.scale(self.texture, self.size)
         

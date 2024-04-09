@@ -100,6 +100,9 @@ class Game:
 
         self.player.UpdateArrow(self.dt)
 
+        self.text.draw_text("fps :" + str(self.clock.get_fps()), (255, 255, 255), 100, 100, 10, 10)
+
+
         self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
 
         pygame.display.flip()
@@ -132,7 +135,6 @@ class Game:
             self.update_graphics()
 
             self.clock.tick(60)
-            
             dt_end = pygame.time.get_ticks()
             self.dt =self.clock.get_time() / 1000
             self.current_dt += self.dt
