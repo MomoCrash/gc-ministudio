@@ -47,7 +47,11 @@ class SpriteRenderer:
         if ( not self.isVisible ): return
         if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position.addToNew( camera ), self.dimensions.multiplyToNew( transform.scale ) )
         elif ( self.spriteRef != None ): Assets.GetSprite( self.spriteRef ).draw( surface, transform.position.addToNew( camera ), self.dimensions.multiplyToNew( transform.scale ) )
-        else: pygame.draw.rect( surface, self.color, self.rect )
+        else: 
+          self.rect: pygame.Rect = pygame.Rect(transform.position.x - camera.x, transform.position.y - camera.y,
+                                                 transform.scale.x * self.dimensions.x,
+                                                 transform.scale.y * self.dimensions.y)
+          pygame.draw.rect( surface, self.color, self.rect )
 
 
 

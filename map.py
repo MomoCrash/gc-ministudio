@@ -41,7 +41,7 @@ class SerializableMapObject( GameObject ):
         else:
             spriteRef = ref
 
-        interactable = json["interatable"]
+        interactable = json["interactable"]
         
         return SerializableMapObject(position, spriteDimensions=dimensions, spriteRef=spriteRef, interactable=interactable)
 
@@ -107,6 +107,7 @@ class Map:
 
             try:
                 for gameObject in jsonObjects["gameobjects"]:
+                    print(gameObject)
                     self.decors.append( SerializableMapObject.deserialize(gameObject) )
             except KeyError:
                 print("No game object for map " + self.map_file)
@@ -117,6 +118,9 @@ class Map:
             except KeyError:
                 print("No colliders for map " + self.map_file)
         
-    def draw( self, surface: pygame.Surface, camera: Vector2 ):
+    def draw( self, surface: pygame.Surface, camera: Vector2, editor: bool = False ):
         for mapObject in self.decors:
             mapObject.update( surface, camera )
+        if editor:
+            for collider in self.colliders:
+                collider.update( surface, camera )
