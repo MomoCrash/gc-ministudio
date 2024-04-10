@@ -16,14 +16,14 @@ def init_game():
     settings.GAME_FONT = pygame.font.Font("Assets/Font/Thunder.ttf", 21)
 
 if __name__ == '__main__':
-    Assets.Init()
 
     init_game()
-
-    screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), pygame.FULLSCREEN,
+                                     pygame.DOUBLEBUF)
+    Assets.Init()
 
     menu = StartMenu(screen)
 
     game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Utltimate game of the Year")
     
-    #editor = Editor(settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
+    #editor = Editor(screen, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")

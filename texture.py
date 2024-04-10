@@ -5,9 +5,26 @@ from vector import Vector2
 from enum import Enum, auto
 
 class SpritesRef(Enum):
-    BACKGROUND_0 = auto()
-    BACKGROUND_1 = auto()
+
+    BOOK = auto()
     START = auto()
+
+    BG_LEVEL_1_1 = auto()
+    BG_LEVEL_1_2 = auto()
+    BG_LEVEL_1_COLOR = auto()
+    BG_LEVEL_1_4 = auto()
+
+    BG_LEVEL_1_5 = auto()
+    BG_LEVEL_1_6 = auto()
+    BG_LEVEL_1_7 = auto()
+
+    BG_LEVEL_1_8 = auto()
+    BG_LEVEL_1_9 = auto()
+    BG_LEVEL_1_10 = auto()
+
+    BG_LEVEL_1_11 = auto()
+    BG_LEVEL_1_12 = auto()
+    BG_LEVEL_1_13 = auto()
 
     LVL1_LOG = auto()
     LVL1_ROCK_1 = auto()
@@ -50,7 +67,7 @@ class SpriteSheetsRef(Enum):
 class Sprite:
     def __init__(self, path_to_texture, width, height):
         self.texture_path = path_to_texture
-        self.texture = pygame.image.load(path_to_texture)#.convert_alpha()
+        self.texture = pygame.image.load(path_to_texture).convert_alpha()
         self.size = (width, height)
         self.texture = pygame.transform.scale(self.texture, self.size)
         
