@@ -8,9 +8,7 @@ import pygame
 
 def init_game():
     pygame.display.init()
-    display_info = pygame.display.Info()
-    # settings.SCREEN_WIDTH = display_info.current_w
-    # settings.SCREEN_HEIGHT = display_info.current_h
+    
     settings.SCREEN_WIDTH = 1920
     settings.SCREEN_HEIGHT = 1080
 
@@ -23,7 +21,7 @@ if __name__ == '__main__':
 
     init_game()
 
-    screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), pygame.FULLSCREEN)
 
     menu = StartMenu(screen)
 
