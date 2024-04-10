@@ -158,3 +158,9 @@ class Vector2:
     
     def __rt__( self, other: Vector2 ) -> bool: # Vector2 > Vector2
         return ( self.x > other.x ) and ( self.y > other.y )
+    
+    def __le__( self, other: Vector2 ) -> bool: # Vector2 < Vector2
+        return ( self.x <= other.x ) and ( self.y <= other.y )
+    
+    def __re__( self, other: Vector2 ) -> bool: # Vector2 > Vector2
+        return ( self.x >= other.x ) and ( self.y >= other.y )
