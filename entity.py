@@ -20,10 +20,11 @@ class Entity( GameObject ):
                     spriteRef: SpritesRef = None,
                     spriteSheetRef: SpriteSheetsRef = None,
                     color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
+                    isVisible: bool = True,
                     
                     velocity: Vector2 = Vector2( 0, 0 ) #? Vector2( 4, 4 )
                 ):
-        super().__init__( position, rotation, scale, spriteDimensions, spriteRef, spriteSheetRef, color )
+        super().__init__( position, rotation, scale, spriteDimensions, spriteRef, spriteSheetRef, color, isVisible )
         self.velocity: Vector2 = velocity
     
     def update( self, surface: pygame.Surface, camera: Vector2, deltaTime: int ) -> None:
@@ -43,34 +44,44 @@ class Player( Entity ):
                     spriteDimensions: Vector2 = Vector2( 1, 1 ),
                     walkingLeftSpriteSheetRef: SpriteSheetsRef = None,
                     walkingRightSpriteSheetRef: SpriteSheetsRef = None,
+                    idleSpriteSheet: SpriteSheetsRef = None,
                     color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
+                    isVisible: bool = True,
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 4, 4 )
                     maxSpeed: float = 4,
-                    jumpHeight: float = 1,
-                    gravity: float = 5
+                    jumpHeight: float = 50,
+                    gravity: float = 10
                 ):
-        super().__init__( position, rotation, scale, spriteDimensions, None, walkingRightSpriteSheetRef, color, velocity )
+        super().__init__( position, rotation, scale, spriteDimensions, None, walkingRightSpriteSheetRef, color, isVisible, velocity )
         self.spriteRenderer.walkingLeftSpriteSheet = walkingLeftSpriteSheetRef
         self.spriteRenderer.walkingRightSpriteSheet = walkingRightSpriteSheetRef
+        self.spriteRenderer.idleSpriteSheet = idleSpriteSheet
         self.maxSpeed: float = maxSpeed
         self.jumpHeight: float = jumpHeight
         self.gravity: float = gravity
         self.isJumping: bool = False
-        self.jumpCount: int = 10
     
-    def update( self, surface: pygame.Surface, camera: Vector2, mapElements: list[ GameObject ] ) -> None:
+    def update( self, surface: pygame.Surface, camera: Vector2, solidElements: list[ GameObject ] ) -> None:
         pressedKey = pygame.key.get_pressed()
-        self.playerMovement( pressedKey, mapElements )
-        self.playerJump( pressedKey, mapElements )
+        self.playerMovement( pressedKey, solidElements )
+        self.playerJump( pressedKey, solidElements )
         
         self.transform.position += self.velocity
         
-        if ( self.velocity.x < 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingLeftSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingLeftSpriteSheet
-        elif ( self.velocity.x > 0 and self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingRightSpriteSheet ): self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingRightSpriteSheet
+        if ( self.velocity.x < 0 ):
+            if ( self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingLeftSpriteSheet ):
+                self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingLeftSpriteSheet
+        elif ( self.velocity.x > 0 ):
+            if ( self.spriteRenderer.spriteSheetRef != self.spriteRenderer.walkingRightSpriteSheet ):
+                self.spriteRenderer.spriteSheetRef = self.spriteRenderer.walkingRightSpriteSheet
+        # else:
+        #     if ( self.spriteRenderer.spriteSheetRef != self.spriteRenderer.idleSpriteSheet ):
+        #         self.spriteRenderer.spriteSheetRef = self.spriteRenderer.idleSpriteSheet
+
         self.spriteRenderer.draw( surface, camera, self.transform )
     
-    def playerMovement( self, pressedKey: pygame.key.ScancodeWrapper, mapElements: list[ GameObject ] ) -> None:
+    def playerMovement( self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[ GameObject ] ) -> None:
         leftPressed: bool = pressedKey[ pygame.K_q ]
         rightPressed: bool = pressedKey[ pygame.K_d ]
         
@@ -102,32 +113,38 @@ class Player( Entity ):
         
         collision: bool = False
         self.transform.position.x += self.velocity.x
-        for mapObject in mapElements: collision = collision or self.getCollision( mapObject )
+        for mapObject in solidElements: collision = collision or self.getCollision( mapObject )
         self.transform.position.x -= self.velocity.x
         if ( collision ) : self.velocity.x = 0
     
-    def playerJump( self, pressedKey: pygame.key.ScancodeWrapper, mapElements: list[ GameObject ] ):
+    def playerJump( self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[ GameObject ] ):
         spacePressed = pressedKey[ pygame.K_SPACE ]
-        
-        self.velocity.y = ( spacePressed * self.jumpHeight ) + self.gravity
         
         if ( spacePressed and not self.isJumping ):
             self.isJumping = True
+            self.velocity.y = -self.jumpHeight
         
         if ( self.isJumping ):
-            if ( self.jumpCount >= 0 ):
-                self.velocity.y -= ( self.jumpCount * abs( self.jumpCount ) ) * 0.1
-                self.jumpCount -= 1
+            if ( self.velocity.y < -5 ):
+                self.velocity.y *= 0.8
             else:
-                # This will execute if our jump is finished
-                self.jumpCount = 20
-                self.isJumping = False
+                if ( self.velocity.y < 0 ):
+                    self.velocity.y = 1
+                if ( self.velocity.y < self.gravity ):
+                    self.velocity.y *= 1.5
+        
+        else:
+            self.velocity.y = self.gravity
+        
+        print
         
         collision: bool = False
         self.transform.position.y += self.velocity.y
-        for mapObject in mapElements: collision = collision or self.getCollision( mapObject )
+        for mapObject in solidElements: collision = collision or self.getCollision( mapObject )
         self.transform.position.y -= self.velocity.y
-        if ( collision ) : self.velocity.y = 0
+        if ( collision ) :
+            self.velocity.y = 0
+            self.isJumping = False
 
     def Attack(self):
         print("left click")
@@ -146,13 +163,14 @@ class Mob( Entity ):
                     sprite: SpritesRef = None,
                     spriteSheet: SpriteSheetsRef = None,
                     color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
+                    isVisible: bool = True,
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 3, 3 )
                     
                     isOnLoop: bool = False,
                     pathPositions: LinkedList = None
                 ):
-        super().__init__( position, rotation, scale, spriteDimensions, sprite, spriteSheet, color, velocity )
+        super().__init__( position, rotation, scale, spriteDimensions, sprite, spriteSheet, color, isVisible, velocity )
         self.isOnLoop: bool = isOnLoop
         if ( self.isOnLoop ): self.pathDestination: LinkedList = pathPositions.first
         
