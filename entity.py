@@ -94,7 +94,6 @@ class Player( Entity ):
         self.timer_between_attack.update(dt)
         
 
-        self.velocity.y = 0
         self.transform.position += self.velocity
         
         if self.velocity.x < 0: 
