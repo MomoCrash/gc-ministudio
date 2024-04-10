@@ -67,14 +67,31 @@ class Player( Entity ):
         self.health = 10
         self.isHit = False
         self.shield = False
+        self.CanAttack = True
+        self.AttackRange = 70
+        self.isAttacking = False
+        self.timer_between_attack = Timer(1, self.enableMeleeAttack)
 
     def FinishAnim(self):
         self.isHit = False
+        self.isAttacking = False
+
+    def enableMeleeAttack(self):
+        self.CanAttack = True
+
+    def MeleeAttack(self):
+        if self.CanAttack == False:
+            return
+        else:
+            self.isAttacking = True
+            self.CanAttack = False
+            self.timer_between_attack.start()
     
-    def update( self, surface: pygame.Surface, camera: Vector2, mapElements: list[ GameObject ] ) -> None:
+    def update( self, surface: pygame.Surface, camera: Vector2, mapElements: list[ GameObject ],dt ) -> None:
         pressedKey = pygame.key.get_pressed()
         self.playerMovement( pressedKey, mapElements )
         self.playerJump( pressedKey, mapElements )
+        self.timer_between_attack.update(dt)
         
 
         self.velocity.y = 0
@@ -85,13 +102,17 @@ class Player( Entity ):
                   self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_GET_HIT_LEFT
             elif self.shield:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_SHIELD_LEFT
+            elif self.isAttacking:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_ATTACK_LEFT
             else:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_WALK_LEFT
         else:
             if self.isHit:
-                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_GET_HIT_RIGHT  
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_GET_HIT_RIGHT  
             elif self.shield:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_SHIELD_RIGHT
+            elif self.isAttacking:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_ATTACK_RIGHT
             else:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_WALK_RIGHT
 
@@ -121,7 +142,11 @@ class Player( Entity ):
                 mob.shield = False
                 self.enableThrow()
                 return
-
+            """
+        self.transform.anchor = (0.5,0.5)
+        mob.transform.anchor = (0.5,0.5)
+        if self.transform.position.x + (self.GetWidth() if self.velocity.x > 0 else -self.GetWidth()) == mob.transform.position.x + (mob.GetWidth() if mob.velocity.x > 0 else -mob.GetWidth()):
+            """
 
 
 
@@ -256,7 +281,6 @@ class Mob( Entity ):
         self.AttackRange = 50
         self.isAttacking = False
         self.isHit = False
-        #self.HammerImage = Assets.GetSprite(SpritesRef.TOMAHAWK).copy()
 
     def movement( self, player: Player, dt ):
         if self.transform.position.distanceTo( player.transform.position ) < self.maximum_distance:
@@ -367,8 +391,8 @@ class Mob( Entity ):
             return
 
         if self.maximum_distance < self.transform.position.distanceTo( player.transform.position ) < self.maximum_throw_distance:
-            self.hammer = GameObject(position=Vector2(self.transform.position.x,self.transform.position.y))
-            self.Vecteur_directeur = Vector2(player.transform.position.x - self.transform.position.x, player.transform.position.y - self.transform.position.y)
+            self.hammer = GameObject(position=Vector2(self.transform.position.x,self.transform.position.y), anchor=(0.5,0.5))
+            self.Vecteur_directeur = Vector2(player.transform.position.x - self.transform.position.x + player.GetWidth()//2, player.transform.position.y - self.transform.position.y + player.GetHeight()//2)
             self.Vecteur_directeur.normalizeToSelf()
             self.CanThrow = False
             self.shoot_timer.start()

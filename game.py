@@ -66,6 +66,8 @@ class Game:
                     self.player.Attack()
                 if event.button == 3:
                     self.player.Defence()
+                if event.button == 2:
+                    self.player.MeleeAttack()
             if event.type == pygame.MOUSEBUTTONUP:
                 self.player.DesactivateDefence()
 
@@ -81,7 +83,7 @@ class Game:
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
 
         self.mob.DamagePlayer(self.player)
-        self.player.update( self.surface, self.camera, self.map.colliders )
+        self.player.update( self.surface, self.camera, self.map.colliders, self.dt )
 
 
         self.map.draw(self.screen, self.camera)
@@ -110,7 +112,7 @@ class Game:
         self.text.draw_text("fps :" + str(self.clock.get_fps()), (255, 255, 255), 100, 100, 10, 10)
 
 
-        self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
+        #self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
 
         pygame.display.flip()
 
