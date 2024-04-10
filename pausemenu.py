@@ -38,18 +38,18 @@ class Menu:
         self.continue_button = pygame.image.load('continuer.png').convert_alpha()
         self.options_button = pygame.image.load('option.png').convert_alpha()
         self.quit_button = pygame.image.load('quitter.png').convert_alpha()
-        self.book_x = (800 - self.book_background.get_width()) // 2
-        self.book_y = (600 - self.book_background.get_height()) // 2
+        self.book_x = (1920 - self.book_background.get_width()) // 2
+        self.book_y = (1080 - self.book_background.get_height()) // 2
 
       
         self.menu_button_rect = self.screen.blit(self.menu_button, (10, 10))
-        self.continue_button_rect = Button(screen, self.continue_button, (200, 150))
-        self.options_button_rect = Button(screen, self.options_button, (200, 250))
-        self.quit_button_rect = Button(screen, self.quit_button, (200, 350))
+        self.continue_button_rect = Button(screen, self.continue_button, (200, 200))
+        self.options_button_rect = Button(screen, self.options_button, (200, 300))
+        self.quit_button_rect = Button(screen, self.quit_button, (200, 400))
 
        
-        max_button_width = 400
-        max_button_height = 100
+        max_button_width = 1000
+        max_button_height = 250
         self.continue_button_rect.resize(max_button_width, max_button_height)
         self.options_button_rect.resize(max_button_width, max_button_height)
         self.quit_button_rect.resize(max_button_width, max_button_height)
@@ -78,37 +78,4 @@ class Menu:
         return None
 
 
-pygame.init()
-screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Menu et Mini-Jeu")
 
-
-menu = Menu(screen)
-
-clock = pygame.time.Clock()  
-
-running = True
-paused = False  
-while running:
-    dt = clock.tick(60) / 1000.0  
-
-   
-    action = menu.handle_input()
-    if action == "CONTINUE":
-        paused = False  
-    elif action == "QUIT":
-        running = False
-
-    screen.fill((255, 255, 255))
-
-    if menu.menu_active:
-        paused = True  
-        screen.blit(menu.book_background, (menu.book_x, menu.book_y))
-        menu_button_rect = screen.blit(menu.menu_button, (10, 10))
-        menu.continue_button_rect.draw()
-        menu.options_button_rect.draw()
-        menu.quit_button_rect.draw()
-
-    pygame.display.flip()
-
-pygame.quit()
