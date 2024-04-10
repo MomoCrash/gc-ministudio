@@ -14,7 +14,7 @@ class StartMenu():
         self.font = pygame.font.Font(None, 40)
         self.chapters = ["CHAPITRE 1", "CHAPITRE 2", "CHAPITRE 3", "CHAPITRE 4", "CHAPITRE 5", ]
         self.current_menu_item = None
-        self.backgroundRef = SpritesRef.BACKGROUND_0
+        self.backgroundRef = SpritesRef.BG_LEVEL_1_1
         self.start = GameObject(Vector2(0,0), Vector2(0,0), Vector2(1,1), spriteDimensions=Vector2(1920,1080), spriteRef=SpritesRef.START)
         self.textRenderer = Text(self.screen, settings.GAME_FONT, 20)
 

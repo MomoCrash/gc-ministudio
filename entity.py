@@ -207,8 +207,8 @@ class Player( Entity ):
         collision: bool = False
         self.transform.position.y += self.velocity.y
         for mapObject in solidElements: collision = collision or self.getCollision( mapObject )
+        self.transform.position.y -= self.velocity.y
         if ( collision ) :
-            self.transform.position.y -= self.velocity.y
             self.velocity.y = 0
             self.isJumping = False
 
@@ -235,9 +235,6 @@ class Player( Entity ):
     def DesactivateDefence(self):
         self.shield = False
        
-
-
-
 
 class Mob( Entity ):
     
@@ -274,7 +271,7 @@ class Mob( Entity ):
         self.disable_shield_timer = Timer(1, self.disableShield )
         self.timer_between_attack = Timer(2,self.enableAttack )
         self.isFacingRight = False
-        self.WalkSpeed = 60
+        self.WalkSpeed = 100
         
         self.CanDefend = True
         self.shield = False
@@ -283,16 +280,32 @@ class Mob( Entity ):
         self.isAttacking = False
         self.isHit = False
 
-    def movement( self, player: Player, dt ):
+    def movement( self, player: Player, solidElements: list[GameObject], dt ):
+
         if self.transform.position.distanceTo( player.transform.position ) < self.maximum_distance:
             if player.transform.position.x > self.transform.position.x:
                 self.velocity.x = +1
-                self.transform.position.x += self.WalkSpeed * dt * self.velocity.x
                 self.isFacingRight = True
             if player.transform.position.x < self.transform.position.x:
                 self.velocity.x = -1
-                self.transform.position.x += self.WalkSpeed * dt * self.velocity.x
                 self.isFacingRight = False
+
+        collision: bool = False
+        self.transform.position.x += self.WalkSpeed * dt * self.velocity.x
+        for mapObject in solidElements: collision = collision or self.getCollision(mapObject)
+        if (collision):
+            self.transform.position.x -= self.WalkSpeed * dt * self.velocity.x
+            self.velocity.x = 0
+
+        self.velocity.y = 300
+
+        collision: bool = False
+        self.transform.position.y += self.velocity.y * dt
+        print(self.velocity.y)
+        for mapObject in solidElements: collision = collision or self.getCollision(mapObject)
+        if (collision):
+            self.transform.position.y -= self.velocity.y * dt
+            self.velocity.y = 0
 
     def DamagePlayer(self, player: Player):
         if self.hammer != None:
