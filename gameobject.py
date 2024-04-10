@@ -12,13 +12,20 @@ class Transform:
                     self,
                     position: Vector2 = Vector2( 0, 0 ),
                     rotation: Vector2 = Vector2( 0, 0 ),
-                    scale: Vector2 = Vector2( 1, 1 )
+                    scale: Vector2 = Vector2( 1, 1 ),
+                    anchor: Vector2 = Vector2( 0, 0 ),
                 ):
         self.position: Vector2 = position
         self.rotation: Vector2 = rotation
         self.scale: Vector2 = scale
+        self.anchor: Vector2 = anchor
 
+    def getPosition(self, width, height):
+        out: Vector2 = Vector2(0,0)
+        out.x = self.position.x - width * self.anchor.x
+        out.y =self.position.y - height * self.anchor.y 
 
+        return out
 
 class SpriteRenderer:
     """Unity-like SpriteRenderer (2D) class that stores a sprite or sprite sheet and it's dimensions as well as it's color"""
@@ -42,7 +49,7 @@ class SpriteRenderer:
         if ( self.spriteRef == None and self.spriteSheetRef == None ):
             self.rect: pygame.Rect = pygame.Rect( transform.position.x, transform.position.y, transform.scale.x * self.dimensions.x, transform.scale.y * self.dimensions.y )
     
-    def draw( self, surface: pygame.Surface, camera: Vector2, transform: Transform ) -> None:
+    def draw( self, surface: pygame.Surface, camera: Vector2, transform: Transform, callback = lambda: 0 ) -> None:
         """Draws the sprite / sprite sheet / rectangle into the given surface (except if alpha color is 0)"""
         if ( not self.isVisible ): return
         if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position - camera, self.dimensions * transform.scale )
@@ -52,6 +59,16 @@ class SpriteRenderer:
                                                  transform.scale.x * self.dimensions.x,
                                                  transform.scale.y * self.dimensions.y)
             pygame.draw.rect( surface, self.color, self.rect )
+
+    def getWidth(self):
+        if ( self.spriteSheetRef != None ): return Assets.GetSpriteSheet( self.spriteSheetRef ).textures[0].size[0]
+        elif ( self.spriteRef != None ): return Assets.GetSprite( self.spriteRef ).size[0]
+        else: return self.rect.right - self.rect.left 
+
+    def getHeight(self):
+        if ( self.spriteSheetRef != None ): return Assets.GetSpriteSheet( self.spriteSheetRef ).textures[1].size[1]
+        elif ( self.spriteRef != None ): return Assets.GetSprite( self.spriteRef ).size[1]
+        else: return self.rect.bottom - self.rect.top 
 
 
 
@@ -63,7 +80,7 @@ class GameObject:
                     position: Vector2 = Vector2( 0, 0 ),
                     rotation: Vector2 = Vector2( 0, 0 ),
                     scale: Vector2 = Vector2( 1, 1 ),
-                    
+
                     spriteDimensions: Vector2 = Vector2( 1, 1 ),
                     spriteRef: SpritesRef = None,
                     spriteSheetRef: SpriteSheetsRef = None,
@@ -94,3 +111,16 @@ class GameObject:
         self.transform.position.x - spriteDimensionsScaled.x <= screenPosition.x + screenSize.x and \
         self.transform.position.y + spriteDimensionsScaled.y >= screenPosition.y and \
         self.transform.position.y - spriteDimensionsScaled.y <= screenPosition.y + screenSize.y
+    
+    def Move(self, direction, anchor_point = None):
+        "fixer le point d'ancrage depuis lequel on veut faire bouger les points de notre GO"
+        pass
+    
+    def GetWidth(self):
+        return self.transform.scale.x * self.spriteRenderer.getWidth()
+    
+    def GetHeight(self):
+        return self.transform.scale.y * self.spriteRenderer.getHeight()
+    
+    def Draw(self, window, camera):
+        self.spriteRenderer.draw(window, camera, self.transform)

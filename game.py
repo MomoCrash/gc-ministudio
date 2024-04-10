@@ -31,14 +31,10 @@ class Game:
 
         self.player = Player(
                                 position = Vector2( 1000, 500 ),
-                                walkingLeftSpriteSheetRef = SpriteSheetsRef.PLAYER_WALK_LEFT,
-                                walkingRightSpriteSheetRef = SpriteSheetsRef.PLAYER_WALK_RIGHT,
                                 spriteDimensions = Vector2( 40, 80 )
                             )
         self.mob = Mob( 
             position=Vector2( 500, 500 ),
-            walkingLeftSpriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_LEFT,
-            walkingRightSpriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_RIGHT,
             spriteDimensions = Vector2( 40, 80 )
             )
         self.camera = Vector2( 0, 0 )
@@ -56,6 +52,13 @@ class Game:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: 
                     self.player.Attack()
+                if event.button == 3:
+                    self.player.Defence()
+                if event.button == 2:
+                    self.player.MeleeAttack()
+            if event.type == pygame.MOUSEBUTTONUP:
+                self.player.DesactivateDefence()
+
         return True
     
     
@@ -70,9 +73,12 @@ class Game:
         self.camera.y = max(0, min(self.camera.y, self.height))
 
     def update_graphics(self):
+        for i, segment in enumerate(self.background_sprites):
+            self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
 
-        for i, segment in enumerate(self.map.background_sprites):
-            self.surface.blit(segment.texture, (i * self.map.background_width - self.camera.x, self.height - self.camera.y))
+        self.mob.DamagePlayer(self.player)
+        self.player.update( self.surface, self.camera, self.map.colliders, self.dt )
+
 
         self.map.draw(self.screen, self.camera)
         
@@ -85,16 +91,22 @@ class Game:
 
 
         self.mob.tryThrow(self.player)
+        self.mob.tryAttack(self.player)
+        self.mob.tryDefence(self.player)
+        self.player.DamageEnnemy(self.mob)
         self.mob.update(self.dt, self.surface, self.camera, self.map.colliders)
         self.mob.draw(self.surface, self.player)
 
-        self.player.DrawArrow(self.surface)
+        self.player.DrawArrow(self.surface, self.camera)
 
         
 
         self.player.UpdateArrow(self.dt)
 
-        self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
+        self.text.draw_text("fps :" + str(self.clock.get_fps()), (255, 255, 255), 100, 100, 10, 10)
+
+
+        #self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
 
         pygame.display.flip()
 
@@ -126,7 +138,6 @@ class Game:
             self.update_graphics()
 
             self.clock.tick(60)
-            
             dt_end = pygame.time.get_ticks()
             self.dt =self.clock.get_time() / 1000
             self.current_dt += self.dt
