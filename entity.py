@@ -133,22 +133,19 @@ class Player( Entity ):
     def DamageEnnemy(self, mob: Mob):
         if self.arrow != None:
             if self.arrow.getCollision(mob) and mob.shield == False:
-                print("b")
                 mob.isHit = True
                 self.arrow = None
                 self.enableThrow()
                 return
             if self.arrow.getCollision(mob) and mob.shield:
-                print("c")
                 self.arrow = None
                 mob.shield = False
                 self.enableThrow()
                 return
-            """
-        self.transform.anchor = (0.5,0.5)
-        mob.transform.anchor = (0.5,0.5)
-        if self.transform.position.x + (self.GetWidth() if self.velocity.x > 0 else -self.GetWidth()) == mob.transform.position.x + (mob.GetWidth() if mob.velocity.x > 0 else -mob.GetWidth()):
-            """
+
+            #if self.velocity.x > 0 and 
+            #print("ennemi touché cac")
+    
 
     def playerMovement(self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[GameObject]) -> None:
         leftPressed: bool = pressedKey[pygame.K_q]
@@ -218,7 +215,7 @@ class Player( Entity ):
     def Attack(self, camera: Vector2):
         if self.CanShoot:
             self.MousePos = pygame.mouse.get_pos()
-            self.arrow = GameObject(position=Vector2(self.transform.position.x, self.transform.position.y), spriteRef=SpritesRef.TOMAHAWK)#, anchor=Vector2(0.5, 0.5))
+            self.arrow = GameObject(position=Vector2(self.transform.position.x, self.transform.position.y), spriteRef=SpritesRef.TOMAHAWK)
             self.Vecteur_directeur = Vector2(self.MousePos[0] - self.transform.position.x + camera.x, self.MousePos[1] - self.transform.position.y + camera.y)
             self.Vecteur_directeur.normalizeToSelf()
             self.CanShoot = False
@@ -303,7 +300,6 @@ class Mob( Entity ):
 
         collision: bool = False
         self.transform.position.y += self.velocity.y * dt
-        print(self.velocity.y)
         for mapObject in solidElements: collision = collision or self.getCollision(mapObject)
         if (collision):
             self.transform.position.y -= self.velocity.y * dt
@@ -333,6 +329,7 @@ class Mob( Entity ):
 
         self.transform.position += self.velocity
         if self.hammer != None:
+            print(self.hammer.transform.position)
             self.hammer.transform.position.x += self.Vecteur_directeur.x * self.ThrowSpeed * dt
             self.hammer.transform.position.y += self.Vecteur_directeur.y * self.ThrowSpeed * dt
         
@@ -409,7 +406,7 @@ class Mob( Entity ):
             return
 
         if self.maximum_distance < self.transform.position.distanceTo( player.transform.position ) < self.maximum_throw_distance:
-            self.hammer = GameObject(position=Vector2(self.transform.position.x   ,self.transform.position.y  ))#, anchor=(0.5,0.5))
+            self.hammer = GameObject(position=Vector2(self.transform.position.x   ,self.transform.position.y  ))
             self.Vecteur_directeur = Vector2(player.transform.position.x - self.transform.position.x, player.transform.position.y - self.transform.position.y )
             self.Vecteur_directeur.normalizeToSelf()
             self.CanThrow = False
@@ -421,7 +418,7 @@ class Mob( Entity ):
     def draw(self, window: pygame.Surface, player: Player, camera: Vector2):
         #pygame.draw.line(window, (255,255,255), (self.rect_transform.x + self.width // 2 ,self.rect_transform.y + self.height // 2), (self.Vecteur_directeur.x * self.maximum_throw_distance + player.rect_transform.width // 2  , self.Vecteur_directeur.y * self.maximum_throw_distance  + player.rect_transform.height // 2), 1)
         if self.hammer != None:
-            Assets.GetSprite(SpritesRef.TOMAHAWK).draw(window,self.hammer.transform.position ,self.hammer.transform.scale)
+            self.hammer.Draw(window,camera)
         
 
         

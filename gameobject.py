@@ -13,19 +13,21 @@ class Transform:
                     position: Vector2 = Vector2( 0, 0 ),
                     rotation: Vector2 = Vector2( 0, 0 ),
                     scale: Vector2 = Vector2( 1, 1 ),
-                    anchor: Vector2 = Vector2( 0, 0 ),
+                    #anchor: Vector2 = Vector2( 0, 0 ),
                 ):
         self.position: Vector2 = position
         self.rotation: Vector2 = rotation
         self.scale: Vector2 = scale
-        self.anchor: Vector2 = anchor
+        #self.anchor: Vector2 = anchor
 
+    """
     def getPosition(self, width, height):
         out: Vector2 = Vector2(0,0)
         out.x = self.position.x - width * self.anchor.x
         out.y =self.position.y - height * self.anchor.y 
 
         return out
+    """
 
 class SpriteRenderer:
     """Unity-like SpriteRenderer (2D) class that stores a sprite or sprite sheet and it's dimensions as well as it's color"""
@@ -111,10 +113,6 @@ class GameObject:
         self.transform.position.x - spriteDimensionsScaled.x <= screenPosition.x + screenSize.x and \
         self.transform.position.y + spriteDimensionsScaled.y >= screenPosition.y and \
         self.transform.position.y - spriteDimensionsScaled.y <= screenPosition.y + screenSize.y
-    
-    def Move(self, direction, anchor_point = None):
-        "fixer le point d'ancrage depuis lequel on veut faire bouger les points de notre GO"
-        pass
     
     def GetWidth(self):
         return self.transform.scale.x * self.spriteRenderer.getWidth()
