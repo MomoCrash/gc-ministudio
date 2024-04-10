@@ -1,14 +1,17 @@
 import pygame
+
+import settings
 from linkedlist import LinkedList
 from vector import Vector2
 from map import Map
 from text import Text
 from entity import Entity, Player, Mob
 from texture import SpritesRef, SpriteSheetsRef, Sprite, SpriteSheet, Assets
+from Music import Songs
 
 
 class Game:
-    def __init__(self, win_width, win_height, win_name, fps=60):
+    def __init__(self, screen, game_chapter, win_width, win_height, win_name, fps=60):
         self.width = win_width
         self.height = win_height
         self.window_name = win_name
@@ -18,12 +21,11 @@ class Game:
         self.elementsOnScreen: LinkedList = LinkedList()
         self.elementsOffScreen: LinkedList = LinkedList()
 
-        self.map = Map( "map1.json", win_width, win_height )
+        self.map = Map( "map" + str(game_chapter) + ".json", win_width, win_height )
         self.map.load_map()
         
         pygame.init()
-        
-        self.screen = pygame.display.set_mode((win_width, win_height))
+        self.screen = screen
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
 
@@ -37,25 +39,11 @@ class Game:
             )
         self.camera = Vector2( 0, 0 )
 
-        self.text = Text(self.screen, "Arial")
-        
-        self.background_sprites = [Assets.GetSprite(SpritesRef.BACKGROUND_0),Assets.GetSprite(SpritesRef.BACKGROUND_0)]
+        self.text = Text(self.screen, settings.GAME_FONT, 21)
 
         self.loop()
 
     def inputs(self) -> bool:
-
-        self.camera.x = self.player.transform.position.x - self.width // 4
-        self.camera.y = self.player.transform.position.y - self.height // 4
-
-        self.camera.x = max(0, min(self.camera.x, self.width))
-        self.camera.y = max(0, min(self.camera.y, self.height))
-
-        for mapObject in self.map.decors:
-            mapObject.transform.position.x = mapObject.initial_position.x - self.camera.x
-
-        for mapObject in self.map.colliders:
-            mapObject.transform.position.x = mapObject.initial_position.x - self.camera.x
 
         for event in pygame.event.get():
 
@@ -77,8 +65,14 @@ class Game:
     def update(self):
         pass
 
-    def update_graphics(self):
+    def update_camera(self):
+        self.camera.x = self.player.transform.position.x - self.width // 4
+        self.camera.y = self.player.transform.position.y - self.height // 4
 
+        self.camera.x = max(0, min(self.camera.x, self.width))
+        self.camera.y = max(0, min(self.camera.y, self.height))
+
+    def update_graphics(self):
         for i, segment in enumerate(self.background_sprites):
             self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
 
@@ -87,10 +81,10 @@ class Game:
 
 
         self.map.draw(self.screen, self.camera)
+        
+        self.player.update( self.surface, self.camera, self.map.colliders )
 
-        #REMOVE LATER
-        for collider in self.map.colliders:
-            collider.draw(self.screen, self.camera, (0, 255, 0))
+        self.update_camera()
 
         # Develop in progress
         self.mob.movement(self.player, self.dt)

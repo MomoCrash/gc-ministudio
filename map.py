@@ -21,7 +21,7 @@ class SerializableMapObject( GameObject ):
                     
                     interactable: bool = False
                 ):
-        super().__init__( position, rotation, scale, spriteDimensions, spriteRef, None, color )
+        super().__init__( position, rotation, scale, spriteDimensions, spriteRef=spriteRef, color=color )
         self.interatable = interactable
 
 
@@ -35,8 +35,13 @@ class SerializableMapObject( GameObject ):
         
         position = Vector2(json["x"], json["y"])
         dimensions = Vector2( json["w"], json["h"])
-        spriteRef = SpritesRef(json["ref"])
-        interactable = json["interatable"]
+        ref = json["ref"]
+        if ref is not None:
+            spriteRef = SpritesRef(ref)
+        else:
+            spriteRef = ref
+
+        interactable = json["interactable"]
         
         return SerializableMapObject(position, spriteDimensions=dimensions, spriteRef=spriteRef, interactable=interactable)
 
@@ -65,14 +70,15 @@ class Map:
 
     def create_decoration(self, x, y, sprite_ref: SpritesRef):
         size = Assets.GetSprite(sprite_ref).size
+        # print(sprite_ref)
         self.decors.append( SerializableMapObject( position=Vector2( x, y ), spriteDimensions=Vector2(size[0], size[1]), spriteRef=sprite_ref))
 
     def save_map(self):
         with open("Assets/Editor/" + self.map_file, "w") as file:
             json_map = {}
-            json_map["background"] = [str(self.background_refs[0])]
+            json_map["backgrounds"] = [str(self.background_refs[0])]
             for i in range(1, len(self.background_refs)):
-                json_map["background"].append(str(self.background_refs[i]))
+                json_map["backgrounds"].append(str(self.background_refs[i]))
             if len(self.colliders):
                 json_map["colliders"] = [self.colliders[0].serialize()]
                 for i in range(1, len(self.colliders)):
@@ -95,11 +101,14 @@ class Map:
                 self.append_backgrounds(1)
                 return
 
-            for backgroundRef in jsonObjects["background"]:
+            # print(jsonObjects)
+
+            for backgroundRef in jsonObjects["backgrounds"]:
                 self.append_backgrounds(int(backgroundRef))
 
             try:
                 for gameObject in jsonObjects["gameobjects"]:
+                    # print(gameObject)
                     self.decors.append( SerializableMapObject.deserialize(gameObject) )
             except KeyError:
                 print("No game object for map " + self.map_file)
@@ -110,6 +119,10 @@ class Map:
             except KeyError:
                 print("No colliders for map " + self.map_file)
         
-    def draw( self, surface: pygame.Surface, camera: Vector2 ):
+    def draw( self, surface: pygame.Surface, camera: Vector2, editor: bool = False ):
         for mapObject in self.decors:
+            # print(mapObject.spriteRenderer.spriteSheetRef)
             mapObject.update( surface, camera )
+        if editor:
+            for collider in self.colliders:
+                collider.update( surface, camera )

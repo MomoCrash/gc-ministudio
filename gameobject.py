@@ -37,26 +37,28 @@ class SpriteRenderer:
                     dimensions: Vector2 = Vector2( 1, 1 ),
                     spriteRef: SpritesRef = None,
                     spriteSheetRef: SpriteSheetsRef = None,
-                    color: pygame.Color = pygame.Color( 255, 255, 255, 255 )
+                    color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
+                    isVisible: bool = True
                 ):
         self.dimensions: Vector2 = dimensions
         self.spriteRef: SpritesRef = spriteRef
         self.spriteSheetRef: SpriteSheetsRef = spriteSheetRef
         self.color: pygame.Color = color
+        self.isVisible = isVisible
         
         if ( self.spriteRef == None and self.spriteSheetRef == None ):
             self.rect: pygame.Rect = pygame.Rect( transform.position.x, transform.position.y, transform.scale.x * self.dimensions.x, transform.scale.y * self.dimensions.y )
     
     def draw( self, surface: pygame.Surface, camera: Vector2, transform: Transform, callback = lambda: 0 ) -> None:
         """Draws the sprite / sprite sheet / rectangle into the given surface (except if alpha color is 0)"""
-        if self.color == None:
-            self.color =pygame.Color(0,0,0,255)
-        if self.color.a == 0: return
-        if ( self.spriteSheetRef != None ): 
-            Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.getPosition(self.getWidth(), self.getHeight()), self.dimensions.multiplyToNew( transform.scale ), callback )
-        elif ( self.spriteRef != None ): 
-            Assets.GetSprite( self.spriteRef ).draw( surface, transform.getPosition(self.getWidth(), self.getHeight()), self.dimensions.multiplyToNew( transform.scale ) )
-        else: pygame.draw.rect( surface, self.color, self.rect )
+        if ( not self.isVisible ): return
+        if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position - camera, self.dimensions * transform.scale )
+        elif ( self.spriteRef != None ): Assets.GetSprite( self.spriteRef ).draw( surface, transform.position - camera, self.dimensions * transform.scale )
+        else:
+            self.rect: pygame.Rect = pygame.Rect(transform.position.x - camera.x, transform.position.y - camera.y,
+                                                 transform.scale.x * self.dimensions.x,
+                                                 transform.scale.y * self.dimensions.y)
+            pygame.draw.rect( surface, self.color, self.rect )
 
     def getWidth(self):
         if ( self.spriteSheetRef != None ): return Assets.GetSpriteSheet( self.spriteSheetRef ).textures[0].size[0]
@@ -83,23 +85,23 @@ class GameObject:
                     spriteRef: SpritesRef = None,
                     spriteSheetRef: SpriteSheetsRef = None,
                     color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
-                    anchor: Vector2 = Vector2( 0, 0 ),
+                    isVisible: bool = True
                 ):
-        
-        self.transform: Transform = Transform( position, rotation, scale, anchor )
-        self.spriteRenderer: SpriteRenderer = SpriteRenderer( self.transform, spriteDimensions, spriteRef, spriteSheetRef, color )
-
+        self.transform: Transform = Transform( position, rotation, scale )
+        # print(spriteSheetRef)
+        self.spriteRenderer: SpriteRenderer = SpriteRenderer( self.transform, spriteDimensions, spriteRef, spriteSheetRef, color, isVisible )
     
     def update( self, surface: pygame.Surface, camera: Vector2 ) -> None:
         self.spriteRenderer.draw( surface, camera, self.transform )
           
-    def getCollision( self, other: GameObject ) -> bool:
+    def getCollision( self, other: GameObject | Vector2 ) -> bool:
         """Returns true if there is a collision between this GameObject and the one specified"""
-        return \
-        other.transform.position.x < self.transform.position.x + ( self.transform.scale.x * self.spriteRenderer.dimensions.x ) and \
-        other.transform.position.y < self.transform.position.y + ( self.transform.scale.y  * self.spriteRenderer.dimensions.y ) and \
-        other.transform.position.x + ( other.transform.scale.x * other.spriteRenderer.dimensions.x ) > self.transform.position.x and \
-        other.transform.position.y + ( other.transform.scale.y * other.spriteRenderer.dimensions.y ) > self.transform.position.y
+        if ( isinstance( other, GameObject ) ):
+            return \
+            other.transform.position <= self.transform.position + ( self.spriteRenderer.dimensions * self.transform.scale ) and \
+            other.transform.position + ( other.spriteRenderer.dimensions * other.transform.scale ) >= self.transform.position
+        else:
+            return self.transform.position <= other <= self.transform.position + ( self.spriteRenderer.dimensions * self.transform.scale )
     
     def isOnScreen( self, screenPosition: Vector2, screenSize: Vector2 ) -> bool:
         """Returns true if this GameObject is on the screen"""

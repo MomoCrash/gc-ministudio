@@ -48,8 +48,8 @@ class Player( Entity ):
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 4, 4 )
                     maxSpeed: float = 4,
-                    jumpHeight: float = 1,
-                    gravity: float = 5
+                    jumpHeight: float = 50,
+                    gravity: float = 10
                 ):
         super().__init__( position, rotation, scale, spriteDimensions, None, spritesheet_ref, velocity )
         self.maxSpeed: float = maxSpeed
@@ -185,32 +185,38 @@ class Player( Entity ):
             
         collision: bool = False
         self.transform.position.x += self.velocity.x
-        for mapObject in mapElements: collision = collision or self.getCollision( mapObject )
+        for mapObject in solidElements: collision = collision or self.getCollision( mapObject )
         self.transform.position.x -= self.velocity.x
         if ( collision ) : self.velocity.x = 0
     
-    def playerJump( self, pressedKey: pygame.key.ScancodeWrapper, mapElements: list[ GameObject ] ):
+    def playerJump( self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[ GameObject ] ):
         spacePressed = pressedKey[ pygame.K_SPACE ]
-        
-        self.velocity.y = ( spacePressed * self.jumpHeight ) + self.gravity
         
         if ( spacePressed and not self.isJumping ):
             self.isJumping = True
+            self.velocity.y = -self.jumpHeight
         
         if ( self.isJumping ):
-            if ( self.jumpCount >= 0 ):
-                self.velocity.y -= ( self.jumpCount * abs( self.jumpCount ) ) * 0.1
-                self.jumpCount -= 1
+            if ( self.velocity.y < -5 ):
+                self.velocity.y *= 0.8
             else:
-                # This will execute if our jump is finished
-                self.jumpCount = 20
-                self.isJumping = False
+                if ( self.velocity.y < 0 ):
+                    self.velocity.y = 1
+                if ( self.velocity.y < self.gravity ):
+                    self.velocity.y *= 1.5
+        
+        else:
+            self.velocity.y = self.gravity
+        
+        print
         
         collision: bool = False
         self.transform.position.y += self.velocity.y
-        for mapObject in mapElements: collision = collision or self.getCollision( mapObject )
+        for mapObject in solidElements: collision = collision or self.getCollision( mapObject )
         self.transform.position.y -= self.velocity.y
-        if ( collision ) : self.velocity.y = 0
+        if ( collision ) :
+            self.velocity.y = 0
+            self.isJumping = False
 
     def Attack(self):
         if self.CanShoot:
@@ -252,6 +258,7 @@ class Mob( Entity ):
                     spritesheet_ref: SpriteSheetsRef = None,
 
                     color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
+                    isVisible: bool = True,
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 3, 3 )
                     
