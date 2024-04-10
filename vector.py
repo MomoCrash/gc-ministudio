@@ -20,7 +20,9 @@ class Vector2:
         return self.scalarProduct( self )**0.5
     
     def normalizeToSelf( self ) -> None:
-        self /= self.norm()
+        n = self.norm()
+        self.x /= n
+        self.y /= n
     
     def normalizeToNew( self ) -> Vector2:
         return self / self.norm()

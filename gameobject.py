@@ -52,7 +52,7 @@ class SpriteRenderer:
     def draw( self, surface: pygame.Surface, camera: Vector2, transform: Transform, callback = lambda: 0 ) -> None:
         """Draws the sprite / sprite sheet / rectangle into the given surface (except if alpha color is 0)"""
         if ( not self.isVisible ): return
-        if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position - camera, self.dimensions * transform.scale )
+        if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position - camera, self.dimensions * transform.scale, callback )
         elif ( self.spriteRef != None ): Assets.GetSprite( self.spriteRef ).draw( surface, transform.position - camera, self.dimensions * transform.scale )
         else:
             self.rect: pygame.Rect = pygame.Rect(transform.position.x - camera.x, transform.position.y - camera.y,

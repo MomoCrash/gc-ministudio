@@ -30,11 +30,11 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.player = Player(
-                                position = Vector2( 1000, 500 ),
+                                position = Vector2( 100, 0 ),
                                 spriteDimensions = Vector2( 40, 80 )
                             )
         self.mob = Mob( 
-            position=Vector2( 500, 500 ),
+            position=Vector2( 550, 0 ),
             spriteDimensions = Vector2( 40, 80 )
             )
         self.camera = Vector2( 0, 0 )
@@ -51,7 +51,7 @@ class Game:
                 return False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: 
-                    self.player.Attack()
+                    self.player.Attack(self.camera)
                 if event.button == 3:
                     self.player.Defence()
                 if event.button == 2:
@@ -65,17 +65,18 @@ class Game:
     def update(self):
         pass
 
+        
     def update_camera(self):
         self.camera.x = self.player.transform.position.x - self.width // 4
         self.camera.y = self.player.transform.position.y - self.height // 4
 
         self.camera.x = max(0, min(self.camera.x, self.width))
         self.camera.y = max(0, min(self.camera.y, self.height))
+        
 
     def update_graphics(self):
         for i, segment in enumerate(self.map.background_sprites):
-            self.surface.blit(segment.texture,
-                              (i * self.map.background_width - self.camera.x, self.height - self.camera.y))
+            self.surface.blit(segment.texture, (i * self.map.background_width - self.camera.x, self.height - self.camera.y))
 
         self.map.draw(self.screen, self.camera)
 
@@ -85,15 +86,15 @@ class Game:
         self.update_camera()
 
         # Develop in progress
-        self.mob.movement(self.player, self.dt)
+        self.mob.movement(self.player, self.dt, self.map.colliders)
 
 
-        self.mob.tryThrow(self.player)
+        self.mob.tryThrow(self.player, self.camera)
         self.mob.tryAttack(self.player)
         self.mob.tryDefence(self.player)
         self.player.DamageEnnemy(self.mob)
         self.mob.update(self.dt, self.surface, self.camera, self.map.colliders)
-        self.mob.draw(self.surface, self.player)
+        self.mob.draw(self.surface, self.player, self.camera)
 
         self.player.DrawArrow(self.surface, self.camera)
 
