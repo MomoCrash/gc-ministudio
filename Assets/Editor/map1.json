@@ -1,32 +1,117 @@
 {
-  "background": [
+  "backgrounds": [
+    "1",
+    "1",
     "1"
+  ],
+  "colliders": [
+    {
+      "x": 775.0942239999999,
+      "y": 1679,
+      "w": 124.0,
+      "h": 31,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 4,
+      "y": 1852,
+      "w": 1921.2216328412158,
+      "h": 68,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1051.002096000001,
+      "y": 1573,
+      "w": 107.0,
+      "h": 20,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1336.8744880000008,
+      "y": 1673,
+      "w": 97.0,
+      "h": 19,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1925.718488000001,
+      "y": 1851,
+      "w": 1081.0,
+      "h": 68,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 2524,
+      "y": 1840,
+      "w": 154,
+      "h": 16,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 2298,
+      "y": 1502,
+      "w": 77,
+      "h": 161,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    }
   ],
   "gameobjects": [
     {
-      "x": 1253,
-      "y": 505,
+      "x": 743.0942239999999,
+      "y": 1612,
       "w": 200,
       "h": 200,
-      "ref": 5,
+      "ref": 9,
       "interactable": false,
       "text": "Default"
     },
     {
-      "x": 1134,
-      "y": 690,
+      "x": 1273.838152000001,
+      "y": 1603,
       "w": 200,
       "h": 200,
-      "ref": 5,
+      "ref": 9,
       "interactable": false,
       "text": "Default"
     },
     {
-      "x": 925,
-      "y": 332,
+      "x": 1002.0020960000011,
+      "y": 1509,
       "w": 200,
       "h": 200,
-      "ref": 5,
+      "ref": 9,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 2497,
+      "y": 1782,
+      "w": 200,
+      "h": 200,
+      "ref": 4,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 2236,
+      "y": 1475,
+      "w": 200,
+      "h": 200,
+      "ref": 8,
       "interactable": false,
       "text": "Default"
     }
