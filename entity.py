@@ -31,7 +31,7 @@ class Entity( GameObject ):
     
     def update( self, surface: pygame.Surface, camera: Vector2, deltaTime: int ) -> None:
         self.transform.position += self.velocity * deltaTime
-        self.spriteRenderer.draw( surface, camera, self.transform )
+        self.spriteRenderer.draw( surface, camera, self.transform, dt=deltaTime )
 
 
 
@@ -115,7 +115,7 @@ class Player( Entity ):
             else:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_WALK_RIGHT
 
-        self.spriteRenderer.draw( surface, camera, self.transform, self.FinishAnim )
+        self.spriteRenderer.draw( surface, camera, self.transform, self.FinishAnim, dt=dt )
 
     
     def UpdateArrow(self, dt):
@@ -265,7 +265,7 @@ class Mob( Entity ):
         self.CanThrow = True
         self.ThrowSpeed = 200
         self.Vecteur_directeur = pygame.Vector2(0,0)
-        self.hammer = None
+        self.hammer: GameObject = None
         self.shoot_timer = Timer(3, self.enableThrow )
         self.defence_timer = Timer(5, self.enableDefence )
         self.disable_shield_timer = Timer(1, self.disableShield )
@@ -329,7 +329,6 @@ class Mob( Entity ):
 
         self.transform.position += self.velocity
         if self.hammer != None:
-            print(self.hammer.transform.position)
             self.hammer.transform.position.x += self.Vecteur_directeur.x * self.ThrowSpeed * dt
             self.hammer.transform.position.y += self.Vecteur_directeur.y * self.ThrowSpeed * dt
         
@@ -355,7 +354,7 @@ class Mob( Entity ):
 
 
 
-        self.spriteRenderer.draw( surface, camera, self.transform, self.FinishAnim )
+        self.spriteRenderer.draw( surface, camera, self.transform, self.FinishAnim, dt=dt )
 
 
     def enableDefence(self):
@@ -406,7 +405,7 @@ class Mob( Entity ):
             return
 
         if self.maximum_distance < self.transform.position.distanceTo( player.transform.position ) < self.maximum_throw_distance:
-            self.hammer = GameObject(position=Vector2(self.transform.position.x   ,self.transform.position.y  ))
+            self.hammer = GameObject(position=Vector2(self.transform.position.x   ,self.transform.position.y  ), spriteRef=SpritesRef.TOMAHAWK, spriteDimensions=Vector2(10,10))#, anchor=(0.5,0.5))
             self.Vecteur_directeur = Vector2(player.transform.position.x - self.transform.position.x, player.transform.position.y - self.transform.position.y )
             self.Vecteur_directeur.normalizeToSelf()
             self.CanThrow = False
@@ -418,7 +417,7 @@ class Mob( Entity ):
     def draw(self, window: pygame.Surface, player: Player, camera: Vector2):
         #pygame.draw.line(window, (255,255,255), (self.rect_transform.x + self.width // 2 ,self.rect_transform.y + self.height // 2), (self.Vecteur_directeur.x * self.maximum_throw_distance + player.rect_transform.width // 2  , self.Vecteur_directeur.y * self.maximum_throw_distance  + player.rect_transform.height // 2), 1)
         if self.hammer != None:
-            self.hammer.Draw(window,camera)
-        
+            self.hammer.update(window, camera)
+
 
         

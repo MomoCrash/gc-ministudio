@@ -78,27 +78,31 @@ class Sprite:
 class SpriteSheet:
     def __init__(self, textures: list[Sprite]):
         self.frame_count = len(textures)
-        self.frame_per_image = settings.ANIMATION_DURATION // self.frame_count
+        self.frame_per_image = settings.ANIMATION_DURATION / self.frame_count
         self.textures = textures
         self.current_index = 0
-        self.time = pygame.time.get_ticks()
+
+        self.total_ticks = 0
+        self.next_image = 0
+
         self.callback: function = None
 
     # TODO: RANDOM FIRST FRAME / DELAY
     def draw( self, ticks, surface: pygame.Surface, position: Vector2, scale: Vector2, func = lambda: 0 ):
         self.callback = func
+        self.total_ticks += ticks
         if self.is_next_frame(ticks):
             self.current_index += 1
             if self.current_index >= self.frame_count:
                 self.callback()
                 self.current_index = 0
+            self.next_image = self.total_ticks + self.frame_per_image
 
 
         self.textures[self.current_index].draw( surface, position, scale )
     
     def is_next_frame(self, current_ticks) -> bool:
-        if current_ticks - self.time > self.frame_per_image:
-            self.time = current_ticks
+        if self.total_ticks > self.next_image:
             return True
         return False
 
