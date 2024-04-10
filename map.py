@@ -51,22 +51,32 @@ class Map:
         self.width = map_w
         self.height = map_h
 
-        self.background_refs: list[ int] = []
         self.colliders: list[ SerializableMapObject ] = []
         self.decors: list[ SerializableMapObject ] = []
         self.map_file = map_data_file
-        self.background_sprites = []
+
+        self.background_refs: list[list[int]] = [[]]
+        self.background_sprites: list[list[Sprite]] = [[]]
+
+        self.end_zone = SerializableMapObject( Vector2(0,0), Vector2(0,0), Vector2(1,1), spriteDimensions=Vector2(0,0) )
 
         self.load_map()
 
-        self.background_width = self.background_sprites[0].texture.get_width()
+        self.parralax_speed = [0.9, 0.3, 0.5, 1, 1]
 
-    def append_backgrounds(self, sprite_ref: int):
-        self.background_refs.append(sprite_ref)
-        self.background_sprites.append(Assets.GetSprite(SpritesRef(sprite_ref)))
+        self.background_width = self.background_sprites[0][0].texture.get_width()
+
+    def append_backgrounds(self, layer, sprite_ref: int):
+        if len(self.background_refs) <= layer: self.background_refs.append([])
+        if len(self.background_sprites) <= layer: self.background_sprites.append([])
+        self.background_refs[layer].append(sprite_ref)
+        self.background_sprites[layer].append(Assets.GetSprite(SpritesRef(sprite_ref)))
         
     def create_collider(self, x, y, w, h):
         self.colliders.append( SerializableMapObject( position=Vector2( x, y ), scale=Vector2( 1, 1 ), spriteDimensions=Vector2(w, h) ) )
+
+    def set_end(self, x, y, w, h):
+        self.end_zone = SerializableMapObject( position=Vector2( x, y ), scale=Vector2( 1, 1 ), spriteDimensions=Vector2(w, h) )
 
     def create_decoration(self, x, y, sprite_ref: SpritesRef):
         size = Assets.GetSprite(sprite_ref).size
@@ -76,9 +86,9 @@ class Map:
     def save_map(self):
         with open("Assets/Editor/" + self.map_file, "w") as file:
             json_map = {}
-            json_map["backgrounds"] = [str(self.background_refs[0])]
-            for i in range(1, len(self.background_refs)):
-                json_map["backgrounds"].append(str(self.background_refs[i]))
+            json_map["end_zone"] = self.end_zone.serialize()
+            json_map["backgrounds"] = self.background_refs
+
             if len(self.colliders):
                 json_map["colliders"] = [self.colliders[0].serialize()]
                 for i in range(1, len(self.colliders)):
@@ -98,13 +108,17 @@ class Map:
             try:
                 jsonObjects = json.load(file)
             except json.decoder.JSONDecodeError:
-                self.append_backgrounds(1)
+                self.append_backgrounds(0, 1)
                 return
 
             # print(jsonObjects)
+            if "end_zone" in jsonObjects:
+                self.end_zone = SerializableMapObject.deserialize(jsonObjects["end_zone"])
+                print(jsonObjects["end_zone"]["x"])
 
-            for backgroundRef in jsonObjects["backgrounds"]:
-                self.append_backgrounds(int(backgroundRef))
+            for i in range(len(jsonObjects["backgrounds"])):
+                for backgroundRef in jsonObjects["backgrounds"][i]:
+                    self.append_backgrounds(i, int(backgroundRef))
 
             try:
                 for gameObject in jsonObjects["gameobjects"]:
