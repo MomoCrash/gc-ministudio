@@ -5,6 +5,7 @@ from map import Map
 from text import Text
 from entity import Entity, Player, Mob
 from texture import SpritesRef, SpriteSheetsRef, Sprite, SpriteSheet, Assets
+from Music import Songs
 
 
 class Game:
@@ -22,7 +23,7 @@ class Game:
         self.map.load_map()
         
         pygame.init()
-        
+
         self.screen = pygame.display.set_mode((win_width, win_height))
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
