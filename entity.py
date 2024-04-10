@@ -30,7 +30,7 @@ class Entity( GameObject ):
         self.velocity: Vector2 = velocity
     
     def update( self, surface: pygame.Surface, camera: Vector2, deltaTime: int ) -> None:
-        self.transform.position.addToSelf( self.velocity.multiplyToNew( deltaTime ) )
+        self.transform.position += self.velocity * deltaTime
         self.spriteRenderer.draw( surface, camera, self.transform )
 
 
@@ -87,15 +87,15 @@ class Player( Entity ):
             self.CanAttack = False
             self.timer_between_attack.start()
     
-    def update( self, surface: pygame.Surface, camera: Vector2, mapElements: list[ GameObject ],dt ) -> None:
+    def update( self, surface: pygame.Surface, camera: Vector2, solidElements: list[ GameObject ],dt ) -> None:
         pressedKey = pygame.key.get_pressed()
-        self.playerMovement( pressedKey, mapElements )
-        self.playerJump( pressedKey, mapElements )
+        self.playerMovement( pressedKey, solidElements )
+        self.playerJump( pressedKey, solidElements )
         self.timer_between_attack.update(dt)
         
 
         self.velocity.y = 0
-        self.transform.position.addToSelf( self.velocity )
+        self.transform.position += self.velocity
         
         if self.velocity.x < 0: 
             if self.isHit:
@@ -148,80 +148,75 @@ class Player( Entity ):
         if self.transform.position.x + (self.GetWidth() if self.velocity.x > 0 else -self.GetWidth()) == mob.transform.position.x + (mob.GetWidth() if mob.velocity.x > 0 else -mob.GetWidth()):
             """
 
+    def playerMovement(self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[GameObject]) -> None:
+        leftPressed: bool = pressedKey[pygame.K_q]
+        rightPressed: bool = pressedKey[pygame.K_d]
 
+        if (leftPressed and not rightPressed):
 
-    def playerMovement( self, pressedKey: pygame.key.ScancodeWrapper, mapElements: list[ GameObject ] ) -> None:
-        leftPressed: bool = pressedKey[ pygame.K_q ]
-        rightPressed: bool = pressedKey[ pygame.K_d ]
-        
-        if ( leftPressed and not rightPressed ):
-            
-            if ( self.velocity.x == 0 ):
+            if (self.velocity.x == 0):
                 self.velocity.x = -1
-            
-            if ( self.velocity.x > 0 ):
+
+            if (self.velocity.x > 0):
                 factor: float = 0.6
             else:
                 factor: float = 1.5
 
-        elif ( rightPressed and not leftPressed ):
-            
-            if ( self.velocity.x == 0 ):
+        elif (rightPressed and not leftPressed):
+
+            if (self.velocity.x == 0):
                 self.velocity.x = 1
-            
-            if ( self.velocity.x < 0 ):
+
+            if (self.velocity.x < 0):
                 factor: float = 0.6
             else:
                 factor: float = 1.5
-        
+
         else:
             factor: float = 0.8
-        
-        if not self.shield:
-            if ( abs( self.velocity.x * factor ) <= self.maxSpeed and self.velocity.x != 0 ):
-                self.velocity.x *= factor if abs( self.velocity.x ) > 0.9 else 0
-        else:
-            self.velocity.x = 0
-            
+
+        if (abs(self.velocity.x * factor) <= self.maxSpeed and self.velocity.x != 0):
+            self.velocity.x *= factor if abs(self.velocity.x) > 0.9 else 0
+
         collision: bool = False
         self.transform.position.x += self.velocity.x
-        for mapObject in solidElements: collision = collision or self.getCollision( mapObject )
+        for mapObject in solidElements: collision = collision or self.getCollision(mapObject)
         self.transform.position.x -= self.velocity.x
-        if ( collision ) : self.velocity.x = 0
-    
-    def playerJump( self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[ GameObject ] ):
-        spacePressed = pressedKey[ pygame.K_SPACE ]
-        
-        if ( spacePressed and not self.isJumping ):
+        if (collision): self.velocity.x = 0
+
+    def playerJump(self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[GameObject]):
+        spacePressed = pressedKey[pygame.K_SPACE]
+
+
+        if (spacePressed and not self.isJumping):
             self.isJumping = True
             self.velocity.y = -self.jumpHeight
-        
-        if ( self.isJumping ):
-            if ( self.velocity.y < -5 ):
+
+        if (self.isJumping):
+            if (self.velocity.y < -5):
                 self.velocity.y *= 0.8
+
             else:
-                if ( self.velocity.y < 0 ):
+                if (self.velocity.y < 0):
                     self.velocity.y = 1
-                if ( self.velocity.y < self.gravity ):
+                if (self.velocity.y < self.gravity):
                     self.velocity.y *= 1.5
-        
+
         else:
             self.velocity.y = self.gravity
-        
-        print
         
         collision: bool = False
         self.transform.position.y += self.velocity.y
         for mapObject in solidElements: collision = collision or self.getCollision( mapObject )
-        self.transform.position.y -= self.velocity.y
         if ( collision ) :
+            self.transform.position.y -= self.velocity.y
             self.velocity.y = 0
             self.isJumping = False
 
     def Attack(self):
         if self.CanShoot:
             self.MousePos = pygame.mouse.get_pos()
-            self.arrow = GameObject(position=Vector2(self.transform.position.x , self.transform.position.y), spriteRef=SpritesRef.TOMAHAWK, anchor=Vector2(0.5, 0.5))
+            self.arrow = GameObject(position=Vector2(self.transform.position.x , self.transform.position.y), spriteRef=SpritesRef.TOMAHAWK)#, anchor=Vector2(0.5, 0.5))
             self.Vecteur_directeur = Vector2(self.MousePos[0] - self.transform.position.x, self.MousePos[1] - self.transform.position.y)
             self.Vecteur_directeur.normalizeToSelf()
             self.CanShoot = False
@@ -398,7 +393,7 @@ class Mob( Entity ):
             return
 
         if self.maximum_distance < self.transform.position.distanceTo( player.transform.position ) < self.maximum_throw_distance:
-            self.hammer = GameObject(position=Vector2(self.transform.position.x,self.transform.position.y), anchor=(0.5,0.5))
+            self.hammer = GameObject(position=Vector2(self.transform.position.x,self.transform.position.y))#, anchor=(0.5,0.5))
             self.Vecteur_directeur = Vector2(player.transform.position.x - self.transform.position.x + player.GetWidth()//2, player.transform.position.y - self.transform.position.y + player.GetHeight()//2)
             self.Vecteur_directeur.normalizeToSelf()
             self.CanThrow = False

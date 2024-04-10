@@ -73,16 +73,14 @@ class Game:
         self.camera.y = max(0, min(self.camera.y, self.height))
 
     def update_graphics(self):
-        for i, segment in enumerate(self.background_sprites):
-            self.surface.blit(segment.texture, (i * self.width - self.camera.x, 0))
-
-        self.mob.DamagePlayer(self.player)
-        self.player.update( self.surface, self.camera, self.map.colliders, self.dt )
-
+        for i, segment in enumerate(self.map.background_sprites):
+            self.surface.blit(segment.texture,
+                              (i * self.map.background_width - self.camera.x, self.height - self.camera.y))
 
         self.map.draw(self.screen, self.camera)
-        
-        self.player.update( self.surface, self.camera, self.map.colliders )
+
+        self.mob.DamagePlayer(self.player)
+        self.player.update( self.surface, self.camera, self.map.colliders, self.dt)
 
         self.update_camera()
 
@@ -98,8 +96,6 @@ class Game:
         self.mob.draw(self.surface, self.player)
 
         self.player.DrawArrow(self.surface, self.camera)
-
-        
 
         self.player.UpdateArrow(self.dt)
 

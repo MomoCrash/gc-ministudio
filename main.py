@@ -27,7 +27,4 @@ if __name__ == '__main__':
 
     game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Utltimate game of the Year")
     
-    # editor = Editor(screen, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
-    game = Game(settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Utltimate game of the Year")
-    
     #editor = Editor(settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
