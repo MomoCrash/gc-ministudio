@@ -15,7 +15,6 @@ def init_game():
     pygame.init()
     settings.GAME_FONT = pygame.font.Font("Assets/Font/Thunder.ttf", 21)
 
-
 if __name__ == '__main__':
 
     init_game()
