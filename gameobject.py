@@ -42,6 +42,7 @@ class SpriteRenderer:
     
     def draw( self, surface: pygame.Surface, camera: Vector2, transform: Transform ) -> None:
         """Draws the sprite / sprite sheet / rectangle into the given surface (except if alpha color is 0)"""
+        print((self.dimensions * transform.scale).x)
         if ( self.color.a == 0 ): return
         if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position - camera, self.dimensions * transform.scale )
         elif ( self.spriteRef != None ): Assets.GetSprite( self.spriteRef ).draw( surface, transform.position - camera, self.dimensions * transform.scale )

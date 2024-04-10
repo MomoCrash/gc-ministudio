@@ -7,6 +7,7 @@ from enum import Enum, auto
 class SpritesRef(Enum):
     BACKGROUND_0 = auto()
     BACKGROUND_1 = auto()
+    START = auto()
 
     LVL1_LOG = auto()
     LVL1_ROCK_1 = auto()
