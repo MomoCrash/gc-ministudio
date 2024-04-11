@@ -29,7 +29,8 @@ if __name__ == '__main__':
                                      pygame.DOUBLEBUF)
     Assets.Init()
 
-    editor = True
+    editor = False
+    # editor = True
 
     if not editor:
         menu = StartMenu(screen)
