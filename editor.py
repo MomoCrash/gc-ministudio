@@ -19,20 +19,22 @@ class Editor:
         self.clock = pygame.time.Clock()
 
         self.player = Player(
-                                position = Vector2( 0, 0 ),
-                                walkingLeftSpriteSheetRef = SpriteSheetsRef.PLAYER_WALK_LEFT,
-                                walkingRightSpriteSheetRef = SpriteSheetsRef.PLAYER_WALK_RIGHT,
-                                spriteDimensions = Vector2( 40, 80 ),
+                                position = Vector2( 0, 1580 ),
+                                spriteDimensions = Vector2( 100, 200 ),
                                 gravity=0
                             )
         self.camera = Vector2(self.player.transform.position.x, 0)
 
         self.drawing_collision = False
+        self.drawing_end_zone = False
         self.collision_start = Vector2(0,0)
+        self.end_zone_start = Vector2(0,0)
         
         self.selected_sprite = SpritesRef(1)
 
         self.map = Map("map1.json", win_width, win_height)
+        self.dt = 0
+        self.current_dt = 0
 
         self.loop()
 
@@ -46,8 +48,15 @@ class Editor:
                 return False
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_d:
-                    self.player.gravity = 5
+                if event.key == pygame.K_e:
+                    self.map.is_showing_textbox = True
+                if event.key == pygame.K_f:
+                    if self.player.gravity == 0:
+                        self.player.gravity = 5
+                    else:
+                        self.player.gravity = 0
+                if event.key == pygame.K_t:
+                    self.player.transform.position = Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y)
                 if event.key == pygame.K_s:
                     self.map.save_map()
                 if event.key == pygame.K_DELETE:
@@ -67,12 +76,24 @@ class Editor:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.map.create_decoration(self.camera.x + self.mouse_x, self.mouse_y + self.camera.y, self.selected_sprite)
+                if event.button == 2:
+                    self.drawing_end_zone = True
+                    # print(self.mouse_x + self.camera.x)
+                    self.end_zone_start = Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y)
                 if event.button == 3:
                     self.drawing_collision = True
                     # print(self.mouse_x + self.camera.x)
                     self.collision_start = Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y)
                     
             if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 2:
+                    self.drawing_end_zone = False
+
+                    distance: Vector2 = Vector2(self.mouse_x + self.camera.x,
+                                                self.mouse_y + self.camera.y) - self.end_zone_start
+
+                    self.map.set_end(self.end_zone_start.x, self.end_zone_start.y,
+                                             w=distance.x, h=distance.y)
                 if event.button == 3:
                     self.drawing_collision = False
 
@@ -90,10 +111,10 @@ class Editor:
         return True
 
     def update_camera(self):
-        self.camera.x = self.player.transform.position.x - self.width // 4
+        self.camera.x = self.player.transform.position.x - self.width // len(self.map.background_sprites)
         self.camera.y = self.player.transform.position.y - self.height // 4
 
-        self.camera.x = max(0, min(self.camera.x, self.width))
+        self.camera.x = max(0, min(self.camera.x, self.width * (len(self.map.background_sprites) - 1)))
         self.camera.y = max(0, min(self.camera.y, self.height))
 
     def update(self):
@@ -101,12 +122,15 @@ class Editor:
         pygame.draw.rect(self.screen, (0,0,0),
                          pygame.Rect(0, 0, self.width, self.height))
 
-        for i, segment in enumerate(self.map.background_sprites):
-            self.surface.blit(segment.texture, (i * self.width - self.camera.x, self.height - self.camera.y))
+        for i in range(len(self.map.background_sprites)):
+            for j in range(1, len(self.map.background_sprites[i])):
+                self.surface.blit(self.map.background_sprites[i][j].texture,
+                                  ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[j]), self.height - self.camera.y, self.width, self.height))
 
-        self.map.draw(self.surface, self.camera, True)
+        self.map.draw(self.surface, self.player, self.camera, True)
+        self.map.end_zone.update(self.screen, self.camera)
         
-        self.player.update( self.surface, self.camera, self.map.colliders )
+        self.player.update( self.surface, self.camera, self.map.colliders, self.dt )
 
         self.update_camera()
         
@@ -116,17 +140,33 @@ class Editor:
             distance: Vector2 = Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y) - self.collision_start
             pygame.draw.rect(self.screen, (0, 200, 0, 120), (self.collision_start.x - self.camera.x, self.collision_start.y - self.camera.y, distance.x, distance.y))
 
+        if self.drawing_end_zone:
+            distance: Vector2 = Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y) - self.end_zone_start
+            pygame.draw.rect(self.screen, (0, 0, 255, 120), (self.end_zone_start.x - self.camera.x, self.end_zone_start.y - self.camera.y, distance.x, distance.y))
+
+        for i in range(len(self.map.background_sprites)):
+            if self.map.background_sprites[i][0] is not None:
+                self.surface.blit(self.map.background_sprites[i][0].texture,
+                                  ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[0]),
+                                   self.height - self.camera.y))
+
+
         pygame.display.flip()
 
     def loop(self):
         running = True
         while running:
+            dt_start = pygame.time.get_ticks()
 
             running = self.inputs()
 
             self.update()
 
             self.clock.tick(60)
-            
+            dt_end = pygame.time.get_ticks()
+            self.dt = self.clock.get_time() / 1000
+            self.current_dt += self.dt
+
+        self.map.save_map()
         pygame.quit()
         

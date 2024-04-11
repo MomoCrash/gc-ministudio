@@ -1,69 +1,242 @@
 {
+  "parralax_speed": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "end_zone": {
+    "x": 9426,
+    "y": 1489,
+    "w": 173,
+    "h": 670,
+    "ref": null,
+    "interactable": false,
+    "text": "Default"
+  },
   "backgrounds": [
-    "1",
-    "1",
-    "1"
+    [
+      null,
+      16,
+      17
+    ],
+    [
+      null,
+      20,
+      21
+    ],
+    [
+      null,
+      22,
+      23
+    ],
+    [
+      null,
+      24,
+      25
+    ],
+    [
+      null,
+      18,
+      19
+    ]
   ],
   "colliders": [
     {
-      "x": 775.0942239999999,
-      "y": 1679,
-      "w": 124.0,
-      "h": 31,
+      "x": 0,
+      "y": 2104,
+      "w": 674,
+      "h": 55,
       "ref": null,
       "interactable": false,
       "text": "Default"
     },
     {
-      "x": 4,
-      "y": 1852,
-      "w": 1921.2216328412158,
-      "h": 68,
+      "x": 830.554344,
+      "y": 1939,
+      "w": 11.0,
+      "h": 83,
       "ref": null,
       "interactable": false,
       "text": "Default"
     },
     {
-      "x": 1051.002096000001,
-      "y": 1573,
-      "w": 107.0,
-      "h": 20,
+      "x": 835.554344,
+      "y": 1936,
+      "w": 15.0,
+      "h": -15,
       "ref": null,
       "interactable": false,
       "text": "Default"
     },
     {
-      "x": 1336.8744880000008,
-      "y": 1673,
-      "w": 97.0,
-      "h": 19,
+      "x": 609.530976,
+      "y": 2045,
+      "w": 46.0,
+      "h": 64,
       "ref": null,
       "interactable": false,
       "text": "Default"
     },
     {
-      "x": 1925.718488000001,
-      "y": 1851,
-      "w": 1081.0,
-      "h": 68,
-      "ref": null,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 2524,
-      "y": 1840,
-      "w": 154,
+      "x": 834.405976,
+      "y": 1934,
+      "w": 19.0,
       "h": 16,
       "ref": null,
       "interactable": false,
       "text": "Default"
     },
     {
-      "x": 2298,
-      "y": 1502,
-      "w": 77,
-      "h": 161,
+      "x": 852.405976,
+      "y": 1941,
+      "w": 16.0,
+      "h": 14,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 982.405976,
+      "y": 1982,
+      "w": 5.0,
+      "h": -11,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 868.405976,
+      "y": 1956,
+      "w": 22.0,
+      "h": 16,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 890.405976,
+      "y": 1972,
+      "w": 28.0,
+      "h": 20,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 917.405976,
+      "y": 1992,
+      "w": 30.0,
+      "h": 23,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 948.405976,
+      "y": 2015,
+      "w": 35.0,
+      "h": 25,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 983.405976,
+      "y": 2040,
+      "w": 59.0,
+      "h": 26,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1039.405976,
+      "y": 2051,
+      "w": 913.8360559999999,
+      "h": 39,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1950.4141439999999,
+      "y": 2050,
+      "w": 1016.0860560000001,
+      "h": 41,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 2964.4612559999996,
+      "y": 2050,
+      "w": 1346.0,
+      "h": 41,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 4310.047312,
+      "y": 2049,
+      "w": 1263.0,
+      "h": 42,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 5571.883368,
+      "y": 2047,
+      "w": 1116.0,
+      "h": 44,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 6889.969424,
+      "y": 2129,
+      "w": 179.0,
+      "h": 30,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7270.530720000001,
+      "y": 2130,
+      "w": 174.0,
+      "h": 29,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7621.530720000001,
+      "y": 2133,
+      "w": 179.0,
+      "h": 26,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7790.155720000001,
+      "y": 2132,
+      "w": 1392.0,
+      "h": 27,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 9183,
+      "y": 2132,
+      "w": 416,
+      "h": 27,
       "ref": null,
       "interactable": false,
       "text": "Default"
@@ -71,47 +244,38 @@
   ],
   "gameobjects": [
     {
-      "x": 743.0942239999999,
-      "y": 1612,
+      "x": 533.616832,
+      "y": 1948,
       "w": 200,
       "h": 200,
-      "ref": 9,
+      "ref": 38,
       "interactable": false,
       "text": "Default"
     },
     {
-      "x": 1273.838152000001,
-      "y": 1603,
+      "x": 6882.969424,
+      "y": 2055,
       "w": 200,
       "h": 200,
-      "ref": 9,
+      "ref": 35,
       "interactable": false,
       "text": "Default"
     },
     {
-      "x": 1002.0020960000011,
-      "y": 1509,
+      "x": 7263.530720000001,
+      "y": 2064,
       "w": 200,
       "h": 200,
-      "ref": 9,
+      "ref": 35,
       "interactable": false,
       "text": "Default"
     },
     {
-      "x": 2497,
-      "y": 1782,
+      "x": 7613.530720000001,
+      "y": 2066,
       "w": 200,
       "h": 200,
-      "ref": 4,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 2236,
-      "y": 1475,
-      "w": 200,
-      "h": 200,
-      "ref": 8,
+      "ref": 35,
       "interactable": false,
       "text": "Default"
     }

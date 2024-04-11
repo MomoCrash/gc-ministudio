@@ -12,11 +12,12 @@ class StartMenu():
     def __init__(self, screen):
         self.screen = screen
         self.font = pygame.font.Font(None, 40)
-        self.chapters = ["CHAPITRE 1", "CHAPITRE 2", "CHAPITRE 3", "CHAPITRE 4", "CHAPITRE 5", ]
+        self.chapters = [ GameObject( Vector2(755, 567), spriteDimensions=Vector2(40,40), spriteRef=SpritesRef.CHECK_BUTTON ),
+                          GameObject( Vector2(1143, 500), spriteDimensions=Vector2(40,40), spriteRef=SpritesRef.CHECK_BUTTON ),
+                          GameObject( Vector2(1384, 600), spriteDimensions=Vector2(40,40), spriteRef=SpritesRef.CHECK_BUTTON ) ]
         self.current_menu_item = None
-        self.backgroundRef = SpritesRef.BACKGROUND_0
         self.start = GameObject(Vector2(0,0), Vector2(0,0), Vector2(1,1), spriteDimensions=Vector2(1920,1080), spriteRef=SpritesRef.START)
-        self.textRenderer = Text(self.screen, settings.GAME_FONT, 20)
+        self.textRenderer = Text(self.screen, settings.GAME_FONT, 30)
 
         self.chapter = self.main_menu()
 
@@ -26,18 +27,9 @@ class StartMenu():
             text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + i * 50))
             self.screen.blit(text, text_rect)
 
-    def draw_background(self):
-        Assets.GetSprite(self.backgroundRef).draw(self.screen, Vector2(0,0), Vector2(SCREEN_WIDTH,SCREEN_HEIGHT))
-
     def draw_chapters(self):
-        chapters = []
         for i, chapter in enumerate(self.chapters):
-            chapter_text = self.textRenderer.draw_text(chapter, (255,255,255), SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + i * 50, 10, 10)
-            chapters.append((i, chapter_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + i * 50))))
-
-        return_text = self.textRenderer.draw_text("Retour", (255,255,255), SCREEN_WIDTH // 2,
-                                                  SCREEN_HEIGHT // 2 + len(self.chapters) * 50, 10, 10)
-        return return_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + len(self.chapters) * 50)), chapters
+            chapter.update(self.screen, Vector2(0,0))
 
 
     def main_menu(self) -> int:
@@ -48,6 +40,8 @@ class StartMenu():
             played = False
             while not played:
 
+                Assets.GetSprite(SpritesRef.BG_LEVEL_1_1).draw(self.screen, Vector2(0, 0),
+                                                          Vector2(SCREEN_WIDTH, SCREEN_HEIGHT))
                 self.start.update(self.screen, Vector2(0,0))
                 pygame.display.flip()
 
@@ -63,17 +57,19 @@ class StartMenu():
                 returned = False
                 if played:
                     while selected is None and not returned:
-                        chapters_data = self.draw_chapters()
+                        Assets.GetSprite(SpritesRef.BG_LEVEL_1_1).draw(self.screen, Vector2(0, 0),
+                                                                  Vector2(SCREEN_WIDTH, SCREEN_HEIGHT))
+                        Assets.GetSprite(SpritesRef.BOOK).draw(self.screen, Vector2(0, 0),
+                                                                  Vector2(SCREEN_WIDTH, SCREEN_HEIGHT))
+                        self.draw_chapters()
                         for event in pygame.event.get():
                             if event.type == pygame.QUIT:
                                 pygame.quit()
                             elif event.type == pygame.MOUSEBUTTONDOWN:
                                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                                if chapters_data[0].collidepoint(mouse_x, mouse_y):
-                                    returned = True
-                                    continue
-                                for j, chapter_collider in chapters_data[1]:
-                                    if chapter_collider.collidepoint(mouse_x, mouse_y):
+                                print(mouse_x, mouse_y)
+                                for j, chapter in enumerate(self.chapters):
+                                    if chapter.getCollision(Vector2(mouse_x, mouse_y)):
                                         selected = j
                         pygame.display.flip()
             clock.tick(60)

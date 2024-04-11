@@ -2,10 +2,12 @@ from __future__ import annotations
 import pygame
 import os
 import json
+
+import settings
 from texture import Assets, SpritesRef, SpriteSheetsRef, SpriteSheet, Sprite
 from vector import Vector2
 from gameobject import GameObject
-
+from ui import InfoBox
 
 class SerializableMapObject( GameObject ):
     def __init__(
@@ -51,22 +53,37 @@ class Map:
         self.width = map_w
         self.height = map_h
 
-        self.background_refs: list[ int] = []
         self.colliders: list[ SerializableMapObject ] = []
         self.decors: list[ SerializableMapObject ] = []
         self.map_file = map_data_file
-        self.background_sprites = []
+
+        self.background_refs: list[list[int]] = [[]]
+        self.background_sprites: list[list[Sprite]] = [[]]
+
+        self.end_zone = SerializableMapObject( Vector2(0,0), Vector2(0,0), Vector2(1,1), spriteDimensions=Vector2(0,0) )
+        self.is_showing_textbox = False
+
+        self.parralax_speed = []
 
         self.load_map()
 
-        self.background_width = self.background_sprites[0].texture.get_width()
+        self.background_width = self.background_sprites[0][1].texture.get_width()
 
-    def append_backgrounds(self, sprite_ref: int):
-        self.background_refs.append(sprite_ref)
-        self.background_sprites.append(Assets.GetSprite(SpritesRef(sprite_ref)))
-        
+    def append_backgrounds(self, layer, sprite_ref: str):
+        if len(self.background_refs) <= layer: self.background_refs.append([])
+        if len(self.background_sprites) <= layer: self.background_sprites.append([])
+        if sprite_ref is None:
+            self.background_refs[layer].append(None)
+            self.background_sprites[layer].append(None)
+            return
+        self.background_refs[layer].append(int(sprite_ref))
+        self.background_sprites[layer].append(Assets.GetSprite(SpritesRef(int(sprite_ref))))
+
     def create_collider(self, x, y, w, h):
         self.colliders.append( SerializableMapObject( position=Vector2( x, y ), scale=Vector2( 1, 1 ), spriteDimensions=Vector2(w, h) ) )
+
+    def set_end(self, x, y, w, h):
+        self.end_zone = SerializableMapObject( position=Vector2( x, y ), scale=Vector2( 1, 1 ), spriteDimensions=Vector2(w, h) )
 
     def create_decoration(self, x, y, sprite_ref: SpritesRef):
         size = Assets.GetSprite(sprite_ref).size
@@ -76,9 +93,10 @@ class Map:
     def save_map(self):
         with open("Assets/Editor/" + self.map_file, "w") as file:
             json_map = {}
-            json_map["backgrounds"] = [str(self.background_refs[0])]
-            for i in range(1, len(self.background_refs)):
-                json_map["backgrounds"].append(str(self.background_refs[i]))
+            json_map["parralax_speed"] = self.parralax_speed
+            json_map["end_zone"] = self.end_zone.serialize()
+            json_map["backgrounds"] = self.background_refs
+
             if len(self.colliders):
                 json_map["colliders"] = [self.colliders[0].serialize()]
                 for i in range(1, len(self.colliders)):
@@ -98,13 +116,21 @@ class Map:
             try:
                 jsonObjects = json.load(file)
             except json.decoder.JSONDecodeError:
-                self.append_backgrounds(1)
+                self.append_backgrounds(0, 1)
                 return
 
-            # print(jsonObjects)
+            if "parralax_speed" in jsonObjects:
+                self.parralax_speed = jsonObjects["parralax_speed"]
+            else:
+                self.parralax_speed = [0.4, 0.5, 0.8, 1, 1]
 
-            for backgroundRef in jsonObjects["backgrounds"]:
-                self.append_backgrounds(int(backgroundRef))
+            # print(jsonObjects)
+            if "end_zone" in jsonObjects:
+                self.end_zone = SerializableMapObject.deserialize(jsonObjects["end_zone"])
+
+            for i in range(len(jsonObjects["backgrounds"])):
+                for backgroundRef in jsonObjects["backgrounds"][i]:
+                    self.append_backgrounds(i, backgroundRef)
 
             try:
                 for gameObject in jsonObjects["gameobjects"]:
@@ -119,10 +145,25 @@ class Map:
             except KeyError:
                 print("No colliders for map " + self.map_file)
         
-    def draw( self, surface: pygame.Surface, camera: Vector2, editor: bool = False ):
+    def draw( self, screen: pygame.Surface, player, camera: Vector2, editor: bool = False ):
         for mapObject in self.decors:
             # print(mapObject.spriteRenderer.spriteSheetRef)
-            mapObject.update( surface, camera )
+            mapObject.update( screen, camera )
         if editor:
             for collider in self.colliders:
-                collider.update( surface, camera )
+                collider.update( screen, camera )
+
+        infos_box = [InfoBox(screen, 200, 1580, 400, 400)]
+
+        for box in infos_box:
+            if box.is_on_player(player):
+                box.show_popup = True
+                if self.is_showing_textbox:
+                    box.big_popup = True
+                    box.draw("Petit text en sblit", (0,0,0), (255,255,255))
+                else:
+                    box.big_popup = False
+                    box.text.draw_text("Appuie sur E pour découvrir l'histoire", (255, 255, 255), 800, 500, 20, 20)
+            else:
+                box.show_popup = False
+                self.is_showing_textbox = False
