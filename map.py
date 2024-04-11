@@ -65,25 +65,17 @@ class Map:
         self.is_showing_textbox = False
 
         self.parralax_speed = []
-        self.mobs = [Mob(
-            position=Vector2( 400, 1810 ),
-            spriteDimensions = Vector2( 100, 200 )
-            ),
-            Mob(
-                position=Vector2(1100, 1810),
-                spriteDimensions=Vector2(100, 200)
-            )
-        ]
+        self.mobs = []
 
         self.load_map()
 
         self.background_width = self.background_sprites[0][1].texture.get_width()
 
     def append_mob(self, x, y):
-        self.mobs.append(Mob[Mob(
+        self.mobs.append(Mob(
             position=Vector2(x, y),
             spriteDimensions=Vector2(100, 200)
-        )])
+        ))
 
     def remove_mob(self, mob: Mob):
         self.mobs.remove(mob)
@@ -115,6 +107,10 @@ class Map:
             json_map["parralax_speed"] = self.parralax_speed
             json_map["end_zone"] = self.end_zone.serialize()
             json_map["backgrounds"] = self.background_refs
+            serialized_mobs = []
+            for mob in self.mobs:
+                serialized_mobs.append(SerializableMapObject(mob.transform.position).serialize())
+            json_map["mobs"] = serialized_mobs
 
             if len(self.colliders):
                 json_map["colliders"] = [self.colliders[0].serialize()]
@@ -142,6 +138,11 @@ class Map:
                 self.parralax_speed = jsonObjects["parralax_speed"]
             else:
                 self.parralax_speed = [0.4, 0.5, 0.8, 1, 1]
+
+            if "mobs" in jsonObjects:
+                for jsonMob in jsonObjects["mobs"]:
+                    mob = SerializableMapObject.deserialize(jsonMob)
+                    self.append_mob(mob.transform.position.x, mob.transform.position.y)
 
             # print(jsonObjects)
             if "end_zone" in jsonObjects:
