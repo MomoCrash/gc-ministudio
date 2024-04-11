@@ -57,6 +57,8 @@ class SpritesRef(Enum):
 
     TOMAHAWK = auto()
 
+    CHECK_BUTTON = auto()
+
 
 class SpriteSheetsRef(Enum):
     ENNEMY_ATTACK_LEFT = auto()

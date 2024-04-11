@@ -1,9 +1,9 @@
 {
   "end_zone": {
-    "x": 772,
-    "y": 1656,
-    "w": 109,
-    "h": 281,
+    "x": 7557,
+    "y": 1676,
+    "w": 57,
+    "h": 130,
     "ref": null,
     "interactable": false,
     "text": "Default"
@@ -360,42 +360,6 @@
       "text": "Default"
     },
     {
-      "x": 6063.774135999999,
-      "y": 1672,
-      "w": 56.0,
-      "h": 17,
-      "ref": null,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 6175.774135999999,
-      "y": 1666,
-      "w": 58.0,
-      "h": 18,
-      "ref": null,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 6292.774135999999,
-      "y": 1668,
-      "w": 55.0,
-      "h": 15,
-      "ref": null,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 6489,
-      "y": 1602,
-      "w": 62,
-      "h": 16,
-      "ref": null,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
       "x": 6767,
       "y": 1647,
       "w": 57,
@@ -409,15 +373,6 @@
       "y": 1575,
       "w": 57,
       "h": 16,
-      "ref": null,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 7334,
-      "y": 1756,
-      "w": 77,
-      "h": 131,
       "ref": null,
       "interactable": false,
       "text": "Default"
@@ -493,18 +448,27 @@
       "ref": null,
       "interactable": false,
       "text": "Default"
-    }
-  ],
-  "gameobjects": [
+    },
     {
-      "x": 727,
-      "y": 1756,
-      "w": 200,
-      "h": 200,
-      "ref": 23,
+      "x": 1617.8360559999999,
+      "y": 1712,
+      "w": 0.0,
+      "h": 0,
+      "ref": null,
       "interactable": false,
       "text": "Default"
     },
+    {
+      "x": 7008,
+      "y": 2086,
+      "w": 658,
+      "h": 73,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    }
+  ],
+  "gameobjects": [
     {
       "x": 1397.2885232000017,
       "y": 1591,
@@ -695,42 +659,6 @@
       "text": "Default"
     },
     {
-      "x": 5999.774135999999,
-      "y": 1621,
-      "w": 200,
-      "h": 200,
-      "ref": 21,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 6111.774135999999,
-      "y": 1620,
-      "w": 200,
-      "h": 200,
-      "ref": 21,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 6228.774135999999,
-      "y": 1616,
-      "w": 200,
-      "h": 200,
-      "ref": 21,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 6427,
-      "y": 1554,
-      "w": 200,
-      "h": 200,
-      "ref": 21,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
       "x": 6704,
       "y": 1602,
       "w": 200,
@@ -742,15 +670,6 @@
     {
       "x": 6908,
       "y": 1522,
-      "w": 200,
-      "h": 200,
-      "ref": 21,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 7272,
-      "y": 1708,
       "w": 200,
       "h": 200,
       "ref": 21,
@@ -772,24 +691,6 @@
       "w": 200,
       "h": 200,
       "ref": 17,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 6410,
-      "y": 1969,
-      "w": 200,
-      "h": 200,
-      "ref": 25,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 6073,
-      "y": 1946,
-      "w": 200,
-      "h": 200,
-      "ref": 25,
       "interactable": false,
       "text": "Default"
     },
