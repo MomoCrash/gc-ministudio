@@ -65,7 +65,15 @@ class Map:
         self.is_showing_textbox = False
 
         self.parralax_speed = []
-        self.mobs = []
+        self.mobs = [Mob(
+            position=Vector2( 400, 1810 ),
+            spriteDimensions = Vector2( 100, 200 )
+            ),
+            Mob(
+                position=Vector2(1100, 1810),
+                spriteDimensions=Vector2(100, 200)
+            )
+        ]
 
         self.load_map()
 
@@ -162,13 +170,21 @@ class Map:
             mob.update(dt, screen, camera, self.colliders, player)
 
     def update_mobs_logic(self, screen: pygame.surface, player, camera: Vector2):
-        for mob in self.mobs:
+        deadMobs = []
+        for i, mob in enumerate(self.mobs):
             mob.tryThrow(player, camera)
             mob.tryAttack(player)
             mob.tryDefence(player)
             player.DamageEnnemy(mob)
 
+            if mob.IsDead and mob.hammer is None:
+                deadMobs.append(i)
+                continue
+
             mob.drawHammer(screen, player, camera)
+
+        for i in deadMobs:
+            self.mobs.pop(i)
         
     def draw( self, screen: pygame.Surface, player, camera: Vector2, editor: bool = False ):
         for mapObject in self.decors:

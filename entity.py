@@ -175,8 +175,6 @@ class Player( Entity ):
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_WALK_RIGHT
 
         self.spriteRenderer.draw( surface, camera, self.transform, self.FinishAnim, dt=dt )
-
-        
     
     def UpdateArrow(self, dt):
         if self.arrow != None:
@@ -391,13 +389,13 @@ class Mob( Entity ):
             self.transform.position.x -= self.WalkSpeed * dt * self.velocity.x
             self.velocity.x = 0
 
-        self.velocity.y = 0 #desactivate gravity for debug
+        self.velocity.y = 2 #desactivate gravity for debug
 
         collision: bool = False
-        self.transform.position.y += self.velocity.y * dt
+        self.transform.position.y += self.velocity.y
         for mapObject in solidElements: collision = collision or self.getCollision(mapObject)
         if (collision):
-            self.transform.position.y -= self.velocity.y * dt
+            self.transform.position.y -= self.velocity.y
             self.velocity.y = 0
 
         
@@ -456,7 +454,7 @@ class Mob( Entity ):
     def update(self, dt,  surface: pygame.Surface, camera: Vector2, mapElements: list[ GameObject ], player: Player):
         if self.health == 0:
             self.IsDead = True
-            self.hammer = None
+            self.updateHammer(dt)
             self.CanAttack = False
         if self.IsDead == False:
             self.mobMovement(player,dt)

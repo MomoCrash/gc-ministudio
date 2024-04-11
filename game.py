@@ -187,7 +187,6 @@ class Game:
             self.clock.tick(60)
             self.dt = (self.clock.get_time()) / 1000.0
 
-            print(self.dt)
             self.fps = 1 / self.dt
             
             if self.menu.menu_active:
