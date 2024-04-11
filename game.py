@@ -59,11 +59,11 @@ class Game:
                         self.map.is_showing_textbox = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1: 
+                if event.button == 2: 
                     self.player.Attack(self.camera)
                 if event.button == 3:
                     self.player.Defence()
-                if event.button == 2:
+                if event.button == 1:
                     self.player.MeleeAttack()
             if event.type == pygame.MOUSEBUTTONUP:
                 self.player.DesactivateDefence()
@@ -180,7 +180,7 @@ class Game:
                     paused = False
                 pygame.display.flip()
 
-            self.clock.tick(60)
+            self.clock.tick()
             self.dt = (self.clock.get_time()) / 1000.0
 
             self.fps = 1 / self.dt

@@ -48,9 +48,9 @@ class Player( Entity ):
                     spritesheet_ref: SpriteSheetsRef = SpriteSheetsRef.PLAYER_WALK_LEFT,
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 4, 4 )
-                    maxSpeed: float = 4,
-                    jumpHeight: float = 30,
-                    gravity: float = 5
+                    maxSpeed: float = 250,
+                    jumpHeight: float = 1400,
+                    gravity: float = 170
                 ):
         super().__init__( position, rotation, scale, spriteDimensions, None, spritesheet_ref, velocity )
         self.maxSpeed: float = maxSpeed
@@ -105,18 +105,18 @@ class Player( Entity ):
             self.isDead = True
             self.death_anim_timer.start()
     
-    def update( self, surface: pygame.Surface, camera: Vector2, solidElements: list[ GameObject ], dt ) -> None:
+    def update( self, surface: pygame.Surface, camera: Vector2, solidElements: list[ GameObject ], deltaTime: int ) -> None:
         pressedKey = pygame.key.get_pressed()
-        self.playerMovement( pressedKey, solidElements )
-        self.playerJump( pressedKey, solidElements )
-        self.timer_between_attack.update(dt)
-        self.death_anim_timer.update(dt)
+        self.playerMovement( pressedKey, solidElements, deltaTime )
+        self.playerJump( pressedKey, solidElements, deltaTime )
+        self.timer_between_attack.update( deltaTime )
+        self.death_anim_timer.update( deltaTime )
 
         
         
         
 
-        self.transform.position += self.velocity
+        self.transform.position += self.velocity * deltaTime
 
 
 
@@ -174,7 +174,7 @@ class Player( Entity ):
             else:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_WALK_RIGHT
 
-        self.spriteRenderer.draw( surface, camera, self.transform, self.FinishAnim, dt=dt )
+        self.spriteRenderer.draw( surface, camera, self.transform, self.FinishAnim, dt=deltaTime )
     
     def UpdateArrow(self, dt):
         if self.arrow != None:
@@ -211,7 +211,7 @@ class Player( Entity ):
                 return
 
 
-    def playerMovement(self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[GameObject]) -> None:
+    def playerMovement( self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[ GameObject ], deltaTime: int ) -> None:
         leftPressed: bool = pressedKey[pygame.K_q]
         rightPressed: bool = pressedKey[pygame.K_d]
 
@@ -252,12 +252,12 @@ class Player( Entity ):
             self.velocity.x = 0
 
         collision: bool = False
-        self.transform.position.x += self.velocity.x
+        self.transform.position.x += self.velocity.x * deltaTime
         for mapObject in solidElements: collision = collision or self.getCollision(mapObject)
-        self.transform.position.x -= self.velocity.x
+        self.transform.position.x -= self.velocity.x * deltaTime
         if (collision): self.velocity.x = 0
 
-    def playerJump(self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[GameObject]):
+    def playerJump( self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[ GameObject ], deltaTime: int ) -> None:
         spacePressed = pressedKey[pygame.K_SPACE]
 
         if not self.isDead:
@@ -268,7 +268,7 @@ class Player( Entity ):
 
         
         if (self.isJumping):
-            if (self.velocity.y < -5):
+            if (self.velocity.y < -50):
                 self.velocity.y *= 0.9
 
             else:
@@ -281,9 +281,9 @@ class Player( Entity ):
             self.velocity.y = self.gravity
         
         collision: bool = False
-        self.transform.position.y += self.velocity.y
+        self.transform.position.y += self.velocity.y * deltaTime
         for mapObject in solidElements: collision = collision or self.getCollision( mapObject )
-        self.transform.position.y -= self.velocity.y
+        self.transform.position.y -= self.velocity.y * deltaTime
         if ( collision ) :
             self.velocity.y = 0
             self.isJumping = False
@@ -565,6 +565,3 @@ class Mob( Entity ):
     def drawHammer(self, window: pygame.Surface, player: Player, camera: Vector2):
         if self.hammer != None:
             self.hammer.update(window, camera)
-
-
-        
