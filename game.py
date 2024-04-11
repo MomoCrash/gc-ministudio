@@ -19,25 +19,17 @@ class Game:
         self.current_dt = 0
         self.elementsOnScreen: LinkedList = LinkedList()
         self.elementsOffScreen: LinkedList = LinkedList()
-<<<<<<< Updated upstream
-
-        self.map = Map( "map" + str(game_chapter) + ".json", win_width, win_height )
-        self.map.load_map()
-        
-=======
         self.game_chapter = game_chapter
         self.menu = menu 
 
         self.map = Map("map" + str(game_chapter) + ".json", win_width, win_height)
 
->>>>>>> Stashed changes
         pygame.init()
         self.screen = screen
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
 
         self.player = Player(
-<<<<<<< Updated upstream
                                 position = Vector2( 1000, 500 ),
                                 spriteDimensions = Vector2( 40, 80 )
                             )
@@ -46,29 +38,16 @@ class Game:
             spriteDimensions = Vector2( 40, 80 )
             )
         self.camera = Vector2( 0, 0 )
-=======
-            position=Vector2(400, 1700),
-            spriteDimensions=Vector2(100, 200)
-        )
-        self.mob = Mob(
-            position=Vector2(700, 1500),
-            spriteDimensions=Vector2(100, 200)
-        )
-        self.camera = Vector2(0, 0)
->>>>>>> Stashed changes
 
         self.text = Text(self.screen, settings.GAME_FONT, 21)
 
         self.loop()
 
-<<<<<<< Updated upstream
-=======
     def load_next_map(self):
         self.game_chapter += 1
         self.map = Map("map" + str(self.game_chapter) + ".json", self.width, self.height)
         self.player.transform.position = position = Vector2(10, 1580)
 
->>>>>>> Stashed changes
     def inputs(self) -> bool:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -98,11 +77,6 @@ class Game:
         self.camera.y = max(0, min(self.camera.y, self.height))
 
     def update_graphics(self):
-<<<<<<< Updated upstream
-        for i, segment in enumerate(self.map.background_sprites):
-            self.surface.blit(segment.texture,
-                              (i * self.map.background_width - self.camera.x, self.height - self.camera.y))
-=======
         for i in range(len(self.map.background_sprites)):
             for j in range(1, len(self.map.background_sprites[i])):
                 self.surface.blit(
@@ -114,7 +88,6 @@ class Game:
                         self.height
                     )
                 )
->>>>>>> Stashed changes
 
         self.map.draw(self.screen, self.camera)
 
@@ -123,12 +96,7 @@ class Game:
 
         self.update_camera()
 
-<<<<<<< Updated upstream
-        # Develop in progress
-        self.mob.movement(self.player, self.dt)
-=======
         self.mob.movement(self.player, self.dt, self.map.colliders)
->>>>>>> Stashed changes
 
 
         self.mob.tryThrow(self.player)
@@ -144,10 +112,6 @@ class Game:
 
         self.text.draw_text("fps :" + str(self.clock.get_fps()), (255, 255, 255), 100, 100, 10, 10)
 
-<<<<<<< Updated upstream
-
-        #self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
-=======
         for i in range(len(self.map.background_sprites)):
             self.surface.blit(
                 self.map.background_sprites[i][0].texture,
@@ -156,7 +120,6 @@ class Game:
                     self.height - self.camera.y
                 )
             )
->>>>>>> Stashed changes
 
         pygame.display.flip()
 
