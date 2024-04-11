@@ -72,6 +72,7 @@ class Player( Entity ):
         self.isAttacking = False
         self.timer_between_attack = Timer(1, self.enableMeleeAttack)
         self.TrueDistance = 0
+        self.FacingRight = True
 
     def FinishAnim(self):
         self.isHit = False
@@ -94,24 +95,48 @@ class Player( Entity ):
         self.playerMovement( pressedKey, solidElements )
         self.playerJump( pressedKey, solidElements )
         self.timer_between_attack.update(dt)
-        
 
         self.transform.position += self.velocity
+
         
-        if self.velocity.x < 0: 
-            if self.isHit:
+        if self.FacingRight == False: 
+            if self.velocity.x == 0:
+                if self.isJumping:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_JUMP_LEFT
+                elif self.shield:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_SHIELD_LEFT
+                elif self.isHit:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_GET_HIT_LEFT
+                elif self.isAttacking:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_ATTACK_LEFT
+                else:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_IDLE_LEFT
+
+            elif self.isJumping:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_JUMP_LEFT
+            elif self.isHit:
                   self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_GET_HIT_LEFT
-            elif self.shield:
-                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_SHIELD_LEFT
             elif self.isAttacking:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_ATTACK_LEFT
             else:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_WALK_LEFT
         else:
-            if self.isHit:
+            if self.velocity.x == 0:
+                if self.isJumping:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_JUMP_RIGHT
+                elif self.shield:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_SHIELD_RIGHT
+                elif self.isHit:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_GET_HIT_RIGHT  
+                elif self.isAttacking:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_ATTACK_RIGHT
+                else:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_IDLE_RIGHT
+
+            elif self.isJumping:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_JUMP_RIGHT
+            elif self.isHit:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_GET_HIT_RIGHT  
-            elif self.shield:
-                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_SHIELD_RIGHT
             elif self.isAttacking:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_ATTACK_RIGHT
             else:
@@ -157,6 +182,8 @@ class Player( Entity ):
 
         if (leftPressed and not rightPressed):
 
+            self.FacingRight = False
+
             if (self.velocity.x == 0):
                 self.velocity.x = -1
 
@@ -166,6 +193,8 @@ class Player( Entity ):
                 factor: float = 1.5
 
         elif (rightPressed and not leftPressed):
+
+            self.FacingRight = True
 
             if (self.velocity.x == 0):
                 self.velocity.x = 1
@@ -286,14 +315,17 @@ class Mob( Entity ):
         self.AttackRange = 15
         self.isAttacking = False
         self.isHit = False
+        self.FacingRight = False
 
     def mobMovement(self, player: Player, dt):
         if self.transform.position.distanceTo( player.transform.position ) < self.maximum_distance:
             if not player.isHit:
                 if player.transform.position.x > self.transform.position.x:
+                    self.FacingRight = True
                     self.velocity.x = +1
                     self.isFacingRight = True
                 if player.transform.position.x < self.transform.position.x:
+                    self.FacingRight = False
                     self.velocity.x = -1
                     self.isFacingRight = False
             else:
@@ -331,8 +363,16 @@ class Mob( Entity ):
             self.hammer.transform.position.y += self.Vecteur_directeur.y * self.ThrowSpeed * dt
 
     def updateSprite(self):
-        if self.velocity.x < 0:
-            if self.shield:
+        if self.FacingRight == False:
+            if self.velocity.x == 0:
+                if self.shield:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_LEFT
+                elif self.isHit:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_GET_HIT_LEFT
+                else:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_IDLE_LEFT
+
+            elif self.shield:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_LEFT
             elif self.isAttacking:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_ATTACK_LEFT
@@ -341,7 +381,14 @@ class Mob( Entity ):
             elif self.shield == False and self.isAttacking == False:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_LEFT
         else:
-            if self.shield:
+            if self.velocity.x == 0:
+                if self.shield:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_RIGHT
+                elif self.isHit:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_GET_HIT_RIGHT
+                else:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_IDLE_RIGHT
+            elif self.shield:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_RIGHT
             elif self.isAttacking:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_ATTACK_RIGHT
