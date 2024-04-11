@@ -26,8 +26,8 @@ if __name__ == '__main__':
                                      pygame.DOUBLEBUF)
     Assets.Init()
 
-    #menu = StartMenu(screen)
+    menu = StartMenu(screen)
 
-    #game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Utltimate game of the Year")
+    game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Utltimate game of the Year")
 
-    editor = Editor(screen, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
+    #editor = Editor(screen, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")

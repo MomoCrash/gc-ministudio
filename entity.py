@@ -378,6 +378,8 @@ class Mob( Entity ):
                     self.isFacingRight = False
             else:
                 self.velocity.x = 0
+                
+        #self.velocity.y = 10
 
 
     def CheckCollision( self, dt, solidElements: list[GameObject]):
@@ -392,12 +394,15 @@ class Mob( Entity ):
 
         #self.velocity.y = 0 #desactivate gravity for debug
 
+
         collision: bool = False
         self.transform.position.y += self.velocity.y * dt
         for mapObject in solidElements: collision = collision or self.getCollision(mapObject)
         if (collision):
             self.transform.position.y -= self.velocity.y * dt
             self.velocity.y = 0
+
+        
 
     def updateTimer(self,dt):
         self.shoot_timer.update(dt)
