@@ -28,7 +28,7 @@ class Vector2:
         return self / self.norm()
     
     def distanceTo( self, other: Vector2 ) -> float:
-        return ( self - other ).norm()
+        return Vector2(self.x - other.x, self.y - other.y).norm()
     
     def abs( self ) -> None: # Vector2.abs()
         self.x *= 1 if self.x >= 0 else -1

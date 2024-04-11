@@ -13,7 +13,7 @@ def init_game():
     settings.SCREEN_HEIGHT = 1080
 
     pygame.init()
-    settings.GAME_FONT = pygame.font.Font("Assets/Font/Thunder.ttf", 21)
+    settings.GAME_FONT = pygame.font.Font("Assets/Font/Thunder.ttf", 21)    
 
 if __name__ == '__main__':
 

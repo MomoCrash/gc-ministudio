@@ -34,7 +34,7 @@ class Game:
                                 spriteDimensions = Vector2( 100, 200 )
                             )
         self.mob = Mob( 
-            position=Vector2( 700, 1500 ),
+            position=Vector2( 700, 1800 ),
             spriteDimensions = Vector2( 100, 200 )
             )
         self.camera = Vector2( 0, 0 )
@@ -88,11 +88,15 @@ class Game:
                 self.surface.blit(self.map.background_sprites[i][j].texture,
                                   ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[j]),
                                    self.height - self.camera.y, self.width, self.height))
+                
+
 
         self.map.draw(self.screen, self.camera)
 
-        self.mob.DamagePlayer(self.player)
+        self.mob.HammerCollision(self.player, self.map.colliders)
+        
         self.player.update( self.surface, self.camera, self.map.colliders, self.dt)
+
 
         if self.player.getCollision(self.map.end_zone):
             self.load_next_map()
@@ -102,14 +106,14 @@ class Game:
         self.update_camera()
 
         # Develop in progress
-        self.mob.movement(self.player, self.dt, self.map.colliders)
+     
 
         self.mob.tryThrow(self.player, self.camera)
         self.mob.tryAttack(self.player)
         self.mob.tryDefence(self.player)
         self.player.DamageEnnemy(self.mob)
-        self.mob.update(self.dt, self.surface, self.camera, self.map.colliders)
-        self.mob.draw(self.surface, self.player, self.camera)
+        self.mob.update(self.dt, self.surface, self.camera, self.map.colliders, self.player)
+        self.mob.drawHammer(self.surface, self.player, self.camera)
 
         self.player.DrawArrow(self.surface, self.camera)
 

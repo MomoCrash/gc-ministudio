@@ -68,9 +68,10 @@ class Player( Entity ):
         self.isHit = False
         self.shield = False
         self.CanAttack = True
-        self.AttackRange = 70
+        self.AttackRange = 15
         self.isAttacking = False
         self.timer_between_attack = Timer(1, self.enableMeleeAttack)
+        self.TrueDistance = 0
 
     def FinishAnim(self):
         self.isHit = False
@@ -86,6 +87,7 @@ class Player( Entity ):
             self.isAttacking = True
             self.CanAttack = False
             self.timer_between_attack.start()
+            self.shoot_timer.start()
     
     def update( self, surface: pygame.Surface, camera: Vector2, solidElements: list[ GameObject ],dt ) -> None:
         pressedKey = pygame.key.get_pressed()
@@ -138,14 +140,16 @@ class Player( Entity ):
                 self.enableThrow()
                 return
             if self.arrow.getCollision(mob) and mob.shield:
-                self.arrow = None
+                self.arrow = None       
                 mob.shield = False
                 self.enableThrow()
                 return
+                
+        if self.isAttacking:
+            if self.CheckColWithDistance(mob,self.AttackRange):
+                mob.isHit = True
+                return
 
-            #if self.velocity.x > 0 and 
-            #print("ennemi touché cac")
-    
 
     def playerMovement(self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[GameObject]) -> None:
         leftPressed: bool = pressedKey[pygame.K_q]
@@ -174,6 +178,9 @@ class Player( Entity ):
         else:
             factor: float = 0.8
 
+        if  self.shield:
+            self.velocity.x = 0
+        
         if (abs(self.velocity.x * factor) <= self.maxSpeed and self.velocity.x != 0):
             self.velocity.x *= factor if abs(self.velocity.x) > 0.9 else 0
 
@@ -241,7 +248,7 @@ class Mob( Entity ):
     def __init__(
                     self,
                     
-                    position: Vector2 = Vector2( 0, 0 ), #? Vector2( 500, 500 )
+                    position: Vector2 = Vector2( 0, 0 ),
                     rotation: Vector2 = Vector2( 0, 0 ),
                     scale: Vector2 = Vector2( 1, 1 ),
                     
@@ -251,7 +258,7 @@ class Mob( Entity ):
                     color: pygame.Color = pygame.Color( 255, 255, 255, 255 ),
                     isVisible: bool = True,
                     
-                    velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 3, 3 )
+                    velocity: Vector2 = Vector2( 0, 0 ), 
                     
                     isOnLoop: bool = False,
                     pathPositions: LinkedList = None
@@ -271,23 +278,30 @@ class Mob( Entity ):
         self.disable_shield_timer = Timer(1, self.disableShield )
         self.timer_between_attack = Timer(2,self.enableAttack )
         self.isFacingRight = False
-        self.WalkSpeed = 100
+        self.WalkSpeed = 50
         
         self.CanDefend = True
         self.shield = False
         self.CanAttack = True
-        self.AttackRange = 50
+        self.AttackRange = 15
         self.isAttacking = False
         self.isHit = False
 
-    def movement( self, player: Player, dt, solidElements: list[GameObject]):
+    def mobMovement(self, player: Player, dt):
         if self.transform.position.distanceTo( player.transform.position ) < self.maximum_distance:
-            if player.transform.position.x > self.transform.position.x:
-                self.velocity.x = +1
-                self.isFacingRight = True
-            if player.transform.position.x < self.transform.position.x:
-                self.velocity.x = -1
-                self.isFacingRight = False
+            if not player.isHit:
+                if player.transform.position.x > self.transform.position.x:
+                    self.velocity.x = +1
+                    self.isFacingRight = True
+                if player.transform.position.x < self.transform.position.x:
+                    self.velocity.x = -1
+                    self.isFacingRight = False
+            else:
+                self.velocity.x = 0
+
+
+    def CheckCollision( self, dt, solidElements: list[GameObject]):
+        
 
         collision: bool = False
         self.transform.position.x += self.WalkSpeed * dt * self.velocity.x
@@ -296,7 +310,7 @@ class Mob( Entity ):
             self.transform.position.x -= self.WalkSpeed * dt * self.velocity.x
             self.velocity.x = 0
 
-        self.velocity.y = 300
+        #self.velocity.y = 0 #desactivate gravity for debug
 
         collision: bool = False
         self.transform.position.y += self.velocity.y * dt
@@ -305,33 +319,18 @@ class Mob( Entity ):
             self.transform.position.y -= self.velocity.y * dt
             self.velocity.y = 0
 
-    def DamagePlayer(self, player: Player):
-        if self.hammer != None:
-            if self.hammer.getCollision(player) and player.shield == False:
-                player.isHit = True
-                self.hammer = None
-                self.enableThrow()
-                return
-            elif  self.hammer.getCollision(player) and player.shield:
-                self.hammer = None
-                self.enableThrow()
-                return
-
-
-
-           
-    def update(self, dt,  surface: pygame.Surface, camera: Vector2, mapElements: list[ GameObject ] ):
+    def updateTimer(self,dt):
         self.shoot_timer.update(dt)
         self.defence_timer.update(dt)
         self.disable_shield_timer.update(dt)
         self.timer_between_attack.update(dt)
 
-
-        self.transform.position += self.velocity
+    def updateHammer(self,dt):
         if self.hammer != None:
             self.hammer.transform.position.x += self.Vecteur_directeur.x * self.ThrowSpeed * dt
             self.hammer.transform.position.y += self.Vecteur_directeur.y * self.ThrowSpeed * dt
-        
+
+    def updateSprite(self):
         if self.velocity.x < 0:
             if self.shield:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_LEFT
@@ -352,20 +351,35 @@ class Mob( Entity ):
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_RIGHT
 
 
+    def update(self, dt,  surface: pygame.Surface, camera: Vector2, mapElements: list[ GameObject ], player: Player):
+        self.mobMovement(player,dt)
+        self.CheckCollision(dt, mapElements)
+        self.updateTimer(dt)
+        self.updateHammer(dt)
+        self.updateSprite()
+        
 
+        self.transform.position += self.velocity
+        self.spriteRenderer.draw( surface, camera, self.transform, self.UpdateAfterCurrentAnim, dt=dt )
 
-        self.spriteRenderer.draw( surface, camera, self.transform, self.FinishAnim, dt=dt )
+        
+    def UpdateAfterCurrentAnim(self):
+        """Those variable are affected after the end of the current animation"""
+        self.isAttacking = False
+        self.isHit = False
 
 
     def enableDefence(self):
         self.CanDefend = True
 
     def disableShield(self):
+        """Disable shield and start 5s timer to be able to shield again"""
         self.shield = False
         self.defence_timer.start()
         
 
     def tryDefence(self, player: Player):
+        """Check if there is an arrow coming to block it"""
         if self.CanDefend == False:
             return
         
@@ -375,16 +389,13 @@ class Mob( Entity ):
             self.disable_shield_timer.start()
 
 
-    
-    def FinishAnim(self):
-        self.isAttacking = False
-        self.isHit = False
 
 
     def enableAttack(self):
         self.CanAttack = True
 
     def tryAttack(self, player: Player):
+        """Check the distance between the player and the mob to see if the mob can Attack"""
         if self.CanAttack == False:
             return
         
@@ -393,29 +404,51 @@ class Mob( Entity ):
             self.CanAttack = False
             self.timer_between_attack.start()
 
-            
-
-
-
     def enableThrow(self):
         self.CanThrow = True
 
     def tryThrow( self, player: Player, camera: Vector2):
+        """Throw a hammer (tomahawk) towards the player if the mob can (not on cooldown)"""
         if self.CanThrow == False:
             return
 
         if self.maximum_distance < self.transform.position.distanceTo( player.transform.position ) < self.maximum_throw_distance:
-            self.hammer = GameObject(position=Vector2(self.transform.position.x   ,self.transform.position.y  ), spriteRef=SpritesRef.TOMAHAWK, spriteDimensions=Vector2(10,10))#, anchor=(0.5,0.5))
-            self.Vecteur_directeur = Vector2(player.transform.position.x - self.transform.position.x, player.transform.position.y - self.transform.position.y )
+            self.hammer = GameObject(position=Vector2(self.transform.position.x + 50  ,self.transform.position.y + 50  ), spriteRef=SpritesRef.TOMAHAWK, spriteDimensions=Vector2(10,10))
+            self.Vecteur_directeur = Vector2(player.transform.position.x - self.transform.position.x , player.transform.position.y - self.transform.position.y )
             self.Vecteur_directeur.normalizeToSelf()
             self.CanThrow = False
             self.shoot_timer.start()
 
 
+    def HammerCollision(self, player: Player, solidElements: list[GameObject]):
+        if self.hammer != None:
+            if self.hammer.getCollision(player) and player.shield == False:
+                player.isHit = True
+                self.hammer = None
+                self.shoot_timer.start()
+                return
+            elif  self.hammer.getCollision(player) and player.shield:
+                self.hammer = None
+                self.shoot_timer.start()
+                return
+            
+            collision: bool = False
+            for mapObject in solidElements: collision = collision or self.hammer.getCollision(mapObject)
+            if (collision):
+                self.hammer = None
+                self.shoot_timer.start()
+                return
+            
+
+        if self.isAttacking:
+            if self.CheckColWithDistance(player,self.AttackRange):
+                player.isHit = True
+                return
 
 
-    def draw(self, window: pygame.Surface, player: Player, camera: Vector2):
-        #pygame.draw.line(window, (255,255,255), (self.rect_transform.x + self.width // 2 ,self.rect_transform.y + self.height // 2), (self.Vecteur_directeur.x * self.maximum_throw_distance + player.rect_transform.width // 2  , self.Vecteur_directeur.y * self.maximum_throw_distance  + player.rect_transform.height // 2), 1)
+
+
+    def drawHammer(self, window: pygame.Surface, player: Player, camera: Vector2):
         if self.hammer != None:
             self.hammer.update(window, camera)
 

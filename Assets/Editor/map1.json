@@ -1,9 +1,9 @@
 {
   "end_zone": {
-    "x": 772,
-    "y": 1656,
-    "w": 109,
-    "h": 281,
+    "x": 636,
+    "y": 1719,
+    "w": -1,
+    "h": 0,
     "ref": null,
     "interactable": false,
     "text": "Default"
@@ -67,15 +67,6 @@
       "y": 2014,
       "w": 45,
       "h": 145,
-      "ref": null,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 739,
-      "y": 1844,
-      "w": 173,
-      "h": 16,
       "ref": null,
       "interactable": false,
       "text": "Default"
@@ -493,18 +484,18 @@
       "ref": null,
       "interactable": false,
       "text": "Default"
+    },
+    {
+      "x": 820,
+      "y": 1767,
+      "w": -2,
+      "h": 4,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
     }
   ],
   "gameobjects": [
-    {
-      "x": 727,
-      "y": 1756,
-      "w": 200,
-      "h": 200,
-      "ref": 23,
-      "interactable": false,
-      "text": "Default"
-    },
     {
       "x": 1397.2885232000017,
       "y": 1591,

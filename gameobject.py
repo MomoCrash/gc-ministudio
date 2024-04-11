@@ -104,7 +104,19 @@ class GameObject:
             other.transform.position + ( other.spriteRenderer.dimensions * other.transform.scale ) >= self.transform.position
         else:
             return self.transform.position <= other <= self.transform.position + ( self.spriteRenderer.dimensions * self.transform.scale )
-    
+        
+    def CheckColWithDistance(self, other: GameObject | Vector2, DistanceFromSelf: float):
+        """Returns true if there is a collision between this GameObject and the one specified at the given distance of self"""
+        #cas player a gauche first
+        if ( isinstance( other, GameObject ) ):
+            return \
+            other.transform.position <= self.transform.position + ( self.spriteRenderer.dimensions * self.transform.scale ) + DistanceFromSelf and \
+            other.transform.position + ( other.spriteRenderer.dimensions * other.transform.scale )+ DistanceFromSelf >= self.transform.position
+        else:
+            return self.transform.position <= other <= self.transform.position + ( self.spriteRenderer.dimensions * self.transform.scale ) + DistanceFromSelf
+        
+
+
     def isOnScreen( self, screenPosition: Vector2, screenSize: Vector2 ) -> bool:
         """Returns true if this GameObject is on the screen"""
         spriteDimensionsScaled: Vector2 = self.spriteRenderer.dimensions.multiplyToNew( self.transform.scale )
