@@ -26,6 +26,15 @@ class SpritesRef(Enum):
     BG_LEVEL_1_12 = auto()
     BG_LEVEL_1_13 = auto()
 
+    LIFE_5 = auto()
+    LIFE_4 = auto()
+    LIFE_3 = auto()
+    LIFE_2 = auto()
+    LIFE_1 = auto()
+    LIFE_0 = auto()
+    LIFE_6 = auto()
+    HP = auto()
+
     LVL1_LOG = auto()
     LVL1_ROCK_1 = auto()
     LVL1_ROCK_2 = auto()
@@ -55,6 +64,10 @@ class SpriteSheetsRef(Enum):
 
     PLAYER_ATTACK_LEFT = auto()
     PLAYER_ATTACK_RIGHT = auto()
+    DEAD_LEFT = auto()
+    DEAD_RIGHT = auto()
+    DEATH_LEFT = auto()
+    DEATH_RIGHT = auto()
     PLAYER_GET_HIT_LEFT = auto()
     PLAYER_GET_HIT_RIGHT = auto()
     PLAYER_IDLE_LEFT = auto()

@@ -94,7 +94,7 @@ class Game:
 
         self.map.draw(self.screen, self.camera)
 
-        self.mob.HammerCollision(self.player, self.map.colliders)
+        self.mob.DamagePlayer(self.player, self.map.colliders)
         
         self.player.update( self.surface, self.camera, self.map.colliders, self.dt)
 
@@ -126,6 +126,22 @@ class Game:
             self.surface.blit(self.map.background_sprites[i][0].texture,
                               ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[0]),
                                self.height - self.camera.y))
+            
+        if self.player.health == 6:
+            Assets.GetSprite(SpritesRef.LIFE_6).draw(self.surface,Vector2(20,20),Vector2(1,1))
+        elif self.player.health == 5:
+            Assets.GetSprite(SpritesRef.LIFE_5).draw(self.surface,Vector2(20,20),Vector2(1,1))
+        elif self.player.health == 4:
+            Assets.GetSprite(SpritesRef.LIFE_4).draw(self.surface,Vector2(20,20),Vector2(1,1))
+        elif self.player.health == 3:
+            Assets.GetSprite(SpritesRef.LIFE_3).draw(self.surface,Vector2(20,20),Vector2(1,1))
+        elif self.player.health == 2:
+            Assets.GetSprite(SpritesRef.LIFE_2).draw(self.surface,Vector2(20,20),Vector2(1,1))
+        elif self.player.health == 1:
+            Assets.GetSprite(SpritesRef.LIFE_1).draw(self.surface,Vector2(20,20),Vector2(1,1))
+        elif self.player.health <= 0:
+            Assets.GetSprite(SpritesRef.LIFE_0).draw(self.surface,Vector2(20,20),Vector2(1,1))
+        
 
         #self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
 
@@ -165,3 +181,5 @@ class Game:
             self.current_dt += self.dt
         
         pygame.quit()
+
+        
