@@ -156,15 +156,12 @@ class Editor:
     def loop(self):
         running = True
         while running:
-            dt_start = pygame.time.get_ticks()
 
             running = self.inputs()
 
             self.update()
 
-            self.clock.tick(60)
-            dt_end = pygame.time.get_ticks()
-            self.dt = self.clock.get_time() / 1000
+            self.dt = self.clock.tick() / 1000
             self.current_dt += self.dt
 
         self.map.save_map()

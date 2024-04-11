@@ -8,6 +8,7 @@ from texture import Assets, SpritesRef, SpriteSheetsRef, SpriteSheet, Sprite
 from vector import Vector2
 from gameobject import GameObject
 from ui import InfoBox
+from entity import Mob
 
 class SerializableMapObject( GameObject ):
     def __init__(
@@ -64,10 +65,20 @@ class Map:
         self.is_showing_textbox = False
 
         self.parralax_speed = []
+        self.mobs = []
 
         self.load_map()
 
         self.background_width = self.background_sprites[0][1].texture.get_width()
+
+    def append_mob(self, x, y):
+        self.mobs.append(Mob[Mob(
+            position=Vector2(x, y),
+            spriteDimensions=Vector2(100, 200)
+        )])
+
+    def remove_mob(self, mob: Mob):
+        self.mobs.remove(mob)
 
     def append_backgrounds(self, layer, sprite_ref: str):
         if len(self.background_refs) <= layer: self.background_refs.append([])
@@ -144,6 +155,20 @@ class Map:
                     self.colliders.append( SerializableMapObject.deserialize(colliders) )
             except KeyError:
                 print("No colliders for map " + self.map_file)
+
+    def update_mobs(self, screen: pygame.surface, player, camera: Vector2, dt):
+        for mob in self.mobs:
+            mob.DamagePlayer(player, self.colliders)
+            mob.update(dt, screen, camera, self.colliders, player)
+
+    def update_mobs_logic(self, screen: pygame.surface, player, camera: Vector2):
+        for mob in self.mobs:
+            mob.tryThrow(player, camera)
+            mob.tryAttack(player)
+            mob.tryDefence(player)
+            player.DamageEnnemy(mob)
+
+            mob.drawHammer(screen, player, camera)
         
     def draw( self, screen: pygame.Surface, player, camera: Vector2, editor: bool = False ):
         for mapObject in self.decors:

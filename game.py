@@ -15,8 +15,7 @@ class Game:
         self.height = win_height
         self.window_name = win_name
         self.fps = fps
-        self.dt = 0
-        self.current_dt = 0
+        self.dt = 1
         self.elementsOnScreen: LinkedList = LinkedList()
         self.elementsOffScreen: LinkedList = LinkedList()
         self.game_chapter = game_chapter
@@ -31,15 +30,13 @@ class Game:
         self.screen = screen
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
+        self.fps = 0
 
         self.player = Player(
                                 position = Vector2( 400, 1700 ),
                                 spriteDimensions = Vector2( 100, 200 )
                             )
-        self.mob = Mob( 
-            position=Vector2( 400, 1810 ),
-            spriteDimensions = Vector2( 100, 200 )
-            )
+
         self.camera = Vector2( 0, 0 )
 
         self.text = Text(self.screen, settings.GAME_FONT, 21)
@@ -101,12 +98,10 @@ class Game:
 
 
         self.map.draw(self.screen, self.player, self.camera)
-
-        self.mob.DamagePlayer(self.player, self.map.colliders)
         
         self.player.update( self.surface, self.camera, self.map.colliders, self.dt)
-        self.mob.update(self.dt, self.surface, self.camera, self.map.colliders, self.player)
 
+        self.map.update_mobs(self.screen, self.player, self.camera, self.dt)
 
         if self.player.getCollision(self.map.end_zone):
             self.load_next_map()
@@ -115,19 +110,13 @@ class Game:
 
         self.update_camera()
 
-
-        self.mob.tryThrow(self.player, self.camera)
-        self.mob.tryAttack(self.player)
-        self.mob.tryDefence(self.player)
-        self.player.DamageEnnemy(self.mob)
-        
-        self.mob.drawHammer(self.surface, self.player, self.camera)
+        self.map.update_mobs_logic(self.screen, self.player, self.camera)
 
         self.player.DrawArrow(self.surface, self.camera)
 
         self.player.UpdateArrow(self.dt)
 
-        self.text.draw_text("fps :" + str(self.clock.get_fps()), (255, 255, 255), 100, 100, 10, 10)
+        self.text.draw_text("fps :" + str(self.fps), (255, 255, 255), 100, 100, 10, 10)
 
         for i in range(len(self.map.background_sprites)):
              if self.map.background_sprites[i][0] is not None:
@@ -178,8 +167,7 @@ class Game:
         
         self.music_manager.Play_Level()
         while running:
-            dt_start = pygame.time.get_ticks()
-            
+
             if not paused:
                 running = self.inputs()
                 self.update()  
@@ -194,12 +182,13 @@ class Game:
                     self.menu.quit_button_rect.draw()
                 else:
                     paused = False
-                pygame.display.flip()  
+                pygame.display.flip()
 
             self.clock.tick(60)
-            dt_end = pygame.time.get_ticks()
-            self.dt = self.clock.get_time() / 1000
-            self.current_dt += self.dt
+            self.dt = (self.clock.get_time()) / 1000.0
+
+            print(self.dt)
+            self.fps = 1 / self.dt
             
             if self.menu.menu_active:
                 paused = True
