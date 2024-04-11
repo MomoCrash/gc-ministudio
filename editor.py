@@ -20,7 +20,7 @@ class Editor:
 
         self.player = Player(
                                 position = Vector2( 0, 1580 ),
-                                spriteDimensions = Vector2( 40, 80 ),
+                                spriteDimensions = Vector2( 100, 200 ),
                                 gravity=0
                             )
         self.camera = Vector2(self.player.transform.position.x, 0)
@@ -48,6 +48,8 @@ class Editor:
                 return False
 
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_e:
+                    self.map.is_showing_textbox = True
                 if event.key == pygame.K_f:
                     if self.player.gravity == 0:
                         self.player.gravity = 5
@@ -125,7 +127,7 @@ class Editor:
                 self.surface.blit(self.map.background_sprites[i][j].texture,
                                   ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[j]), self.height - self.camera.y, self.width, self.height))
 
-        self.map.draw(self.surface, self.camera, True)
+        self.map.draw(self.surface, self.player, self.camera, True)
         self.map.end_zone.update(self.screen, self.camera)
         
         self.player.update( self.surface, self.camera, self.map.colliders, self.dt )
@@ -143,9 +145,10 @@ class Editor:
             pygame.draw.rect(self.screen, (0, 0, 255, 120), (self.end_zone_start.x - self.camera.x, self.end_zone_start.y - self.camera.y, distance.x, distance.y))
 
         for i in range(len(self.map.background_sprites)):
-            self.surface.blit(self.map.background_sprites[i][0].texture,
-                              ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[0]),
-                               self.height - self.camera.y))
+            if self.map.background_sprites[i][0] is not None:
+                self.surface.blit(self.map.background_sprites[i][0].texture,
+                                  ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[0]),
+                                   self.height - self.camera.y))
 
 
         pygame.display.flip()

@@ -9,6 +9,7 @@ class SpritesRef(Enum):
     BOOK = auto()
     START = auto()
 
+    # 2
     BG_LEVEL_1_1 = auto()
     BG_LEVEL_1_2 = auto()
     BG_LEVEL_1_COLOR = auto()
@@ -26,6 +27,22 @@ class SpritesRef(Enum):
     BG_LEVEL_1_12 = auto()
     BG_LEVEL_1_13 = auto()
 
+    #15
+    BG_LEVEL_2_1 = auto()
+    BG_LEVEL_2_2 = auto()
+
+    BG_LEVEL_2_3 = auto()
+    BG_LEVEL_2_4 = auto()
+
+    BG_LEVEL_2_5 = auto()
+    BG_LEVEL_2_6 = auto()
+
+    BG_LEVEL_2_7 = auto()
+    BG_LEVEL_2_8 = auto()
+
+    BG_LEVEL_2_9 = auto()
+    BG_LEVEL_2_10 = auto()
+
     LIFE_5 = auto()
     LIFE_4 = auto()
     LIFE_3 = auto()
@@ -34,7 +51,8 @@ class SpritesRef(Enum):
     LIFE_0 = auto()
     LIFE_6 = auto()
     HP = auto()
-
+    
+    #25
     LVL1_LOG = auto()
     LVL1_ROCK_1 = auto()
     LVL1_ROCK_2 = auto()
@@ -47,6 +65,8 @@ class SpritesRef(Enum):
     TEST = auto()
 
     TOMAHAWK = auto()
+
+    CHECK_BUTTON = auto()
 
 
 class SpriteSheetsRef(Enum):
