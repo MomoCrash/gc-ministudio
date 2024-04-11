@@ -9,6 +9,7 @@ class SpritesRef(Enum):
     BOOK = auto()
     START = auto()
 
+    # 2
     BG_LEVEL_1_1 = auto()
     BG_LEVEL_1_2 = auto()
     BG_LEVEL_1_COLOR = auto()
@@ -26,6 +27,23 @@ class SpritesRef(Enum):
     BG_LEVEL_1_12 = auto()
     BG_LEVEL_1_13 = auto()
 
+    #15
+    BG_LEVEL_2_1 = auto()
+    BG_LEVEL_2_2 = auto()
+
+    BG_LEVEL_2_3 = auto()
+    BG_LEVEL_2_4 = auto()
+
+    BG_LEVEL_2_5 = auto()
+    BG_LEVEL_2_6 = auto()
+
+    BG_LEVEL_2_7 = auto()
+    BG_LEVEL_2_8 = auto()
+
+    BG_LEVEL_2_9 = auto()
+    BG_LEVEL_2_10 = auto()
+
+    #25
     LVL1_LOG = auto()
     LVL1_ROCK_1 = auto()
     LVL1_ROCK_2 = auto()
