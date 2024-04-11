@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     menu = StartMenu(screen)
 
-    pause_menu = Menu(screen) 
+    pause_menu = Menu(screen)
     game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Ultimate Game of the Year", pause_menu)  
     
     # editor = Editor(screen, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
