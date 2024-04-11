@@ -513,6 +513,15 @@
       "ref": 43,
       "interactable": false,
       "text": "Default"
+    },
+    {
+      "x": 2158.5832249973255,
+      "y": 1446,
+      "w": 359,
+      "h": 620,
+      "ref": 54,
+      "interactable": false,
+      "text": "Default"
     }
   ]
 }
