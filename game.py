@@ -58,6 +58,13 @@ class Game:
             if event.type == pygame.QUIT:
                 return False
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_e:
+                    if not self.map.is_showing_textbox:
+                        self.map.is_showing_textbox = True
+                    else:
+                        self.map.is_showing_textbox = False
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: 
                     self.player.Attack(self.camera)
@@ -92,7 +99,7 @@ class Game:
                 
 
 
-        self.map.draw(self.screen, self.camera)
+        self.map.draw(self.screen, self.player, self.camera)
 
         self.mob.HammerCollision(self.player, self.map.colliders)
         
@@ -123,9 +130,10 @@ class Game:
         self.text.draw_text("fps :" + str(self.clock.get_fps()), (255, 255, 255), 100, 100, 10, 10)
 
         for i in range(len(self.map.background_sprites)):
-            self.surface.blit(self.map.background_sprites[i][0].texture,
-                              ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[0]),
-                               self.height - self.camera.y))
+            if self.map.background_sprites[i][0] is not None:
+                self.surface.blit(self.map.background_sprites[i][0].texture,
+                                  ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[0]),
+                                   self.height - self.camera.y))
 
         #self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
 
