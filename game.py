@@ -21,6 +21,7 @@ class Game:
         self.elementsOnScreen: LinkedList = LinkedList()
         self.elementsOffScreen: LinkedList = LinkedList()
         self.game_chapter = game_chapter
+        self.music_manager = Songs()
 
         self.map = Map( "map" + str(game_chapter) + ".json", win_width, win_height )
         
@@ -133,7 +134,8 @@ class Game:
     def loop(self):
         
         running = True
-        
+
+        self.music_manager.Play_Level()
         while running:
             dt_start = pygame.time.get_ticks()
             running = self.inputs()
