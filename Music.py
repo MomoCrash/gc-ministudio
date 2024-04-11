@@ -17,4 +17,4 @@ class Songs:
     def Play_Level(self):
         pygame.mixer.music.load('Musics/Musique_Level.mp3')
         pygame.mixer.music.set_volume(0.2)
-        pygame.mixer.music.play(1,0.0,3000)
+        pygame.mixer.music.play(-1,0.0,3000)

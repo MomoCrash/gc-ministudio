@@ -1,5 +1,4 @@
 import pygame
-
 import settings
 from linkedlist import LinkedList
 from vector import Vector2
@@ -8,10 +7,10 @@ from text import Text
 from entity import Entity, Player, Mob
 from texture import SpritesRef, SpriteSheetsRef, Sprite, SpriteSheet, Assets
 from Music import Songs
-
+from pauseUI import Menu
 
 class Game:
-    def __init__(self, screen, game_chapter, win_width, win_height, win_name, fps=60):
+    def __init__(self, screen, game_chapter, win_width, win_height, win_name, menu, fps=60):
         self.width = win_width
         self.height = win_height
         self.window_name = win_name
@@ -21,11 +20,14 @@ class Game:
         self.elementsOnScreen: LinkedList = LinkedList()
         self.elementsOffScreen: LinkedList = LinkedList()
         self.game_chapter = game_chapter
-        self.music_manager = Songs()
+        self.menu = menu 
 
-        self.map = Map( "map" + str(game_chapter) + ".json", win_width, win_height )
-        
+        self.map = Map("map" + str(game_chapter) + ".json", win_width, win_height)
+
+        self.music_manager = Songs()
+      
         pygame.init()
+        
         self.screen = screen
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
@@ -52,9 +54,7 @@ class Game:
         # TODO : AJOUTER LE RESET DES MOBS
 
     def inputs(self) -> bool:
-
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 return False
 
@@ -74,10 +74,11 @@ class Game:
                     self.player.MeleeAttack()
             if event.type == pygame.MOUSEBUTTONUP:
                 self.player.DesactivateDefence()
-
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.menu.menu_active = not self.menu.menu_active
         return True
-    
-    
+
     def update(self):
         pass
 
@@ -114,8 +115,6 @@ class Game:
 
         self.update_camera()
 
-        # Develop in progress
-     
 
         self.mob.tryThrow(self.player, self.camera)
         self.mob.tryAttack(self.player)
@@ -155,39 +154,54 @@ class Game:
 
         pygame.display.flip()
 
-    def loop(self):
-        
-        running = True
+    def handle_pause_menu(self):
+        menu = Menu(self.screen)
+        paused = True
 
+        while paused:
+            action = menu.handle_input()
+            if action == "CONTINUE":
+                paused = False
+            elif action == "QUIT":
+                pygame.quit()
+                quit()
+
+            self.screen.fill((255, 255, 255))
+            menu.draw()
+            pygame.display.flip()
+
+        return paused
+
+    def loop(self):
+        running = True
+        paused = False
+        
         self.music_manager.Play_Level()
         while running:
             dt_start = pygame.time.get_ticks()
-            running = self.inputs()
             
-            # element = self.elementsOnScreen.first
-            # amountOfElementsOnScreen = self.elementsOnScreen.count
-            # for elementIndex in range( amountOfElementsOnScreen ):
-            #     if ( not element.value.isOnScreen ):
-                    
-            #         if ( amountOfElementsOnScreen == 1 ): self.elementsOnScreen.first = None
-            #         else:
-            #             element.previous.next = element.next
-            #             element.next.previous = element.previous
-            #             if ( elementIndex == 0 ):
-            #                 self.elementsOnScreen.first = element.next
-                    
-            #         self.elementsOnScreen.count -= 1
-            #         element.value.isVisible = False
-            #     element.value.update( self.surface )
-            #     element = element.next #! I think this won't work because it's not a "pointer" copy, but a real copy that creates a new Node
-
-            self.update_graphics()
+            if not paused:
+                running = self.inputs()
+                self.update()  
+                self.update_graphics()  
+            else:            
+                self.menu.handle_input()  
+                if self.menu.menu_active:
+                    self.screen.blit(self.menu.book_background, (self.menu.book_x, self.menu.book_y))
+                    menu_button_rect = self.screen.blit(self.menu.menu_button, (10, 10))
+                    self.menu.continue_button_rect.draw()
+                    self.menu.options_button_rect.draw()
+                    self.menu.quit_button_rect.draw()
+                else:
+                    paused = False
+                pygame.display.flip()  
 
             self.clock.tick(60)
             dt_end = pygame.time.get_ticks()
-            self.dt =self.clock.get_time() / 1000
+            self.dt = self.clock.get_time() / 1000
             self.current_dt += self.dt
-        
+            
+            if self.menu.menu_active:
+                paused = True
+                
         pygame.quit()
-
-        

@@ -3,6 +3,7 @@ import settings
 from editor import Editor
 from startmenu import StartMenu
 from game import Game
+from pauseUI import Menu  
 import pygame
 
 def init_game():
@@ -28,6 +29,7 @@ if __name__ == '__main__':
 
     menu = StartMenu(screen)
 
-    game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Utltimate game of the Year")
-
-    #editor = Editor(screen, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
+    pause_menu = Menu(screen) 
+    game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Ultimate Game of the Year", pause_menu)  
+    
+    # editor = Editor(screen, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
