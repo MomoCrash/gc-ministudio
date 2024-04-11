@@ -37,7 +37,7 @@ class Game:
                                 spriteDimensions = Vector2( 100, 200 )
                             )
         self.mob = Mob( 
-            position=Vector2( 400, 1500 ),
+            position=Vector2( 400, 1810 ),
             spriteDimensions = Vector2( 100, 200 )
             )
         self.camera = Vector2( 0, 0 )
@@ -105,6 +105,7 @@ class Game:
         self.mob.DamagePlayer(self.player, self.map.colliders)
         
         self.player.update( self.surface, self.camera, self.map.colliders, self.dt)
+        self.mob.update(self.dt, self.surface, self.camera, self.map.colliders, self.player)
 
 
         if self.player.getCollision(self.map.end_zone):
@@ -119,7 +120,7 @@ class Game:
         self.mob.tryAttack(self.player)
         self.mob.tryDefence(self.player)
         self.player.DamageEnnemy(self.mob)
-        self.mob.update(self.dt, self.surface, self.camera, self.map.colliders, self.player)
+        
         self.mob.drawHammer(self.surface, self.player, self.camera)
 
         self.player.DrawArrow(self.surface, self.camera)

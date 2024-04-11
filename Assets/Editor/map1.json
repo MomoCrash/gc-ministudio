@@ -278,6 +278,15 @@
       "ref": 35,
       "interactable": false,
       "text": "Default"
+    },
+    {
+      "x": 1467,
+      "y": 1243,
+      "w": 1920,
+      "h": 1080,
+      "ref": 1,
+      "interactable": false,
+      "text": "Default"
     }
   ]
 }
