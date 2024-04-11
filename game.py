@@ -23,10 +23,6 @@ class Game:
 
         self.map = Map("map" + str(game_chapter) + ".json", win_width, win_height)
 
-        self.music_manager = Songs()
-      
-        pygame.init()
-        
         self.screen = screen
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
@@ -93,7 +89,7 @@ class Game:
             for j in range(1, len(self.map.background_sprites[i])):
                 self.surface.blit(self.map.background_sprites[i][j].texture,
                                   ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[j]),
-                                   self.height - self.camera.y, self.width, self.height))
+                                   0, self.width, self.height))
                 
 
 
@@ -116,29 +112,30 @@ class Game:
 
         self.player.UpdateArrow(self.dt)
 
-        self.text.draw_text("fps :" + str(self.fps), (255, 255, 255), 100, 100, 10, 10)
-
         for i in range(len(self.map.background_sprites)):
              if self.map.background_sprites[i][0] is not None:
+
                 self.surface.blit(self.map.background_sprites[i][0].texture,
                                   ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[0]),
-                                   self.height - self.camera.y))
-            
-        if self.player.health == 6:
-            Assets.GetSprite(SpritesRef.LIFE_6).draw(self.surface,Vector2(20,20),Vector2(1,1))
-        elif self.player.health == 5:
-            Assets.GetSprite(SpritesRef.LIFE_5).draw(self.surface,Vector2(20,20),Vector2(1,1))
-        elif self.player.health == 4:
-            Assets.GetSprite(SpritesRef.LIFE_4).draw(self.surface,Vector2(20,20),Vector2(1,1))
-        elif self.player.health == 3:
-            Assets.GetSprite(SpritesRef.LIFE_3).draw(self.surface,Vector2(20,20),Vector2(1,1))
-        elif self.player.health == 2:
-            Assets.GetSprite(SpritesRef.LIFE_2).draw(self.surface,Vector2(20,20),Vector2(1,1))
-        elif self.player.health == 1:
-            Assets.GetSprite(SpritesRef.LIFE_1).draw(self.surface,Vector2(20,20),Vector2(1,1))
-        elif self.player.health <= 0:
-            Assets.GetSprite(SpritesRef.LIFE_0).draw(self.surface,Vector2(20,20),Vector2(1,1))
+                                   0))
 
+        Assets.GetSprite(SpritesRef.HP).draw(self.surface, Vector2(20, 30), Vector2(1, 1))
+        if self.player.health == 6:
+            Assets.GetSprite(SpritesRef.LIFE_6).draw(self.surface,Vector2(90,20),Vector2(1,1))
+        elif self.player.health == 5:
+            Assets.GetSprite(SpritesRef.LIFE_5).draw(self.surface,Vector2(90,20),Vector2(1,1))
+        elif self.player.health == 4:
+            Assets.GetSprite(SpritesRef.LIFE_4).draw(self.surface,Vector2(90,20),Vector2(1,1))
+        elif self.player.health == 3:
+            Assets.GetSprite(SpritesRef.LIFE_3).draw(self.surface,Vector2(90,20),Vector2(1,1))
+        elif self.player.health == 2:
+            Assets.GetSprite(SpritesRef.LIFE_2).draw(self.surface,Vector2(90,20),Vector2(1,1))
+        elif self.player.health == 1:
+            Assets.GetSprite(SpritesRef.LIFE_1).draw(self.surface,Vector2(90,20),Vector2(1,1))
+        elif self.player.health <= 0:
+            Assets.GetSprite(SpritesRef.LIFE_0).draw(self.surface,Vector2(90,20),Vector2(1,1))
+
+        self.text.draw_text("fps :" + str(self.fps), (255, 255, 255), 90, 100, 10, 10)
         #self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
 
         pygame.display.flip()
@@ -164,8 +161,7 @@ class Game:
     def loop(self):
         running = True
         paused = False
-        
-        self.music_manager.Play_Level()
+
         while running:
 
             if not paused:
