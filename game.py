@@ -35,7 +35,7 @@ class Game:
                                 spriteDimensions = Vector2( 100, 200 )
                             )
         self.mob = Mob( 
-            position=Vector2( 400, 1700 ),
+            position=Vector2( 400, 1810 ),
             spriteDimensions = Vector2( 100, 200 )
             )
         self.camera = Vector2( 0, 0 )
