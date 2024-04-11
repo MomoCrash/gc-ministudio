@@ -49,15 +49,14 @@ class Player( Entity ):
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 4, 4 )
                     maxSpeed: float = 4,
-                    jumpHeight: float = 50,
-                    gravity: float = 10
+                    jumpHeight: float = 30,
+                    gravity: float = 5
                 ):
         super().__init__( position, rotation, scale, spriteDimensions, None, spritesheet_ref, velocity )
         self.maxSpeed: float = maxSpeed
         self.jumpHeight: float = jumpHeight
         self.gravity: float = gravity
         self.isJumping: bool = False
-        self.jumpCount: int = 10
         self.CanShoot = True
         self.shoot_timer = Timer(1, self.enableThrow )
         self.ArrowSpeed = 500
@@ -272,7 +271,7 @@ class Player( Entity ):
         
         if (self.isJumping):
             if (self.velocity.y < -5):
-                self.velocity.y *= 0.8
+                self.velocity.y *= 0.9
 
             else:
                 if (self.velocity.y < 0):
