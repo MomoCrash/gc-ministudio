@@ -275,7 +275,7 @@ class Player( Entity ):
                 if (self.velocity.y < 0):
                     self.velocity.y = 1
                 if (self.velocity.y < self.gravity):
-                    self.velocity.y *= 1.5 * deltaTime
+                    self.velocity.y *= 1.5
 
         else:
             self.velocity.y = self.gravity

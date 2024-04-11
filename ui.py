@@ -5,6 +5,7 @@ from text import Text
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 from gameobject import GameObject
 from vector import Vector2
+from texture import Assets, SpritesRef
 
 # Info box
 class InfoBox():
@@ -55,8 +56,7 @@ class InfoBox():
                 popup_height = 300
                 popup_x = (SCREEN_WIDTH - popup_width) // 2
                 popup_y = (SCREEN_HEIGHT - popup_height) // 2 + 50
-                popup_rect = pygame.Rect(popup_x, popup_y, popup_width, popup_height)
-                pygame.draw.rect(self.screen, bg_color, popup_rect)
+                Assets.GetSprite( SpritesRef.POPUP ).draw( self.screen, Vector2( popup_x, popup_y ), Vector2(1, 1) )
                 font = pygame.font.Font(None, 24)
                 description_text = desc_text
                 text_x = popup_rect.x + 20
