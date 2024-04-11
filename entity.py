@@ -6,6 +6,7 @@ from gameobject import GameObject
 from thetimer import Timer
 from texture import Sprite, SpriteSheet, Assets, SpritesRef, SpriteSheetsRef
 from math import  pi
+import settings
 
 
 
@@ -64,18 +65,29 @@ class Player( Entity ):
         self.Vecteur_directeur = Vector2(0,0)
         self.ArrowDistance = 500
         self.circle = pi / self.ArrowDistance
-        self.health = 10
         self.isHit = False
         self.shield = False
         self.CanAttack = True
         self.AttackRange = 15
         self.isAttacking = False
         self.timer_between_attack = Timer(1, self.enableMeleeAttack)
+        self.death_anim_timer = Timer(0.25, self.disableDeathAnim)
         self.TrueDistance = 0
+        self.FacingRight = True
+        self.health = 6
+        self.isDead = False
+        self.isDone = False
+        self.CanDealDamage = True
+        
+
+    def disableDeathAnim(self):
+        self.isDone = True
 
     def FinishAnim(self):
         self.isHit = False
         self.isAttacking = False
+        self.CanDealDamage = True
+
 
     def enableMeleeAttack(self):
         self.CanAttack = True
@@ -89,29 +101,75 @@ class Player( Entity ):
             self.timer_between_attack.start()
             self.shoot_timer.start()
     
-    def update( self, surface: pygame.Surface, camera: Vector2, solidElements: list[ GameObject ],dt ) -> None:
+    def IsDead(self):
+        if self.health == 0:
+            self.isDead = True
+            self.death_anim_timer.start()
+    
+    def update( self, surface: pygame.Surface, camera: Vector2, solidElements: list[ GameObject ], dt ) -> None:
         pressedKey = pygame.key.get_pressed()
         self.playerMovement( pressedKey, solidElements )
         self.playerJump( pressedKey, solidElements )
         self.timer_between_attack.update(dt)
+        self.death_anim_timer.update(dt)
+
+        
+        
         
 
         self.transform.position += self.velocity
-        
-        if self.velocity.x < 0: 
-            if self.isHit:
+
+
+
+        if self.FacingRight == False: 
+            if self.isDead and not self.isDone:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.DEATH_RIGHT
+            elif self.isDead and self.isDone:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.DEAD_RIGHT
+
+
+            elif self.velocity.x == 0:
+                if self.isJumping:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_JUMP_LEFT
+                elif self.shield:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_SHIELD_LEFT
+                elif self.isHit:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_GET_HIT_LEFT
+                elif self.isAttacking:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_ATTACK_LEFT
+                else:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_IDLE_LEFT
+
+            elif self.isJumping:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_JUMP_LEFT
+            elif self.isHit:
                   self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_GET_HIT_LEFT
-            elif self.shield:
-                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_SHIELD_LEFT
             elif self.isAttacking:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_ATTACK_LEFT
             else:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_WALK_LEFT
         else:
-            if self.isHit:
+            if self.isDead and not self.isDone:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.DEATH_LEFT
+            elif self.isDead and self.isDone:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.DEAD_LEFT
+            
+            elif self.velocity.x == 0:
+                if self.isJumping:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_JUMP_RIGHT
+                elif self.shield:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_SHIELD_RIGHT
+                elif self.isHit:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_GET_HIT_RIGHT  
+                elif self.isAttacking:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_ATTACK_RIGHT
+                else:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_IDLE_RIGHT
+
+            elif self.isJumping:
+                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_JUMP_RIGHT
+            elif self.isHit:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_GET_HIT_RIGHT  
-            elif self.shield:
-                self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_SHIELD_RIGHT
             elif self.isAttacking:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.PLAYER_ATTACK_RIGHT
             else:
@@ -119,6 +177,7 @@ class Player( Entity ):
 
         self.spriteRenderer.draw( surface, camera, self.transform, self.FinishAnim, dt=dt )
 
+        
     
     def UpdateArrow(self, dt):
         if self.arrow != None:
@@ -136,6 +195,7 @@ class Player( Entity ):
         if self.arrow != None:
             if self.arrow.getCollision(mob) and mob.shield == False:
                 mob.isHit = True
+                mob.health -= 1
                 self.arrow = None
                 self.enableThrow()
                 return
@@ -148,6 +208,9 @@ class Player( Entity ):
         if self.isAttacking:
             if self.CheckColWithDistance(mob,self.AttackRange):
                 mob.isHit = True
+                if self.CanDealDamage:
+                    mob.health -= 1
+                    self.CanDealDamage = False
                 return
 
 
@@ -155,34 +218,41 @@ class Player( Entity ):
         leftPressed: bool = pressedKey[pygame.K_q]
         rightPressed: bool = pressedKey[pygame.K_d]
 
-        if (leftPressed and not rightPressed):
+        if not self.isDead:
+            if (leftPressed and not rightPressed):
 
-            if (self.velocity.x == 0):
-                self.velocity.x = -1
+                self.FacingRight = False
 
-            if (self.velocity.x > 0):
-                factor: float = 0.6
+                if (self.velocity.x == 0):
+                    self.velocity.x = -1
+
+                if (self.velocity.x > 0):
+                    factor: float = 0.6
+                else:
+                    factor: float = 1.5
+
+            elif (rightPressed and not leftPressed):
+
+                self.FacingRight = True
+
+                if (self.velocity.x == 0):
+                    self.velocity.x = 1
+
+                if (self.velocity.x < 0):
+                    factor: float = 0.6
+                else:
+                    factor: float = 1.5
+
             else:
-                factor: float = 1.5
+                factor: float = 0.8
 
-        elif (rightPressed and not leftPressed):
-
-            if (self.velocity.x == 0):
-                self.velocity.x = 1
-
-            if (self.velocity.x < 0):
-                factor: float = 0.6
-            else:
-                factor: float = 1.5
-
+            if  self.shield:
+                self.velocity.x = 0
+            
+            if (abs(self.velocity.x * factor) <= self.maxSpeed and self.velocity.x != 0):
+                self.velocity.x *= factor if abs(self.velocity.x) > 0.9 else 0
         else:
-            factor: float = 0.8
-
-        if  self.shield:
             self.velocity.x = 0
-        
-        if (abs(self.velocity.x * factor) <= self.maxSpeed and self.velocity.x != 0):
-            self.velocity.x *= factor if abs(self.velocity.x) > 0.9 else 0
 
         collision: bool = False
         self.transform.position.x += self.velocity.x
@@ -193,11 +263,13 @@ class Player( Entity ):
     def playerJump(self, pressedKey: pygame.key.ScancodeWrapper, solidElements: list[GameObject]):
         spacePressed = pressedKey[pygame.K_SPACE]
 
+        if not self.isDead:
 
-        if (spacePressed and not self.isJumping):
-            self.isJumping = True
-            self.velocity.y = -self.jumpHeight
+            if (spacePressed and not self.isJumping):
+                self.isJumping = True
+                self.velocity.y = -self.jumpHeight
 
+        
         if (self.isJumping):
             if (self.velocity.y < -5):
                 self.velocity.y *= 0.8
@@ -220,7 +292,7 @@ class Player( Entity ):
             self.isJumping = False
 
     def Attack(self, camera: Vector2):
-        if self.CanShoot:
+        if self.CanShoot and not self.isDead:
             self.MousePos = pygame.mouse.get_pos()
             self.arrow = GameObject(position=Vector2(self.transform.position.x, self.transform.position.y), spriteRef=SpritesRef.TOMAHAWK)
             self.Vecteur_directeur = Vector2(self.MousePos[0] - self.transform.position.x + camera.x, self.MousePos[1] - self.transform.position.y + camera.y)
@@ -286,14 +358,22 @@ class Mob( Entity ):
         self.AttackRange = 15
         self.isAttacking = False
         self.isHit = False
+        self.FacingRight = False
+        self.health = 2
+        self.IsDead = False
+        self.CanDealDamage = True
 
     def mobMovement(self, player: Player, dt):
         if self.transform.position.distanceTo( player.transform.position ) < self.maximum_distance:
-            if not player.isHit:
+            if -self.AttackRange < self.transform.position.distanceTo( player.transform.position ) < self.AttackRange:
+                self.velocity.x = 0
+            elif not player.isHit or not player.isDead:
                 if player.transform.position.x > self.transform.position.x:
+                    self.FacingRight = True
                     self.velocity.x = +1
                     self.isFacingRight = True
                 if player.transform.position.x < self.transform.position.x:
+                    self.FacingRight = False
                     self.velocity.x = -1
                     self.isFacingRight = False
             else:
@@ -331,8 +411,18 @@ class Mob( Entity ):
             self.hammer.transform.position.y += self.Vecteur_directeur.y * self.ThrowSpeed * dt
 
     def updateSprite(self):
-        if self.velocity.x < 0:
-            if self.shield:
+        if self.FacingRight == False:
+            if self.velocity.x == 0:
+                if self.shield:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_LEFT
+                elif self.isAttacking:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_ATTACK_LEFT
+                elif self.isHit:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_GET_HIT_LEFT
+                else:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_IDLE_LEFT
+
+            elif self.shield:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_LEFT
             elif self.isAttacking:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_ATTACK_LEFT
@@ -341,7 +431,16 @@ class Mob( Entity ):
             elif self.shield == False and self.isAttacking == False:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_WALK_LEFT
         else:
-            if self.shield:
+            if self.velocity.x == 0:
+                if self.shield:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_RIGHT
+                elif self.isAttacking:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_ATTACK_RIGHT
+                elif self.isHit:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_GET_HIT_RIGHT
+                else:
+                    self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_IDLE_RIGHT
+            elif self.shield:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_SHIELD_RIGHT
             elif self.isAttacking:
                 self.spriteRenderer.spriteSheetRef = SpriteSheetsRef.ENNEMY_ATTACK_RIGHT
@@ -352,21 +451,29 @@ class Mob( Entity ):
 
 
     def update(self, dt,  surface: pygame.Surface, camera: Vector2, mapElements: list[ GameObject ], player: Player):
-        self.mobMovement(player,dt)
-        self.CheckCollision(dt, mapElements)
-        self.updateTimer(dt)
-        self.updateHammer(dt)
-        self.updateSprite()
-        
+        if self.health == 0:
+            self.IsDead = True
+            self.hammer = None
+            self.CanAttack = False
+        if self.IsDead == False:
+            self.mobMovement(player,dt)
+            self.CheckCollision(dt, mapElements)
+            self.updateTimer(dt)
+            self.updateHammer(dt)
+            self.updateSprite()
 
-        self.transform.position += self.velocity
-        self.spriteRenderer.draw( surface, camera, self.transform, self.UpdateAfterCurrentAnim, dt=dt )
+        
+            
+
+            self.transform.position += self.velocity
+            self.spriteRenderer.draw( surface, camera, self.transform, self.UpdateAfterCurrentAnim, dt=dt )
 
         
     def UpdateAfterCurrentAnim(self):
         """Those variable are affected after the end of the current animation"""
         self.isAttacking = False
         self.isHit = False
+        self.CanDealDamage = True
 
 
     def enableDefence(self):
@@ -396,7 +503,7 @@ class Mob( Entity ):
 
     def tryAttack(self, player: Player):
         """Check the distance between the player and the mob to see if the mob can Attack"""
-        if self.CanAttack == False:
+        if self.CanAttack == False or  player.isDead:
             return
         
         if self.transform.position.distanceTo( player.transform.position ) < self.AttackRange:
@@ -409,7 +516,7 @@ class Mob( Entity ):
 
     def tryThrow( self, player: Player, camera: Vector2):
         """Throw a hammer (tomahawk) towards the player if the mob can (not on cooldown)"""
-        if self.CanThrow == False:
+        if self.CanThrow == False or player.isDead:
             return
 
         if self.maximum_distance < self.transform.position.distanceTo( player.transform.position ) < self.maximum_throw_distance:
@@ -420,10 +527,12 @@ class Mob( Entity ):
             self.shoot_timer.start()
 
 
-    def HammerCollision(self, player: Player, solidElements: list[GameObject]):
+    def DamagePlayer(self, player: Player, solidElements: list[GameObject]):
         if self.hammer != None:
             if self.hammer.getCollision(player) and player.shield == False:
                 player.isHit = True
+                player.health -= 1
+                player.IsDead()
                 self.hammer = None
                 self.shoot_timer.start()
                 return
@@ -443,6 +552,10 @@ class Mob( Entity ):
         if self.isAttacking:
             if self.CheckColWithDistance(player,self.AttackRange):
                 player.isHit = True
+                if self.CanDealDamage:
+                    player.health -= 1
+                    player.IsDead()
+                    self.CanDealDamage = False
                 return
 
 
