@@ -30,12 +30,13 @@ class Game:
 
         self.player = Player(
                                 position = Vector2( 400, 1700 ),
-                                spriteDimensions = Vector2( 100, 200 )
+                                spriteDimensions = Vector2( 100, 200 ),
+                                jumpHeight=2400
                             )
 
         self.camera = Vector2( 0, 0 )
 
-        self.text = Text(self.screen, settings.GAME_FONT, 21)
+        self.text = Text(self.screen, settings.GAME_FONT, 30)
 
         self.loop()
 

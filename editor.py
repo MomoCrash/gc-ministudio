@@ -19,8 +19,10 @@ class Editor:
 
         self.player = Player(
                                 position = Vector2( 0, 1580 ),
-                                spriteDimensions = Vector2( 60, 200 ),
-                                gravity=0
+                                spriteDimensions = Vector2( 60, 190 ),
+                                gravity=0,
+            jumpHeight=2400
+
                             )
         self.camera = Vector2(self.player.transform.position.x, 0)
 
@@ -31,7 +33,7 @@ class Editor:
         
         self.selected_sprite = SpritesRef(1)
 
-        self.map = Map("map2.json", win_width, win_height)
+        self.map = Map("map1.json", win_width, win_height)
         self.dt = 0
         self.current_dt = 0
 
@@ -54,7 +56,7 @@ class Editor:
                         self.map.is_showing_textbox = True
                 if event.key == pygame.K_f:
                     if self.player.gravity == 0:
-                        self.player.gravity = 5
+                        self.player.gravity = 170
                     else:
                         self.player.gravity = 0
                 if event.key == pygame.K_m:

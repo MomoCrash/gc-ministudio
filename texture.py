@@ -77,6 +77,8 @@ class SpritesRef(Enum):
     LVL3_SWORD = auto()
     LVL3_SWORD_1 = auto()
 
+    LVL4_STATUE = auto()
+
     TOMAHAWK = auto()
 
     KEY_ART = auto()

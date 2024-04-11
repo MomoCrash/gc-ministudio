@@ -29,7 +29,7 @@ if __name__ == '__main__':
                                      pygame.DOUBLEBUF)
     Assets.Init()
 
-    editor = False
+    editor = True
     # editor = True
 
     if not editor:

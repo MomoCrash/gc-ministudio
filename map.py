@@ -202,7 +202,7 @@ class Map:
                 box.show_popup = True
                 if self.is_showing_textbox:
                     box.big_popup = True
-                    box.draw("Petit text en sblit", (0,0,0), (255,255,255))
+                    box.draw("Cette statue représente Ymir, le premier des géants. Au commencement, il n'y avait que 3 choses : le feu, la glace, et l'immense abysse les séparant appelé Ginnungagap. Un jour, le feu et la glace traversèrent l'abysse et se rejoignirent. Au contact des flammes, la glace fondit et les gouttes tombèrent au fond de Ginnungagap. Puis, elles s'assemblèrent d'elles-même pour former le corps d'Ymir.", (0,0,0), (0,0,0))
                 else:
                     box.big_popup = False
                     box.text.draw_text("Appuie sur E pour découvrir l'histoire", (255, 255, 255), 800, 500, 20, 20)

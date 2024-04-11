@@ -22,7 +22,35 @@
       26
     ]
   ],
-  "mobs": [],
+  "mobs": [
+    {
+      "x": 457.0,
+      "y": 1847,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1209.0,
+      "y": 1846,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1463.0,
+      "y": 1846,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    }
+  ],
   "colliders": [
     {
       "x": 0,
@@ -44,15 +72,6 @@
     }
   ],
   "gameobjects": [
-    {
-      "x": 464,
-      "y": 1912,
-      "w": 100,
-      "h": 100,
-      "ref": 50,
-      "interactable": false,
-      "text": "Default"
-    },
     {
       "x": 1103,
       "y": 1906,
@@ -99,11 +118,29 @@
       "text": "Default"
     },
     {
-      "x": 1446,
-      "y": 1906,
+      "x": 1227,
+      "y": 314,
+      "w": 1920,
+      "h": 1080,
+      "ref": 1,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 442,
+      "y": 1918,
       "w": 100,
       "h": 100,
-      "ref": 50,
+      "ref": 48,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1421,
+      "y": 1910,
+      "w": 100,
+      "h": 100,
+      "ref": 48,
       "interactable": false,
       "text": "Default"
     }
