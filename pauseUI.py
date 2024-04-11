@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from Music import Songs
 
 
 class Button:
@@ -33,11 +34,11 @@ class Menu:
     def __init__(self, screen):
         self.screen = screen
         self.menu_active = False
-        self.menu_button = pygame.image.load('menubutton.png').convert_alpha()
-        self.book_background = pygame.image.load('menubackground.png').convert_alpha()
-        self.continue_button = pygame.image.load('continuer.png').convert_alpha()
-        self.options_button = pygame.image.load('option.png').convert_alpha()
-        self.quit_button = pygame.image.load('quitter.png').convert_alpha()
+        self.menu_button = pygame.image.load('Assets/menubutton.png').convert_alpha()
+        self.book_background = pygame.image.load('Assets/menubackground.png').convert_alpha()
+        self.continue_button = pygame.image.load('Assets/continuer.png').convert_alpha()
+        self.options_button = pygame.image.load('Assets/option.png').convert_alpha()
+        self.quit_button = pygame.image.load('Assets/quitter.png').convert_alpha()
         self.book_x = (1920 - self.book_background.get_width()) // 2
         self.book_y = (1080 - self.book_background.get_height()) // 2
 

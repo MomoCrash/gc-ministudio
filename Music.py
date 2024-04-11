@@ -6,6 +6,9 @@ class Songs:
     def __init__(self) -> None:
         pass
 
+    def Pause(self):
+        pygame.mixer.music.pause()
+
     def Play_Menu(self):
         pygame.mixer.music.load('Musics/Projet_Vikings_Menu.mp3')
         pygame.mixer.music.play(-1,0.0,3000)

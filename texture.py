@@ -66,7 +66,10 @@ class SpritesRef(Enum):
 
     TOMAHAWK = auto()
 
+    KEY_ART = auto()
+
     CHECK_BUTTON = auto()
+    UNCHECK_BUTTON = auto()
 
 
 class SpriteSheetsRef(Enum):

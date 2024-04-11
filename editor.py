@@ -12,15 +12,14 @@ class Editor:
         self.height = win_height
         self.window_name = win_name
         self.fps = fps
-        
-        pygame.init()
+
         self.screen = pygame.display.set_mode((win_width, win_height))
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
 
         self.player = Player(
                                 position = Vector2( 0, 1580 ),
-                                spriteDimensions = Vector2( 100, 200 ),
+                                spriteDimensions = Vector2( 60, 200 ),
                                 gravity=0
                             )
         self.camera = Vector2(self.player.transform.position.x, 0)
@@ -49,12 +48,17 @@ class Editor:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_e:
-                    self.map.is_showing_textbox = True
+                    if self.map.is_showing_textbox:
+                        self.map.is_showing_textbox = False
+                    else:
+                        self.map.is_showing_textbox = True
                 if event.key == pygame.K_f:
                     if self.player.gravity == 0:
                         self.player.gravity = 5
                     else:
                         self.player.gravity = 0
+                if event.key == pygame.K_m:
+                    self.map.append_mob(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y)
                 if event.key == pygame.K_t:
                     self.player.transform.position = Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y)
                 if event.key == pygame.K_s:
@@ -62,6 +66,10 @@ class Editor:
                 if event.key == pygame.K_DELETE:
                     mouseObject = GameObject(position=Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y), spriteDimensions=Vector2(10, 10))
                     has_removed = False
+                    for mob in self.map.mobs:
+                        if mob.getCollision( mouseObject ):
+                            self.map.remove_mob(mob)
+                            break
                     for mapObject in self.map.colliders:
                         if mapObject.getCollision( mouseObject ):
                             self.map.colliders.remove(mapObject)
@@ -112,7 +120,7 @@ class Editor:
 
     def update_camera(self):
         self.camera.x = self.player.transform.position.x - self.width // len(self.map.background_sprites)
-        self.camera.y = self.player.transform.position.y - self.height // 4
+        self.camera.y = self.player.transform.position.y - self.height // 20
 
         self.camera.x = max(0, min(self.camera.x, self.width * (len(self.map.background_sprites) - 1)))
         self.camera.y = max(0, min(self.camera.y, self.height))
@@ -125,12 +133,14 @@ class Editor:
         for i in range(len(self.map.background_sprites)):
             for j in range(1, len(self.map.background_sprites[i])):
                 self.surface.blit(self.map.background_sprites[i][j].texture,
-                                  ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[j]), self.height - self.camera.y, self.width, self.height))
+                                  ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[j]), 0))
 
         self.map.draw(self.surface, self.player, self.camera, True)
         self.map.end_zone.update(self.screen, self.camera)
-        
+
         self.player.update( self.surface, self.camera, self.map.colliders, self.dt )
+
+        self.map.update_mobs(self.screen, self.player, self.camera, self.dt)
 
         self.update_camera()
         
@@ -148,7 +158,7 @@ class Editor:
             if self.map.background_sprites[i][0] is not None:
                 self.surface.blit(self.map.background_sprites[i][0].texture,
                                   ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[0]),
-                                   self.height - self.camera.y))
+                                   0))
 
 
         pygame.display.flip()
