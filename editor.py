@@ -31,7 +31,7 @@ class Editor:
         
         self.selected_sprite = SpritesRef(1)
 
-        self.map = Map("map1.json", win_width, win_height)
+        self.map = Map("map2.json", win_width, win_height)
         self.dt = 0
         self.current_dt = 0
 

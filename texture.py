@@ -43,6 +43,9 @@ class SpritesRef(Enum):
     BG_LEVEL_2_9 = auto()
     BG_LEVEL_2_10 = auto()
 
+    BG_LEVEL_3_1 = auto()
+    BG_LEVEL_3_2 = auto()
+
     LIFE_5 = auto()
     LIFE_4 = auto()
     LIFE_3 = auto()
@@ -60,9 +63,19 @@ class SpritesRef(Enum):
     LVL1_ROCK_4 = auto()
     LVL1_ROCK_SIDE = auto()
     LVL1_ROCK_FACE = auto()
-    LVL1_TOMBSTONE = auto()
     LVL1_STUMP = auto()
     TEST = auto()
+
+    LVL2_BARIL = auto()
+    LVL2_CAISSE = auto()
+
+    LVL3_OS = auto()
+    LVL3_SKULL = auto()
+    LVL3_SKULL_2 = auto()
+    LVL3_STATUE = auto()
+    LVL1_TOMBSTONE = auto()
+    LVL3_SWORD = auto()
+    LVL3_SWORD_1 = auto()
 
     TOMAHAWK = auto()
 

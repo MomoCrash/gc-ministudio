@@ -42,7 +42,71 @@
       19
     ]
   ],
-  "mobs": [],
+  "mobs": [
+    {
+      "x": 2726.0,
+      "y": 1850,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 5037.0,
+      "y": 1847,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 4802.0,
+      "y": 1850,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 5330.0,
+      "y": 1850,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1951.0,
+      "y": 1745,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1208.2000000000028,
+      "y": 1852,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1714.0,
+      "y": 1851,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    }
+  ],
   "colliders": [
     {
       "x": 0,
@@ -198,24 +262,6 @@
       "text": "Default"
     },
     {
-      "x": 6889.969424,
-      "y": 2129,
-      "w": 179.0,
-      "h": 30,
-      "ref": null,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 7270.530720000001,
-      "y": 2130,
-      "w": 174.0,
-      "h": 29,
-      "ref": null,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
       "x": 7621.530720000001,
       "y": 2133,
       "w": 179.0,
@@ -241,6 +287,60 @@
       "ref": null,
       "interactable": false,
       "text": "Default"
+    },
+    {
+      "x": 723.7578249357979,
+      "y": 2109,
+      "w": 123.0,
+      "h": 49,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1966.5572428171233,
+      "y": 1945,
+      "w": 153.00000000000023,
+      "h": 107,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 6910.108965160742,
+      "y": 2115,
+      "w": 130.0,
+      "h": 44,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7256.108965160742,
+      "y": 2118,
+      "w": 141.0,
+      "h": 41,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7073.108965160742,
+      "y": 2117,
+      "w": 145.0,
+      "h": 42,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7448.108965160742,
+      "y": 2123,
+      "w": 140.0,
+      "h": 36,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
     }
   ],
   "gameobjects": [
@@ -254,29 +354,56 @@
       "text": "Default"
     },
     {
-      "x": 6882.969424,
-      "y": 2055,
+      "x": 682.7578249357979,
+      "y": 2058,
       "w": 200,
       "h": 200,
-      "ref": 35,
+      "ref": 47,
       "interactable": false,
       "text": "Default"
     },
     {
-      "x": 7263.530720000001,
-      "y": 2064,
+      "x": 1944.827815525035,
+      "y": 1892,
       "w": 200,
       "h": 200,
-      "ref": 35,
+      "ref": 47,
       "interactable": false,
       "text": "Default"
     },
     {
-      "x": 7613.530720000001,
-      "y": 2066,
+      "x": 6872.108965160742,
+      "y": 2072,
       "w": 200,
       "h": 200,
-      "ref": 35,
+      "ref": 47,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7219.108965160742,
+      "y": 2073,
+      "w": 200,
+      "h": 200,
+      "ref": 47,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7046.108965160742,
+      "y": 2068,
+      "w": 200,
+      "h": 200,
+      "ref": 47,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7409.108965160742,
+      "y": 2079,
+      "w": 200,
+      "h": 200,
+      "ref": 47,
       "interactable": false,
       "text": "Default"
     }

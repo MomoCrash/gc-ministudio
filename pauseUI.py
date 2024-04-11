@@ -1,5 +1,7 @@
 import pygame
 from pygame.locals import *
+
+import settings
 from Music import Songs
 
 
@@ -70,7 +72,7 @@ class Menu:
                         self.menu_active = False  
                         return "CONTINUE"
                     elif self.options_button_rect.rect.collidepoint(mouse_pos):
-                        print("Afficher les options")
+                        settings.MUSIC.toggle_music()
                         return "OPTIONS"
                     elif self.quit_button_rect.rect.collidepoint(mouse_pos):
                         pygame.quit()
