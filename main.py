@@ -1,5 +1,6 @@
 from texture import Assets
 import settings
+from editor import Editor
 from startmenu import StartMenu
 from game import Game
 from pauseUI import Menu  
@@ -31,4 +32,4 @@ if __name__ == '__main__':
     pause_menu = Menu(screen) 
     game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Ultimate Game of the Year", pause_menu)  
     
-    #editor = Editor(settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
+    # editor = Editor(screen, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
