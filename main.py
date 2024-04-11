@@ -1,17 +1,37 @@
-import texture
+from texture import Assets
 import settings
-from editor import Editor
+from startmenu import StartMenu
 from game import Game
-from pygame import display
+from pauseUI import Menu  
+import pygame
+
+def init_game():
+    pygame.display.init()
+    
+    settings.SCREEN_WIDTH = 1920
+    settings.SCREEN_HEIGHT = 1080
+
+    pygame.init()
+    settings.GAME_FONT = pygame.font.Font("Assets/Font/Thunder.ttf", 21)
+
 
 if __name__ == '__main__':
-    texture.Assets.Init()
+<<<<<<< Updated upstream
+    Assets.Init()
 
-    display.init()
-    display_info = display.Info()
-    settings.SCREEN_WIDTH = display_info.current_w
-    settings.SCREEN_HEIGHT = display_info.current_h
+=======
+>>>>>>> Stashed changes
+    init_game()
 
-    game = Game(settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Utltimate game of the Year")
+    screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), pygame.FULLSCREEN)
+
+    menu = StartMenu(screen)
+<<<<<<< Updated upstream
+
+    game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Utltimate game of the Year")
     
     #editor = Editor(settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "EDITEUR DE JEU")
+=======
+    pause_menu = Menu(screen) 
+    game = Game(screen, menu.chapter, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, "Ultimate Game of the Year", pause_menu)  
+>>>>>>> Stashed changes
