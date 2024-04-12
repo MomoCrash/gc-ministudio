@@ -49,7 +49,7 @@ class Player( Entity ):
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 4, 4 )
                     maxSpeed: float = 250,
-                    jumpHeight: float = 1400,
+                    jumpHeight: float = 1700,
                     gravity: float = 170
                 ):
         super().__init__( position, rotation, scale, spriteDimensions, None, spritesheet_ref, velocity )

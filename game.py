@@ -30,8 +30,7 @@ class Game:
 
         self.player = Player(
                                 position = Vector2( 400, 1700 ),
-                                spriteDimensions = Vector2( 100, 200 ),
-                                jumpHeight=2400
+                                spriteDimensions = Vector2( 100, 200 )
                             )
 
         self.camera = Vector2( 0, 0 )
@@ -169,7 +168,7 @@ class Game:
                 running = self.inputs()
                 self.update()  
                 self.update_graphics()
-                # print( self.player.transform.position )
+                print( self.player.transform.position )
             else:            
                 self.menu.handle_input()  
                 if self.menu.menu_active:
