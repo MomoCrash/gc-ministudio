@@ -5,10 +5,57 @@ from vector import Vector2
 from enum import Enum, auto
 
 class SpritesRef(Enum):
-    BACKGROUND_0 = auto()
-    BACKGROUND_1 = auto()
+
+    BOOK = auto()
     START = auto()
 
+    # 2
+    BG_LEVEL_1_1 = auto()
+    BG_LEVEL_1_2 = auto()
+    BG_LEVEL_1_COLOR = auto()
+    BG_LEVEL_1_4 = auto()
+
+    BG_LEVEL_1_5 = auto()
+    BG_LEVEL_1_6 = auto()
+    BG_LEVEL_1_7 = auto()
+
+    BG_LEVEL_1_8 = auto()
+    BG_LEVEL_1_9 = auto()
+    BG_LEVEL_1_10 = auto()
+
+    BG_LEVEL_1_11 = auto()
+    BG_LEVEL_1_12 = auto()
+    BG_LEVEL_1_13 = auto()
+
+    #15
+    BG_LEVEL_2_1 = auto()
+    BG_LEVEL_2_2 = auto()
+
+    BG_LEVEL_2_3 = auto()
+    BG_LEVEL_2_4 = auto()
+
+    BG_LEVEL_2_5 = auto()
+    BG_LEVEL_2_6 = auto()
+
+    BG_LEVEL_2_7 = auto()
+    BG_LEVEL_2_8 = auto()
+
+    BG_LEVEL_2_9 = auto()
+    BG_LEVEL_2_10 = auto()
+
+    BG_LEVEL_3_1 = auto()
+    BG_LEVEL_3_2 = auto()
+
+    LIFE_5 = auto()
+    LIFE_4 = auto()
+    LIFE_3 = auto()
+    LIFE_2 = auto()
+    LIFE_1 = auto()
+    LIFE_0 = auto()
+    LIFE_6 = auto()
+    HP = auto()
+    
+    #25
     LVL1_LOG = auto()
     LVL1_ROCK_1 = auto()
     LVL1_ROCK_2 = auto()
@@ -16,11 +63,29 @@ class SpritesRef(Enum):
     LVL1_ROCK_4 = auto()
     LVL1_ROCK_SIDE = auto()
     LVL1_ROCK_FACE = auto()
-    LVL1_TOMBSTONE = auto()
     LVL1_STUMP = auto()
     TEST = auto()
 
+    LVL2_BARIL = auto()
+    LVL2_CAISSE = auto()
+
+    LVL3_OS = auto()
+    LVL3_SKULL = auto()
+    LVL3_SKULL_2 = auto()
+    LVL3_STATUE = auto()
+    LVL1_TOMBSTONE = auto()
+    LVL3_SWORD = auto()
+    LVL3_SWORD_1 = auto()
+
+    LVL4_STATUE = auto()
+
     TOMAHAWK = auto()
+
+    KEY_ART = auto()
+    POPUP = auto()
+
+    CHECK_BUTTON = auto()
+    UNCHECK_BUTTON = auto()
 
 
 class SpriteSheetsRef(Enum):
@@ -28,6 +93,8 @@ class SpriteSheetsRef(Enum):
     ENNEMY_ATTACK_RIGHT = auto()
     ENNEMY_GET_HIT_LEFT = auto()
     ENNEMY_GET_HIT_RIGHT = auto()
+    ENNEMY_IDLE_LEFT = auto()
+    ENNEMY_IDLE_RIGHT = auto()
     ENNEMY_WALK_LEFT = auto()
     ENNEMY_WALK_RIGHT = auto()
     ENNEMY_SHIELD_LEFT = auto()
@@ -36,8 +103,16 @@ class SpriteSheetsRef(Enum):
 
     PLAYER_ATTACK_LEFT = auto()
     PLAYER_ATTACK_RIGHT = auto()
+    DEAD_LEFT = auto()
+    DEAD_RIGHT = auto()
+    DEATH_LEFT = auto()
+    DEATH_RIGHT = auto()
     PLAYER_GET_HIT_LEFT = auto()
     PLAYER_GET_HIT_RIGHT = auto()
+    PLAYER_IDLE_LEFT = auto()
+    PLAYER_IDLE_RIGHT = auto()
+    PLAYER_JUMP_LEFT = auto()
+    PLAYER_JUMP_RIGHT = auto()
     PLAYER_WALK_LEFT = auto()
     PLAYER_WALK_RIGHT = auto()
     PLAYER_SHIELD_LEFT = auto()
@@ -50,7 +125,7 @@ class SpriteSheetsRef(Enum):
 class Sprite:
     def __init__(self, path_to_texture, width, height):
         self.texture_path = path_to_texture
-        self.texture = pygame.image.load(path_to_texture)#.convert_alpha()
+        self.texture = pygame.image.load(path_to_texture).convert_alpha()
         self.size = (width, height)
         self.texture = pygame.transform.scale(self.texture, self.size)
         
@@ -61,27 +136,31 @@ class Sprite:
 class SpriteSheet:
     def __init__(self, textures: list[Sprite]):
         self.frame_count = len(textures)
-        self.frame_per_image = settings.ANIMATION_DURATION // self.frame_count
+        self.frame_per_image = settings.ANIMATION_DURATION / self.frame_count
         self.textures = textures
         self.current_index = 0
-        self.time = pygame.time.get_ticks()
+
+        self.total_ticks = 0
+        self.next_image = 0
+
         self.callback: function = None
 
     # TODO: RANDOM FIRST FRAME / DELAY
     def draw( self, ticks, surface: pygame.Surface, position: Vector2, scale: Vector2, func = lambda: 0 ):
         self.callback = func
+        self.total_ticks += ticks
         if self.is_next_frame(ticks):
             self.current_index += 1
             if self.current_index >= self.frame_count:
                 self.callback()
                 self.current_index = 0
+            self.next_image = self.total_ticks + self.frame_per_image
 
 
         self.textures[self.current_index].draw( surface, position, scale )
     
     def is_next_frame(self, current_ticks) -> bool:
-        if current_ticks - self.time > self.frame_per_image:
-            self.time = current_ticks
+        if self.total_ticks > self.next_image:
             return True
         return False
 

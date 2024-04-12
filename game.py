@@ -15,70 +15,55 @@ class Game:
         self.height = win_height
         self.window_name = win_name
         self.fps = fps
-        self.dt = 0
-        self.current_dt = 0
+        self.dt = 1
         self.elementsOnScreen: LinkedList = LinkedList()
         self.elementsOffScreen: LinkedList = LinkedList()
-<<<<<<< Updated upstream
-
-        self.map = Map( "map" + str(game_chapter) + ".json", win_width, win_height )
-        self.map.load_map()
-        
-=======
         self.game_chapter = game_chapter
         self.menu = menu 
 
         self.map = Map("map" + str(game_chapter) + ".json", win_width, win_height)
 
->>>>>>> Stashed changes
-        pygame.init()
         self.screen = screen
         self.surface = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
+        self.fps = 0
 
         self.player = Player(
-<<<<<<< Updated upstream
-                                position = Vector2( 1000, 500 ),
-                                spriteDimensions = Vector2( 40, 80 )
+                                position = Vector2( 400, 1700 ),
+                                spriteDimensions = Vector2( 100, 200 )
                             )
-        self.mob = Mob( 
-            position=Vector2( 500, 500 ),
-            spriteDimensions = Vector2( 40, 80 )
-            )
-        self.camera = Vector2( 0, 0 )
-=======
-            position=Vector2(400, 1700),
-            spriteDimensions=Vector2(100, 200)
-        )
-        self.mob = Mob(
-            position=Vector2(700, 1500),
-            spriteDimensions=Vector2(100, 200)
-        )
-        self.camera = Vector2(0, 0)
->>>>>>> Stashed changes
 
-        self.text = Text(self.screen, settings.GAME_FONT, 21)
+        self.camera = Vector2( 0, 0 )
+
+        self.text = Text(self.screen, settings.GAME_FONT, 30)
 
         self.loop()
 
-<<<<<<< Updated upstream
-=======
     def load_next_map(self):
         self.game_chapter += 1
-        self.map = Map("map" + str(self.game_chapter) + ".json", self.width, self.height)
-        self.player.transform.position = position = Vector2(10, 1580)
+        self.map = Map( "map" + str(self.game_chapter) + ".json", self.width, self.height )
+        self.player.transform.position = position = Vector2( 10, 1580 )
 
->>>>>>> Stashed changes
+        # TODO : AJOUTER LE RESET DES MOBS
+
     def inputs(self) -> bool:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_e:
+                    if not self.map.is_showing_textbox:
+                        self.map.is_showing_textbox = True
+                    else:
+                        self.map.is_showing_textbox = False
+
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1: 
-                    self.player.Attack()
+                if event.button == 2: 
+                    self.player.Attack(self.camera)
                 if event.button == 3:
                     self.player.Defence()
-                if event.button == 2:
+                if event.button == 1:
                     self.player.MeleeAttack()
             if event.type == pygame.MOUSEBUTTONUP:
                 self.player.DesactivateDefence()
@@ -90,73 +75,68 @@ class Game:
     def update(self):
         pass
 
+        
     def update_camera(self):
-        self.camera.x = self.player.transform.position.x - self.width // 4
+        self.camera.x = self.player.transform.position.x - self.width // len(self.map.background_sprites)
         self.camera.y = self.player.transform.position.y - self.height // 4
 
-        self.camera.x = max(0, min(self.camera.x, self.width))
+        self.camera.x = max(0, min(self.camera.x, self.width * (len(self.map.background_sprites) - 1)))
         self.camera.y = max(0, min(self.camera.y, self.height))
+        
 
     def update_graphics(self):
-<<<<<<< Updated upstream
-        for i, segment in enumerate(self.map.background_sprites):
-            self.surface.blit(segment.texture,
-                              (i * self.map.background_width - self.camera.x, self.height - self.camera.y))
-=======
         for i in range(len(self.map.background_sprites)):
             for j in range(1, len(self.map.background_sprites[i])):
-                self.surface.blit(
-                    self.map.background_sprites[i][j].texture,
-                    (
-                        (i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[j]),
-                        self.height - self.camera.y,
-                        self.width,
-                        self.height
-                    )
-                )
->>>>>>> Stashed changes
+                self.surface.blit(self.map.background_sprites[i][j].texture,
+                                  ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[j]),
+                                   0, self.width, self.height))
+                
 
-        self.map.draw(self.screen, self.camera)
 
-        self.mob.DamagePlayer(self.player)
-        self.player.update(self.surface, self.camera, self.map.colliders, self.dt)
+        self.map.draw(self.screen, self.player, self.camera)
+        
+        self.player.update( self.surface, self.camera, self.map.colliders, self.dt)
+
+        self.map.update_mobs(self.screen, self.player, self.camera, self.dt)
+
+        if self.player.getCollision(self.map.end_zone):
+            self.load_next_map()
+            pygame.display.flip()
+            return
 
         self.update_camera()
 
-<<<<<<< Updated upstream
-        # Develop in progress
-        self.mob.movement(self.player, self.dt)
-=======
-        self.mob.movement(self.player, self.dt, self.map.colliders)
->>>>>>> Stashed changes
-
-
-        self.mob.tryThrow(self.player)
-        self.mob.tryAttack(self.player)
-        self.mob.tryDefence(self.player)
-        self.player.DamageEnnemy(self.mob)
-        self.mob.update(self.dt, self.surface, self.camera, self.map.colliders)
-        self.mob.draw(self.surface, self.player)
+        self.map.update_mobs_logic(self.screen, self.player, self.camera)
 
         self.player.DrawArrow(self.surface, self.camera)
 
         self.player.UpdateArrow(self.dt)
 
-        self.text.draw_text("fps :" + str(self.clock.get_fps()), (255, 255, 255), 100, 100, 10, 10)
-
-<<<<<<< Updated upstream
-
-        #self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
-=======
         for i in range(len(self.map.background_sprites)):
-            self.surface.blit(
-                self.map.background_sprites[i][0].texture,
-                (
-                    (i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[0]),
-                    self.height - self.camera.y
-                )
-            )
->>>>>>> Stashed changes
+             if self.map.background_sprites[i][0] is not None:
+
+                self.surface.blit(self.map.background_sprites[i][0].texture,
+                                  ((i * self.map.background_width) - (self.camera.x * self.map.parralax_speed[0]),
+                                   0))
+
+        Assets.GetSprite(SpritesRef.HP).draw(self.surface, Vector2(20, 30), Vector2(1, 1))
+        if self.player.health == 6:
+            Assets.GetSprite(SpritesRef.LIFE_6).draw(self.surface,Vector2(90,20),Vector2(1,1))
+        elif self.player.health == 5:
+            Assets.GetSprite(SpritesRef.LIFE_5).draw(self.surface,Vector2(90,20),Vector2(1,1))
+        elif self.player.health == 4:
+            Assets.GetSprite(SpritesRef.LIFE_4).draw(self.surface,Vector2(90,20),Vector2(1,1))
+        elif self.player.health == 3:
+            Assets.GetSprite(SpritesRef.LIFE_3).draw(self.surface,Vector2(90,20),Vector2(1,1))
+        elif self.player.health == 2:
+            Assets.GetSprite(SpritesRef.LIFE_2).draw(self.surface,Vector2(90,20),Vector2(1,1))
+        elif self.player.health == 1:
+            Assets.GetSprite(SpritesRef.LIFE_1).draw(self.surface,Vector2(90,20),Vector2(1,1))
+        elif self.player.health <= 0:
+            Assets.GetSprite(SpritesRef.LIFE_0).draw(self.surface,Vector2(90,20),Vector2(1,1))
+
+        self.text.draw_text("fps :" + str(self.fps), (255, 255, 255), 90, 100, 10, 10)
+        #self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
 
         pygame.display.flip()
 
@@ -181,14 +161,14 @@ class Game:
     def loop(self):
         running = True
         paused = False
-        
+
         while running:
-            dt_start = pygame.time.get_ticks()
-            
+
             if not paused:
                 running = self.inputs()
                 self.update()  
-                self.update_graphics()  
+                self.update_graphics()
+                print( self.player.transform.position )
             else:            
                 self.menu.handle_input()  
                 if self.menu.menu_active:
@@ -199,15 +179,14 @@ class Game:
                     self.menu.quit_button_rect.draw()
                 else:
                     paused = False
-                pygame.display.flip()  
+                pygame.display.flip()
 
-            self.clock.tick(60)
-            dt_end = pygame.time.get_ticks()
-            self.dt = self.clock.get_time() / 1000
-            self.current_dt += self.dt
+            self.clock.tick()
+            self.dt = (self.clock.get_time()) / 1000.0
+
+            self.fps = 1 / self.dt
             
             if self.menu.menu_active:
                 paused = True
                 
         pygame.quit()
-

@@ -1,0 +1,148 @@
+{
+  "parralax_speed": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "end_zone": {
+    "x": 7534,
+    "y": 1536,
+    "w": 140,
+    "h": 179,
+    "ref": null,
+    "interactable": false,
+    "text": "Default"
+  },
+  "backgrounds": [
+    [
+      null,
+      25,
+      26
+    ]
+  ],
+  "mobs": [
+    {
+      "x": 457.0,
+      "y": 1847,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1209.0,
+      "y": 1846,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1463.0,
+      "y": 1846,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    }
+  ],
+  "colliders": [
+    {
+      "x": 0,
+      "y": 2046,
+      "w": 1919,
+      "h": 113,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1277,
+      "y": 242,
+      "w": 0,
+      "h": 1080,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    }
+  ],
+  "gameobjects": [
+    {
+      "x": 1103,
+      "y": 1906,
+      "w": 100,
+      "h": 100,
+      "ref": 49,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1391,
+      "y": 2037,
+      "w": 100,
+      "h": 100,
+      "ref": 48,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1380,
+      "y": 1924,
+      "w": 100,
+      "h": 100,
+      "ref": 53,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1096,
+      "y": 1938,
+      "w": 100,
+      "h": 100,
+      "ref": 52,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 357,
+      "y": 1829,
+      "w": 100,
+      "h": 100,
+      "ref": 53,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1227,
+      "y": 314,
+      "w": 1920,
+      "h": 1080,
+      "ref": 1,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 442,
+      "y": 1918,
+      "w": 100,
+      "h": 100,
+      "ref": 48,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1421,
+      "y": 1910,
+      "w": 100,
+      "h": 100,
+      "ref": 48,
+      "interactable": false,
+      "text": "Default"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import pygame
 
+
 class Text :
     def __init__(self,surface: pygame.Surface,font,font_size) -> None:
         self.screen = surface

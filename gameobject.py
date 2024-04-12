@@ -13,19 +13,21 @@ class Transform:
                     position: Vector2 = Vector2( 0, 0 ),
                     rotation: Vector2 = Vector2( 0, 0 ),
                     scale: Vector2 = Vector2( 1, 1 ),
-                    anchor: Vector2 = Vector2( 0, 0 ),
+                    #anchor: Vector2 = Vector2( 0, 0 ),
                 ):
         self.position: Vector2 = position
         self.rotation: Vector2 = rotation
         self.scale: Vector2 = scale
-        self.anchor: Vector2 = anchor
+        #self.anchor: Vector2 = anchor
 
+    """
     def getPosition(self, width, height):
         out: Vector2 = Vector2(0,0)
         out.x = self.position.x - width * self.anchor.x
         out.y =self.position.y - height * self.anchor.y 
 
         return out
+    """
 
 class SpriteRenderer:
     """Unity-like SpriteRenderer (2D) class that stores a sprite or sprite sheet and it's dimensions as well as it's color"""
@@ -49,10 +51,10 @@ class SpriteRenderer:
         if ( self.spriteRef == None and self.spriteSheetRef == None ):
             self.rect: pygame.Rect = pygame.Rect( transform.position.x, transform.position.y, transform.scale.x * self.dimensions.x, transform.scale.y * self.dimensions.y )
     
-    def draw( self, surface: pygame.Surface, camera: Vector2, transform: Transform, callback = lambda: 0 ) -> None:
+    def draw( self, surface: pygame.Surface, camera: Vector2, transform: Transform, callback = lambda: 0, dt: int=0 ) -> None:
         """Draws the sprite / sprite sheet / rectangle into the given surface (except if alpha color is 0)"""
         if ( not self.isVisible ): return
-        if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( pygame.time.get_ticks(), surface, transform.position - camera, self.dimensions * transform.scale )
+        if ( self.spriteSheetRef != None ): Assets.GetSpriteSheet( self.spriteSheetRef ).draw( dt, surface, transform.position - camera, self.dimensions * transform.scale, callback )
         elif ( self.spriteRef != None ): Assets.GetSprite( self.spriteRef ).draw( surface, transform.position - camera, self.dimensions * transform.scale )
         else:
             self.rect: pygame.Rect = pygame.Rect(transform.position.x - camera.x, transform.position.y - camera.y,
@@ -102,7 +104,19 @@ class GameObject:
             other.transform.position + ( other.spriteRenderer.dimensions * other.transform.scale ) >= self.transform.position
         else:
             return self.transform.position <= other <= self.transform.position + ( self.spriteRenderer.dimensions * self.transform.scale )
-    
+        
+    def CheckColWithDistance(self, other: GameObject | Vector2, DistanceFromSelf: float):
+        """Returns true if there is a collision between this GameObject and the one specified at the given distance of self"""
+        #cas player a gauche first
+        if ( isinstance( other, GameObject ) ):
+            return \
+            other.transform.position <= self.transform.position + ( self.spriteRenderer.dimensions * self.transform.scale ) + DistanceFromSelf and \
+            other.transform.position + ( other.spriteRenderer.dimensions * other.transform.scale )+ DistanceFromSelf >= self.transform.position
+        else:
+            return self.transform.position <= other <= self.transform.position + ( self.spriteRenderer.dimensions * self.transform.scale ) + DistanceFromSelf
+        
+
+
     def isOnScreen( self, screenPosition: Vector2, screenSize: Vector2 ) -> bool:
         """Returns true if this GameObject is on the screen"""
         spriteDimensionsScaled: Vector2 = self.spriteRenderer.dimensions.multiplyToNew( self.transform.scale )
@@ -111,10 +125,6 @@ class GameObject:
         self.transform.position.x - spriteDimensionsScaled.x <= screenPosition.x + screenSize.x and \
         self.transform.position.y + spriteDimensionsScaled.y >= screenPosition.y and \
         self.transform.position.y - spriteDimensionsScaled.y <= screenPosition.y + screenSize.y
-    
-    def Move(self, direction, anchor_point = None):
-        "fixer le point d'ancrage depuis lequel on veut faire bouger les points de notre GO"
-        pass
     
     def GetWidth(self):
         return self.transform.scale.x * self.spriteRenderer.getWidth()
