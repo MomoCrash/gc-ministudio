@@ -19,7 +19,7 @@ def init_game():
 
     pygame.mixer.init()
     settings.MUSIC = Songs()
-    settings.GAME_FONT = pygame.font.Font("Assets/Font/Thunder.ttf", 21)
+    settings.GAME_FONT = pygame.font.Font("Assets/Font/Thunder.ttf", 40)
 
 
 if __name__ == '__main__':

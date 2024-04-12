@@ -57,9 +57,9 @@ class InfoBox():
                 Assets.GetSprite( SpritesRef.POPUP ).draw( self.screen, Vector2( popup_x, popup_y ), Vector2(1, 1) )
                 font = settings.GAME_FONT
                 description_text = desc_text
-                text_x = SCREEN_WIDTH // 2 - 200
-                text_y = SCREEN_HEIGHT // 2 - 300
-                max_width = self.rect.width - 40
+                text_x = SCREEN_WIDTH // 2 - 400
+                text_y = SCREEN_HEIGHT // 2 - 200
+                max_width = 1500
                 words = description_text.split()
                 space_width = font.size(' ')[0]
                 space_count = 0
