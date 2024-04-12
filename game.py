@@ -168,7 +168,8 @@ class Game:
             if not paused:
                 running = self.inputs()
                 self.update()  
-                self.update_graphics()  
+                self.update_graphics()
+                # print( self.player.transform.position )
             else:            
                 self.menu.handle_input()  
                 if self.menu.menu_active:

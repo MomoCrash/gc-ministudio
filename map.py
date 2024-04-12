@@ -195,7 +195,7 @@ class Map:
             for collider in self.colliders:
                 collider.update( screen, camera )
 
-        infos_box = [InfoBox(screen, 200, 1580, 400, 400)]
+        infos_box = [InfoBox(screen, 2200, 1600, 400, 400)]
 
         for box in infos_box:
             if box.is_on_player(player):
