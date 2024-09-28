@@ -21,7 +21,7 @@ class Editor:
                                 position = Vector2( 0, 1580 ),
                                 spriteDimensions = Vector2( 60, 190 ),
                                 gravity=0,
-            jumpHeight=2400
+            jumpHeight=2000
 
                             )
         self.camera = Vector2(self.player.transform.position.x, 0)
@@ -65,6 +65,8 @@ class Editor:
                     self.player.transform.position = Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y)
                 if event.key == pygame.K_s:
                     self.map.save_map()
+                if event.type == pygame.K_ESCAPE :
+                    return False
                 if event.key == pygame.K_DELETE:
                     mouseObject = GameObject(position=Vector2(self.mouse_x + self.camera.x, self.mouse_y + self.camera.y), spriteDimensions=Vector2(10, 10))
                     has_removed = False

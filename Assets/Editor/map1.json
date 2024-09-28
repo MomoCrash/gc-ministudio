@@ -289,15 +289,6 @@
       "text": "Default"
     },
     {
-      "x": 722.7124239375406,
-      "y": 2100,
-      "w": 129.0,
-      "h": 59,
-      "ref": null,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
       "x": 580.1882967742042,
       "y": 2038,
       "w": 53.0,
@@ -368,18 +359,27 @@
       "ref": null,
       "interactable": false,
       "text": "Default"
-    }
-  ],
-  "gameobjects": [
+    },
     {
-      "x": 682.7124239375406,
-      "y": 2080,
-      "w": 200,
-      "h": 200,
-      "ref": 45,
+      "x": 702,
+      "y": 2019,
+      "w": 0,
+      "h": 0,
+      "ref": null,
       "interactable": false,
       "text": "Default"
     },
+    {
+      "x": 702,
+      "y": 2019,
+      "w": 123,
+      "h": 140,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    }
+  ],
+  "gameobjects": [
     {
       "x": 507.18829677420416,
       "y": 1966,
@@ -428,6 +428,15 @@
     {
       "x": 7503.158245539321,
       "y": 2084,
+      "w": 200,
+      "h": 200,
+      "ref": 45,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 656,
+      "y": 2001,
       "w": 200,
       "h": 200,
       "ref": 45,

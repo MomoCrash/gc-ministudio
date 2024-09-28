@@ -48,8 +48,8 @@ class Player( Entity ):
                     spritesheet_ref: SpriteSheetsRef = SpriteSheetsRef.PLAYER_WALK_LEFT,
                     
                     velocity: Vector2 = Vector2( 0, 0 ), #? Vector2( 4, 4 )
-                    maxSpeed: float = 250,
-                    jumpHeight: float = 1700,
+                    maxSpeed: float = 500,
+                    jumpHeight: float = 2000,
                     gravity: float = 170
                 ):
         super().__init__( position, rotation, scale, spriteDimensions, None, spritesheet_ref, velocity )

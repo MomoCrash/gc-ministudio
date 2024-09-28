@@ -135,7 +135,7 @@ class Game:
         elif self.player.health <= 0:
             Assets.GetSprite(SpritesRef.LIFE_0).draw(self.surface,Vector2(90,20),Vector2(1,1))
 
-        self.text.draw_text("fps :" + str(self.fps), (255, 255, 255), 90, 100, 10, 10)
+        self.text.draw_text("fps :" + str(int(self.fps)), (255, 255, 255), 90, 100, 10, 10)
         #self.text.draw_text("Test de Text adaptatif !", (255, 255, 255), 100, 100, 10, 10)
 
         pygame.display.flip()

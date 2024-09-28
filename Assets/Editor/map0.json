@@ -79,8 +79,8 @@
       "text": "Default"
     },
     {
-      "x": 6891.0,
-      "y": 1832,
+      "x": 7134.050000000006,
+      "y": 1834,
       "w": 1,
       "h": 1,
       "ref": null,
@@ -88,8 +88,26 @@
       "text": "Default"
     },
     {
-      "x": 7134.050000000006,
-      "y": 1834,
+      "x": 6817.0,
+      "y": 1831,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7028.0,
+      "y": 1831,
+      "w": 1,
+      "h": 1,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 1584.0500000000095,
+      "y": 1783,
       "w": 1,
       "h": 1,
       "ref": null,
@@ -261,15 +279,6 @@
       "text": "Default"
     },
     {
-      "x": 3983.572763487862,
-      "y": 1746,
-      "w": 60.0,
-      "h": 86,
-      "ref": null,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
       "x": 4267.374002469187,
       "y": 1966,
       "w": 60.0,
@@ -328,6 +337,51 @@
       "y": 1495,
       "w": 174,
       "h": 20,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7679,
+      "y": 1735,
+      "w": -20,
+      "h": 160,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7652,
+      "y": 1745,
+      "w": 27,
+      "h": 287,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 4026.991983653735,
+      "y": 1712,
+      "w": 49.0,
+      "h": 265,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 4024.852619021958,
+      "y": 1558,
+      "w": 52.0,
+      "h": 169,
+      "ref": null,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 3895.952820010353,
+      "y": 1528,
+      "w": 66.0,
+      "h": 105,
       "ref": null,
       "interactable": false,
       "text": "Default"
@@ -425,15 +479,6 @@
       "text": "Default"
     },
     {
-      "x": 3910.0440279441086,
-      "y": 1672,
-      "w": 200,
-      "h": 200,
-      "ref": 41,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
       "x": 4200.954147884284,
       "y": 1892,
       "w": 200,
@@ -448,15 +493,6 @@
       "w": 200,
       "h": 200,
       "ref": 37,
-      "interactable": false,
-      "text": "Default"
-    },
-    {
-      "x": 6945.230842013558,
-      "y": 1944,
-      "w": 100,
-      "h": 100,
-      "ref": 51,
       "interactable": false,
       "text": "Default"
     },
@@ -520,6 +556,69 @@
       "w": 359,
       "h": 620,
       "ref": 54,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7598,
+      "y": 1870,
+      "w": 200,
+      "h": 200,
+      "ref": 41,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 7599,
+      "y": 1731,
+      "w": 200,
+      "h": 200,
+      "ref": 41,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 3948.0,
+      "y": 1791,
+      "w": 200,
+      "h": 200,
+      "ref": 41,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 3953.0,
+      "y": 1646,
+      "w": 200,
+      "h": 200,
+      "ref": 41,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 3830.852619021958,
+      "y": 1465,
+      "w": 200,
+      "h": 200,
+      "ref": 41,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 3954.852619021958,
+      "y": 1512,
+      "w": 200,
+      "h": 200,
+      "ref": 41,
+      "interactable": false,
+      "text": "Default"
+    },
+    {
+      "x": 6948,
+      "y": 1945,
+      "w": 100,
+      "h": 100,
+      "ref": 51,
       "interactable": false,
       "text": "Default"
     }

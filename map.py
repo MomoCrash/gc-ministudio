@@ -195,14 +195,14 @@ class Map:
             for collider in self.colliders:
                 collider.update( screen, camera )
 
-        infos_box = [InfoBox(screen, 3650, 1600, 400, 400)]
+        infos_box = [InfoBox(screen, 2100, 1600, 400, 400)]
 
         for box in infos_box:
             if box.is_on_player(player):
                 box.show_popup = True
                 if self.is_showing_textbox:
                     box.big_popup = True
-                    box.draw("Cette statue représente Ymir2, le premier des krakens. Au commencement, il n'y avait que 3 choses : le feu, la glace, et l'immense abysse les séparant appelé Ginnungagap. Un jour, le feu et la glace traversèrent l'abysse et se rejoignirent. Au contact des flammes, la glace fondit et les gouttes tombèrent au fond de Ginnungagap. Puis, elles s'assemblèrent d'elles-même pour former le corps d'Ymir2 (je sais que c'est le même texte mais je vais pas écrire un texte à 3h07 du matin).", (0,0,0), (0,0,0))
+                    box.draw("Cette statue représente Ymir2, le premier des krakens. Au commencement, il n'y avait que 3 choses : le feu, la glace, et l'immense abysse les séparant appelé Ginnungagap. Un jour, le feu et la glace traversèrent l'abysse et se rejoignirent. Au contact des flammes, la glace fondit et les gouttes tombèrent au fond de Ginnungagap. Puis, elles s'assemblèrent d'elles-même pour former le corps d'Ymir2.", (0,0,0), (0,0,0))
                 else:
                     box.big_popup = False
                     box.text.draw_text("Appuie sur E pour découvrir l'histoire", (255, 255, 255), 800, 500, 20, 20)
